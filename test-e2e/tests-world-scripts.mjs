@@ -10,7 +10,9 @@ const MENUS = {
   heroCards: { id: "stt-settings-hero-cards", settings: ["lockNaturals", "showPlayedCards"] },
   diceRolling: {
     id: "stt-settings-dice-rolling",
-    settings: ["markNaturals", "naturalSaves", "naturalInitiative", "naturalChecks", "naturalRollOff"]
+    settings: [
+      "markNaturals", "naturalSaves", "naturalSaveOutcomes", "naturalInitiative", "naturalChecks", "naturalRollOff"
+    ]
   },
   rollRequests: {
     id: "stt-settings-roll-requests",

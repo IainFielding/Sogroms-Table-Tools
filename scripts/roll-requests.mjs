@@ -588,11 +588,12 @@ function getPartKeys(type) {
 
 /**
  * @param {string} type  A request part's type.
- * @returns {"check"|void}  The kind of roll it is, for a natural 1 or 20 that decides it against a DC (see meetsDC).
- *   A plain d20 is judged as an ability check, as it is for Hero Cards.
+ * @returns {"check"|"save"|void}  The kind of roll it is, for a natural 1 or 20 that decides it against a DC (see
+ *   meetsDC). A plain d20 is judged as an ability check, as it is for Hero Cards. A death save keeps dnd5e's own rules.
  */
 export function getPartKind(type) {
   if ( ["skill", "check", "tool", "d20"].includes(type) ) return "check";
+  if ( type === "save" ) return "save";
 }
 
 /* -------------------------------------------- */

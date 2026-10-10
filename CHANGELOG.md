@@ -17,6 +17,10 @@ All notable changes to Sogrom's Table Tools.
 - **Natural 1s and 20s in a Roll-Off.** In a Roll-Off between two d20 rolls, a natural 20 wins outright, against any
   total but another natural 20, and a natural 1 loses to anything but another natural 1. The card says when a natural
   decided it. On by default; turn it off with **Natural 1s and 20s in a Roll-Off**, under **Dice Rolling**.
+- **Natural 1s and 20s on all saves.** A natural 20 on a saving throw made against a DC always succeeds, and a natural
+  1 always fails, whatever the total: saves against spells and features, concentration saves, and saves on request
+  cards. Death saves keep D&D 5e's own rules. On by default; turn it off with **Natural 1s and 20s on all saves**, under
+  **Dice Rolling**.
 
 ### Fixes
 

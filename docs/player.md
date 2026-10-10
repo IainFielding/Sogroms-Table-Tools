@@ -104,6 +104,8 @@ By default:
   total.
 - On an ability check, skill check or tool check against a DC, a natural 20 always succeeds and a natural 1 always
   fails, whatever your total.
+- On any saving throw against a DC, a natural 20 always succeeds and a natural 1 always fails, whatever your total.
+  Death saves keep their own rules.
 - In a Roll-Off between two d20 rolls, a natural 20 wins outright and a natural 1 loses, whatever the totals, unless
   you both roll the same natural.
 

@@ -167,6 +167,15 @@ function registerSettings() {
     default: true,
     onChange: () => game.messages.forEach(m => ui.chat.updateMessage(m))
   });
+  game.settings.register(MODULE_ID, "naturalSaveOutcomes", {
+    name: "STT.Settings.NaturalSaveOutcomes.Name",
+    hint: "STT.Settings.NaturalSaveOutcomes.Hint",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: true,
+    onChange: () => game.messages.forEach(m => ui.chat.updateMessage(m))
+  });
   game.settings.register(MODULE_ID, "showPlayedCards", {
     name: "STT.Settings.ShowPlayedCards.Name",
     hint: "STT.Settings.ShowPlayedCards.Hint",
@@ -682,7 +691,7 @@ export function getNatural(roll) {
  * The setting under which a natural 20 always succeeds and a natural 1 always fails, for each kind of roll made
  * against a DC.
  */
-const NATURAL_OUTCOMES = { check: "naturalChecks" };
+const NATURAL_OUTCOMES = { check: "naturalChecks", save: "naturalSaveOutcomes" };
 
 /**
  * @param {number|void} natural  The d20 a roll kept.
@@ -721,7 +730,8 @@ export function isKnownFailure(message) {
   const roll = message.rolls[0];
   const target = getRollTarget(message, roll);
   if ( !Number.isNumeric(target) ) return true;
-  if ( roll.total >= target ) return false;
+  // A natural 20 under the DC may have saved all the same, and a natural 1 over it failed.
+  if ( meetsDC(roll.total, target, getNatural(roll), getRollKind(message)) ) return false;
   if ( game.user.isGM ) return true;
   const request = message.getFlag(MODULE_ID, "requestRoll")?.request;
   if ( request ) return !!game.messages.get(request)?.getFlag(MODULE_ID, "revealed");

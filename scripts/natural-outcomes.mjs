@@ -3,8 +3,9 @@
  * whatever the total, on each kind of roll whose setting is on (see getNaturalOutcome in hero-cards.mjs).
  *
  * A roll request's card scores its own rolls, in roll-requests.mjs. dnd5e judges every other roll that carries its DC,
- * such as a check asked for from a journal, by the roll's own `isSuccess` and `isFailure`. So those are wrapped here,
- * and everything dnd5e works out from them follows.
+ * such as a check asked for from a journal or a save against a spell, by the roll's own `isSuccess` and `isFailure`. So those are wrapped here,
+ * and everything dnd5e works out from them follows: who a spell's card shows as saved, the half damage its damage tray
+ * starts them at, and whether a failed save can break concentration or be turned by a Legendary Resistance.
  */
 
 import { MODULE_ID, getNatural, getNaturalOutcome } from "./hero-cards.mjs";

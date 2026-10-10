@@ -45,7 +45,8 @@ export const WHATS_NEW = [
     lines: [
       "STT.Welcome.New.NaturalInitiative",
       "STT.Welcome.New.NaturalChecks",
-      "STT.Welcome.New.NaturalRollOff"
+      "STT.Welcome.New.NaturalRollOff",
+      "STT.Welcome.New.NaturalSaveOutcomes"
     ]
   }
 ];

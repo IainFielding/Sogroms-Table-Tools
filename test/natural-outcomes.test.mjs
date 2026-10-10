@@ -17,6 +17,7 @@ beforeEach(() => {
   game.messages = [];
   game.user = { isGM: true };
   settingValues.set("naturalChecks", true);
+  settingValues.set("naturalSaveOutcomes", true);
 });
 
 /* -------------------------------------------- */
@@ -44,6 +45,18 @@ describe("a natural 1 or 20 against a DC", () => {
     expect(meetsDC(21, 30, 20, "check")).toBe(false);
     expect(meetsDC(16, 15, 1, "check")).toBe(true);
   });
+
+  it("decides a save under its own setting, apart from the one for checks", () => {
+    expect(meetsDC(21, 30, 20, "save")).toBe(true);
+    expect(meetsDC(16, 15, 1, "save")).toBe(false);
+    settingValues.set("naturalSaveOutcomes", false);
+    expect(meetsDC(21, 30, 20, "save")).toBe(false);
+    expect(meetsDC(16, 15, 1, "save")).toBe(true);
+    expect(meetsDC(21, 30, 20, "check")).toBe(true);
+    settingValues.set("naturalSaveOutcomes", true);
+    settingValues.set("naturalChecks", false);
+    expect(meetsDC(21, 30, 20, "save")).toBe(true);
+  });
 });
 
 /* -------------------------------------------- */
@@ -54,6 +67,25 @@ describe("a request's rolls", () => {
   it("judges skill, ability and tool checks, and a plain d20, as checks", () => {
     expect(["skill", "check", "tool", "d20"].map(getPartKind)).toEqual(["check", "check", "check", "check"]);
     expect(["death", "d6", "d100"].map(getPartKind)).toEqual([undefined, undefined, undefined]);
+  });
+
+  it("judges a saving throw as a save, and leaves a death save to dnd5e", () => {
+    expect(getPartKind("save")).toBe("save");
+    game.messages = [rollMessage({ actor: "A", total: 9, natural: 20 }), rollMessage({ actor: "B", total: 17, natural: 1 })];
+    const results = getResults(request([{ type: "save", key: "dex", dc: 15 }]));
+    expect(results.get("A")[0]).toMatchObject({ success: true, kind: "save" });
+    expect(results.get("B")[0]).toMatchObject({ success: false, kind: "save" });
+  });
+
+  it("judges a death save by its total", () => {
+    game.messages = [rollMessage({ actor: "A", total: 11, natural: 1 })];
+    expect(getResults(request([{ type: "death", dc: 10 }])).get("A")[0]).toMatchObject({ success: true, kind: undefined });
+  });
+
+  it("judges a save by its total with only the setting for checks on", () => {
+    settingValues.set("naturalSaveOutcomes", false);
+    game.messages = [rollMessage({ actor: "A", total: 9, natural: 20 })];
+    expect(getResults(request([{ type: "save", key: "dex", dc: 15 }])).get("A")[0].success).toBe(false);
   });
 
   it("passes a natural 20 under the DC and fails a natural 1 over it", () => {
@@ -144,6 +176,13 @@ describe("the rolls dnd5e judges", () => {
   it("has a check's natural 20 succeed and its natural 1 fail", () => {
     expect(outcome(new D20Roll(12, 20, { target: 25, rollType: "check" }))).toEqual([true, false]);
     expect(outcome(new D20Roll(18, 1, { target: 15, rollType: "check" }))).toEqual([false, true]);
+  });
+
+  it("has a save's natural 20 succeed and its natural 1 fail", () => {
+    expect(outcome(new D20Roll(12, 20, { target: 25, rollType: "save" }))).toEqual([true, false]);
+    expect(outcome(new D20Roll(18, 1, { target: 15, rollType: "save" }))).toEqual([false, true]);
+    settingValues.set("naturalSaveOutcomes", false);
+    expect(outcome(new D20Roll(12, 20, { target: 25, rollType: "save" }))).toEqual([false, true]);
   });
 
   it("leaves other naturals, and other kinds of roll, to their totals", () => {
