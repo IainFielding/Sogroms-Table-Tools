@@ -15,7 +15,7 @@
         "DiceRolling": {
           "Name": "Dice Rolling",
           "Label": "Dice Rolling Settings",
-          "Hint": "Control how natural 1s and 20s are highlighted in chat, how critical saving throws against damage are handled, and whether a natural 1 or 20 on initiative decides who goes last or first."
+          "Hint": "Control how natural 1s and 20s are highlighted in chat, how critical saving throws against damage are handled, whether a natural 1 or 20 on initiative decides who goes last or first, and whether one decides a check."
         },
         "RollRequests": {
           "Name": "Roll Requests",
@@ -63,6 +63,10 @@
       "NaturalInitiative": {
         "Name": "Natural 1s and 20s on initiative",
         "Hint": "A natural 20 on an initiative roll puts that creature first in the initiative order, above any higher total. A natural 1 puts it last, below any lower total. Each keeps the initiative it rolled, which still orders several natural 20s, or several natural 1s, among themselves. Turn it off to order everyone by their totals alone."
+      },
+      "NaturalChecks": {
+        "Name": "Natural 1s and 20s on checks",
+        "Hint": "A natural 20 on an ability check, skill check or tool check made against a DC always succeeds, and a natural 1 always fails, whatever the total. It counts on roll request cards, where a plain d20 is judged the same way, and on any check D&D 5e rolls against a DC. Turn it off to judge every check by its total alone."
       },
       "ShowPlayedCards": {
         "Name": "Show Played Cards on Screen",
@@ -119,7 +123,8 @@
         "Cards": "This card: a welcome for new worlds, and a short note like it when an update adds features.",
         "BlindRoll": "Blind GM Roll is a third Roll Visibility in the request window: only you see the results.",
         "ShownDC": "A public Standard Roll with Show DC to Players ticked shows players who passed straight away.",
-        "NaturalInitiative": "A natural 20 on initiative goes first in the initiative order and a natural 1 goes last, whatever their totals. Turn it off with Natural 1s and 20s on initiative, under Dice Rolling."
+        "NaturalInitiative": "A natural 20 on initiative goes first in the initiative order and a natural 1 goes last, whatever their totals. Turn it off with Natural 1s and 20s on initiative, under Dice Rolling.",
+        "NaturalChecks": "A natural 20 on a check made against a DC always succeeds and a natural 1 always fails, whatever the total. Turn it off with Natural 1s and 20s on checks, under Dice Rolling."
       },
       "SettingsTitle": "Worth a look before your players start",
       "Guide": "Read the GM guide"

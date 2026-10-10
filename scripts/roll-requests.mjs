@@ -5,7 +5,9 @@
  * tagged roll messages each time the card renders, so deleting a roll message lets that actor roll again.
  */
 
-import { MODULE_ID, createCardButton, getCardOptions, localize, renderLog, reportError } from "./hero-cards.mjs";
+import {
+  MODULE_ID, createCardButton, getCardOptions, localize, meetsDC, renderLog, reportError
+} from "./hero-cards.mjs";
 import { createIndomitableButton } from "./class-features.mjs";
 import RollRequestConfig from "./roll-request-config.mjs";
 
@@ -572,6 +574,17 @@ function getPartKeys(type) {
 /* -------------------------------------------- */
 
 /**
+ * @param {string} type  A request part's type.
+ * @returns {"check"|void}  The kind of roll it is, for a natural 1 or 20 that decides it against a DC (see meetsDC).
+ *   A plain d20 is judged as an ability check, as it is for Hero Cards.
+ */
+export function getPartKind(type) {
+  if ( ["skill", "check", "tool", "d20"].includes(type) ) return "check";
+}
+
+/* -------------------------------------------- */
+
+/**
  * @param {RequestPart} part
  * @returns {string}  Name of the roll, e.g. "Athletics Check", "Dexterity Save" or "d100".
  */
@@ -717,6 +730,7 @@ export function getDCText(request, dc) {
  * @property {ChatMessage5e} message
  * @property {number} total
  * @property {number|void} natural   The d20 that counted.
+ * @property {string|void} kind      The kind of roll made, where a natural 1 or 20 may decide it: see getPartKind.
  * @property {boolean} visible       Whether this user may see the result: not while its dice are still rolling.
  * @property {boolean} rolling       Whether Dice So Nice is still showing its dice.
  * @property {boolean|null} success  Null without a DC, or while its dice are still rolling.
@@ -796,10 +810,12 @@ export function getResults(message) {
     if ( !isRollByOwner(roll, actor) ) continue;
     const slot = contest ? 0 : part;
     if ( results.get(actor)[slot] ) continue;
-    const choices = getChoices(request.parts[part]).length;
-    const chosen = (Number.isInteger(choice) && (choice >= 0) && (choice < choices)) ? choice : 0;
-    const dc = getChoiceDC(request.parts[part], chosen);
-    let success = Number.isNumeric(dc) ? first.total >= dc : null;
+    const choices = getChoices(request.parts[part]);
+    const chosen = (Number.isInteger(choice) && (choice >= 0) && (choice < choices.length)) ? choice : 0;
+    const dc = choices[chosen].dc;
+    const natural = first.d20?.results.find(r => r.active)?.result;
+    const kind = getPartKind(choices[chosen].type);
+    let success = Number.isNumeric(dc) ? meetsDC(first.total, dc, natural, kind) : null;
     // A Divine Intervention roll lands in the numbers picked, which must be as many as the request allows: a wider
     // run, such as 1 to 100, can't succeed.
     if ( request.mode === "divine" ) {
@@ -810,7 +826,8 @@ export function getResults(message) {
     results.get(actor)[slot] = {
       message: roll,
       total: first.total,
-      natural: first.d20?.results.find(r => r.active)?.result,
+      natural,
+      kind,
       visible: roll.isContentVisible && !animating,
       rolling: animating,
       success: animating ? null : success,
@@ -941,7 +958,8 @@ export function poolTeamRolls(entries, places=0) {
 /**
  * Score a team's rolls. A way that needs a DC falls back to an average without one, as a request a macro posted
  * without validating it might be.
- * @param {{ uuid: string, total: number, natural: number }[]} entries  One per actor.
+ * @param {{ uuid: string, total: number, natural: number, kind?: string }[]} entries  One per actor. A roll whose
+ *   `kind` lets a natural 1 or 20 decide it meets the DC, or doesn't, by that: see meetsDC.
  * @param {string} [scoring="average"]  A key in SCORING.
  * @param {number|null} [dc]
  * @param {number} [places=0]  Decimal places an average is rounded down to.
@@ -953,7 +971,8 @@ export function scoreTeam(entries, scoring="average", dc=null, places=0) {
     const { average, exact, removed } = poolTeamRolls(entries, places);
     return { scoring: "average", score: average, exact, removed, notes: new Map(), success: hasDC ? average >= dc : null };
   }
-  const passed = entries.filter(e => e.total >= dc).length;
+  const met = e => meetsDC(e.total, dc, e.natural, e.kind);
+  const passed = entries.filter(met).length;
   if ( scoring === "half" ) {
     const needed = Math.ceil(entries.length / 2);
     return {
@@ -975,7 +994,7 @@ export function scoreTeam(entries, scoring="average", dc=null, places=0) {
   let hindered = 0;
   for ( const e of entries ) {
     if ( e === counted ) notes.set(e.uuid, leading ? "leader" : "weakest");
-    else if ( e.total >= dc ) {
+    else if ( met(e) ) {
       helped++;
       notes.set(e.uuid, "helped");
     } else if ( leading ) {
@@ -1022,7 +1041,9 @@ export function getGroupOutcome(uuids, results, pooled, { scoring="average", dc=
   const hidden = entries.some(e => e.result && !e.result.visible);
   if ( !complete || hidden ) return { complete, hidden, ...none };
   if ( !pooled ) return { complete, hidden, score: entries[0].result.total, ...none };
-  const rolls = entries.map(({ uuid, result }) => ({ uuid, total: result.total, natural: result.natural }));
+  const rolls = entries.map(({ uuid, result }) => {
+    return { uuid, total: result.total, natural: result.natural, kind: result.kind };
+  });
   return { complete, hidden, ...scoreTeam(rolls, scoring, dc, places) };
 }
 

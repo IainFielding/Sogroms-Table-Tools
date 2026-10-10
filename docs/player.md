@@ -102,6 +102,8 @@ By default:
   maximum: every die counts as its highest, and your resistances and immunities don't reduce it.
 - On initiative, a natural 20 puts you first in the initiative order and a natural 1 puts you last, whatever your
   total.
+- On an ability check, skill check or tool check against a DC, a natural 20 always succeeds and a natural 1 always
+  fails, whatever your total.
 
 <img src="images/initiative-naturals.webp" alt="The combat tracker: Aria first with a natural 20 in gold, above Borin's higher total, and the Goblin last with a natural 1 in red" width="300">
 

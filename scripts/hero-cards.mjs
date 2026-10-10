@@ -158,6 +158,15 @@ function registerSettings() {
     default: true,
     onChange: () => game.messages.filter(m => m.type === "damage").forEach(m => ui.chat.updateMessage(m))
   });
+  game.settings.register(MODULE_ID, "naturalChecks", {
+    name: "STT.Settings.NaturalChecks.Name",
+    hint: "STT.Settings.NaturalChecks.Hint",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: true,
+    onChange: () => game.messages.forEach(m => ui.chat.updateMessage(m))
+  });
   game.settings.register(MODULE_ID, "showPlayedCards", {
     name: "STT.Settings.ShowPlayedCards.Name",
     hint: "STT.Settings.ShowPlayedCards.Hint",
@@ -665,6 +674,38 @@ export function getCardOptions(message) {
 export function getNatural(roll) {
   if ( !(roll instanceof CONFIG.Dice.D20Roll) ) return;
   return roll.d20?.results.find(r => r.active)?.result;
+}
+
+/* -------------------------------------------- */
+
+/**
+ * The setting under which a natural 20 always succeeds and a natural 1 always fails, for each kind of roll made
+ * against a DC.
+ */
+const NATURAL_OUTCOMES = { check: "naturalChecks" };
+
+/**
+ * @param {number|void} natural  The d20 a roll kept.
+ * @param {string|void} kind     The kind of roll: "check" or "save".
+ * @returns {boolean|null}  Whether the roll succeeds whatever its total, on a natural 20, or fails whatever its total,
+ *   on a natural 1, while the setting for its kind is on. Null if its total decides it.
+ */
+export function getNaturalOutcome(natural, kind) {
+  const setting = NATURAL_OUTCOMES[kind];
+  if ( ![1, 20].includes(natural) || !setting || !game.settings.get(MODULE_ID, setting) ) return null;
+  return natural === 20;
+}
+
+/**
+ * @param {number} total
+ * @param {number} dc
+ * @param {number|void} [natural]  The d20 the roll kept.
+ * @param {string|void} [kind]     The kind of roll: "check" or "save".
+ * @returns {boolean}  Whether the roll succeeds against the DC: by its natural 1 or 20, where that decides it, or by
+ *   its total.
+ */
+export function meetsDC(total, dc, natural, kind) {
+  return getNaturalOutcome(natural, kind) ?? (total >= dc);
 }
 
 /* -------------------------------------------- */

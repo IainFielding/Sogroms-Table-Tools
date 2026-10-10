@@ -10,6 +10,10 @@ All notable changes to Sogrom's Table Tools.
   initiative order, above any higher total, and one whose roll shows a natural 1 goes last. Each keeps the initiative
   it rolled, shown in gold or red in the combat tracker. On by default; turn it off with **Natural 1s and 20s on
   initiative**, under **Dice Rolling**.
+- **Natural 1s and 20s on checks.** A natural 20 on an ability check, skill check or tool check made against a DC
+  always succeeds, and a natural 1 always fails, whatever the total: on request cards, where a plain d20 is judged the
+  same way, and on any check D&D 5e rolls against a DC. On by default; turn it off with **Natural 1s and 20s on
+  checks**, under **Dice Rolling**.
 
 ### Fixes
 

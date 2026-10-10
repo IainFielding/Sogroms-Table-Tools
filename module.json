@@ -43,6 +43,7 @@
     "scripts/class-features.mjs",
     "scripts/natural-saves.mjs",
     "scripts/natural-initiative.mjs",
+    "scripts/natural-outcomes.mjs",
     "scripts/bloodied-tint.mjs",
     "scripts/fade-unprepared.mjs",
     "scripts/rarity-colours.mjs",

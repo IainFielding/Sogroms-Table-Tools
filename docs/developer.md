@@ -103,7 +103,7 @@ interface RequestPart {
 
 | `mode` | Window label | `parts` used | `sides` | Notes |
 |---|---|---|---|---|
-| `standard` | Standard Roll | 1 | | Each actor rolls once against the DC. Allows `alternatives`, and a `death` part with none. |
+| `standard` | Standard Roll | 1 | | Each actor rolls once against the DC. While `naturalChecks` is on, a natural 20 on a `skill`, `check`, `tool` or `d20` roll meets any DC and a natural 1 meets none, here and wherever a roll is judged against a DC below. Allows `alternatives`, and a `death` part with none. |
 | `team` | Team Challenge | 1 | | Scored by `scoring`. `average`: everyone's totals averaged, rounded down, against the DC; each natural 1 removes the highest roll, each natural 20 the lowest. `half`: succeeds if at least half meet the DC. `leader`: the roll with the highest modifier (total less the kept d20), +1 per other success, −1 per other failure, against the DC. `weakest`: the lowest modifier, +1 per other success. All but `average` need a `dc`. Allows `alternatives`. |
 | `challenge` | Skill Challenge | 3 | | Three rolls in turn, each with its own DC; `successes` of them needed. Allows `alternatives`. |
 | `rolloff` | Roll-Off | 2 (one per side) | Required, exactly one actor each | Higher total wins. An actor no player owns rolls as a private GM roll until the GM shows it. |
@@ -382,6 +382,7 @@ in `settings-menus.mjs`. A setting is added to a menu through its class's `SETTI
 | `markNaturals` | Boolean | `true` | Ring natural 1s and 20s in chat and on request cards. |
 | `naturalSaves` | Boolean | `true` | A natural 20 on a save against an activity's damage takes none, and a natural 1 takes its maximum, ignoring resistances and immunities. |
 | `naturalInitiative` | Boolean | `true` | A natural 20 on initiative goes first in the initiative order, and a natural 1 last. Changing it sorts every combat again. |
+| `naturalChecks` | Boolean | `true` | A natural 20 on a check made against a DC always succeeds, and a natural 1 always fails. Changing it redraws the chat log. |
 | `showPlayedCards` | Boolean | `true` | Show played cards' art on screen. |
 | `defaultDC` | Number or `null` | `null` | The DC each roll starts with in the request window; `null` for none. |
 | `showDCDefault` | Boolean | `false` | Whether **Show DC to Players** starts ticked, and the default for `createRequest`'s `showDC`. |
@@ -442,7 +443,7 @@ Sogrom's Table Tools fires no hooks of its own. It listens to these:
 | Hook | Script | Why |
 |---|---|---|
 | `init` | Every script with a setting, and `settings-menus.mjs` | Register settings and their menus, and set the API. `natural-initiative.mjs` also wraps `Combat#_sortCombatants` and `Combatant#getInitiativeRoll` here, as Foundry sorts each combat's turns before `setup`. |
-| `setup` | `hero-cards.mjs`, `natural-saves.mjs` | Wrap `Item#use` and the damage tray's target options (see below). |
+| `setup` | `hero-cards.mjs`, `natural-saves.mjs`, `natural-outcomes.mjs` | Wrap `Item#use`, the damage tray's target options (see below), and `D20Roll#isSuccess` and `D20Roll#isFailure`, so dnd5e judges a roll that carries its DC by its natural 1 or 20 where a setting says so. |
 | `ready` | `bonus-rolls.mjs`, `roll-request-popup.mjs`, `natural-saves.mjs`, `welcome.mjs`, `chat-button-labels.mjs`, `one-tab-activities.mjs` | Start listening on the socket, open pop-ups for recent requests, watch RSReforged's Apply buttons, post a welcome or what's new card that is due, and apply the two layout settings. |
 | `dnd5e.renderChatMessage` | `hero-cards.mjs`, `roll-requests.mjs`, `bonus-rolls.mjs`, `class-features.mjs` | Add card buttons, natural 1/20 rings, notes, request cards, and the Indomitable button. |
 | `createChatMessage`, `updateChatMessage`, `deleteChatMessage` | `hero-cards.mjs`, `roll-requests.mjs`, `roll-request-popup.mjs` | Show played cards, redraw request cards, and open or close pop-ups. |
@@ -497,6 +498,7 @@ scripts/
   class-features.mjs        Fighter's Indomitable.
   natural-saves.mjs         Natural 1s and 20s on saves against an activity's damage.
   natural-initiative.mjs    Natural 1s and 20s on initiative: first and last in the initiative order.
+  natural-outcomes.mjs      Natural 1s and 20s that decide a roll made against a DC, for the rolls dnd5e judges.
   bloodied-tint.mjs         Gameplay Enhancements: the red tint on D&D 5e's Bloodied effect.
   fade-unprepared.mjs       Gameplay Enhancements: fading unprepared spells on actor sheets.
   rarity-colours.mjs        Gameplay Enhancements: tinting item rows on actor sheets by rarity.

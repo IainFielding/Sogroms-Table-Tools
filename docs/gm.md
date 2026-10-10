@@ -72,6 +72,7 @@ can open them, and each setting applies to the whole world.
 | **Ring natural 1s and 20s** | On | A roll whose d20 shows a natural 20 is ringed in gold in chat, and a natural 1 in red: checks, saving throws and attacks, a save summarised inside the card of the spell that called for it, and a result on a request card. Turn it off for plain totals. |
 | **Natural 1s and 20s on saves against damage** | On | When a spell or feature calls for a save and deals damage, a natural 20 on the save takes no damage, and a natural 1 takes the damage's maximum, every die at its highest (36 from 6d6), ignoring resistances and immunities. Each starts that way in the damage's **Apply** tray, where you can still change it. Turn it off for D&D 5e's own rules. |
 | **Natural 1s and 20s on initiative** | On | A creature whose initiative roll shows a natural 20 goes first in the initiative order, above any higher total, and one whose roll shows a natural 1 goes last, below any lower total. Each keeps the initiative it rolled, shown in gold or red in the combat tracker, and several natural 20s, or several natural 1s, are ordered among themselves by it. A Hero Card or a bonus that changes the roll's d20 moves the creature to match, and an initiative you type in has no natural. Turn it off to order everyone by their totals alone. |
+| **Natural 1s and 20s on checks** | On | A natural 20 on an ability check, skill check or tool check made against a DC always succeeds, and a natural 1 always fails, whatever the total. It counts on request cards, where a plain d20 is judged the same way: in a Standard Roll, a Skill Challenge, and for each roll a Team Challenge judges against its DC. It also counts on any check D&D 5e rolls against a DC, such as one asked for from a journal. Turn it off to judge every check by its total alone. |
 
 ### Roll Requests
 
@@ -174,8 +175,9 @@ and on the buttons they choose from, or "DC ?" if you're keeping the DC hidden.
 
 #### Standard Roll
 
-Each actor rolls once, against a DC if you set one. You see straight away who passed and how many succeeded. Players
-don't, until you click **Show to players**, and you can hide it again.
+Each actor rolls once, against a DC if you set one. A check's natural 20 passes and its natural 1 fails, whatever the
+total, unless you turn off [Natural 1s and 20s on checks](#dice-rolling). You see straight away who passed and how
+many succeeded. Players don't, until you click **Show to players**, and you can hide it again.
 
 A public roll with **Show DC to Players** ticked starts already shown, since players can see the DC and the totals
 for themselves. Click **Shown** to hide it.
@@ -213,7 +215,8 @@ Everyone rolls, and the team gets one result. Choose how it's worked out under *
 | **Leader, helped by the rest** | The roll with the highest modifier counts, +1 for each other roll that meets the DC and −1 for each that doesn't. |
 | **Weakest link** | The roll with the lowest modifier counts, +1 for each other roll that meets the DC. Other failures don't count against it. |
 
-All but the average are judged against the DC, so they need one. A roll's modifier is its total less the d20 it kept,
+All but the average are judged against the DC, so they need one. A check's natural 20 meets the DC and its natural 1
+doesn't, whatever the total, when a roll is counted as a success or as a +1 or −1. A roll's modifier is its total less the d20 it kept,
 so where you offer a choice of rolls, such as Athletics or Acrobatics, each actor is judged by the roll they chose. On
 a tie, the higher total counts. The card marks each roll with what it did for the team (**Leader**, **+1**, **−1**),
 and its summary shows the working, such as "Aria leads: 21, +1 helped, −2 hindered = 20".

@@ -43,7 +43,8 @@ export const WHATS_NEW = [
   {
     version: "1.0.1",
     lines: [
-      "STT.Welcome.New.NaturalInitiative"
+      "STT.Welcome.New.NaturalInitiative",
+      "STT.Welcome.New.NaturalChecks"
     ]
   }
 ];
