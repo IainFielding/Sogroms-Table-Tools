@@ -21,6 +21,7 @@ import "./tests-bonus.mjs";
 import "./tests-features.mjs";
 import "./tests-natural-saves.mjs";
 import "./tests-natural-initiative.mjs";
+import "./tests-natural-outcomes.mjs";
 import "./tests-death-saves.mjs";
 import "./tests-world-scripts.mjs";
 import "./tests-compat.mjs";

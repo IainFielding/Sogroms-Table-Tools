@@ -380,11 +380,11 @@ in `settings-menus.mjs`. A setting is added to a menu through its class's `SETTI
 |---|---|---|---|
 | `lockNaturals` | Boolean | `true` | No card can be played on a natural 1 or 20. |
 | `markNaturals` | Boolean | `true` | Ring natural 1s and 20s in chat and on request cards. |
-| `naturalSaves` | Boolean | `true` | A natural 20 on a save against an activity's damage takes none, and a natural 1 takes its maximum, ignoring resistances and immunities. |
-| `naturalSaveOutcomes` | Boolean | `true` | A natural 20 on a saving throw made against a DC always succeeds, and a natural 1 always fails. Death saves are left to dnd5e. Changing it redraws the chat log. |
-| `naturalInitiative` | Boolean | `true` | A natural 20 on initiative goes first in the initiative order, and a natural 1 last. Changing it sorts every combat again. |
 | `naturalChecks` | Boolean | `true` | A natural 20 on a check made against a DC always succeeds, and a natural 1 always fails. Changing it redraws the chat log. |
+| `naturalSaveOutcomes` | Boolean | `true` | A natural 20 on a saving throw made against a DC always succeeds, and a natural 1 always fails. Death saves are left to dnd5e. Changing it redraws the chat log. |
+| `naturalSaves` | Boolean | `true` | A natural 20 on a save against an activity's damage takes none, and a natural 1 takes its maximum, ignoring resistances and immunities. |
 | `naturalRollOff` | Boolean | `true` | In a Roll-Off between two d20 rolls, a natural 20 wins outright and a natural 1 loses, unless both rolled the same natural. Changing it redraws every Roll-Off card. |
+| `naturalInitiative` | Boolean | `true` | A natural 20 on initiative goes first in the initiative order, and a natural 1 last. Changing it sorts every combat again. |
 | `showPlayedCards` | Boolean | `true` | Show played cards' art on screen. |
 | `defaultDC` | Number or `null` | `null` | The DC each roll starts with in the request window; `null` for none. |
 | `showDCDefault` | Boolean | `false` | Whether **Show DC to Players** starts ticked, and the default for `createRequest`'s `showDC`. |

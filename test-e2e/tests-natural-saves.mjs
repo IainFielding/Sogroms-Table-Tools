@@ -5,6 +5,9 @@
  * The Goblin casts Sacred Flame at Aria and Borin, who have tokens on the scene for these tests. The player rolls their
  * saves against the spell's card, as its Save button does, and the GM rolls its damage as the Damage button does. What
  * each target takes is read from dnd5e's damage tray, then applied through it.
+ *
+ * Natural 1s and 20s on all saves is turned off for these tests, so a save is passed or failed by its total, and only
+ * this rule changes the damage.
  */
 
 import { MODULE_ID } from "./config.mjs";
@@ -25,6 +28,7 @@ const d8 = n => [n, 8];
  * @returns {Promise<{ usage: string, aria: string, borin: string }>}  The spell card's ID, and the targets' token UUIDs.
  */
 async function castAtAriaAndBorin(gm, player, defence = "dr") {
+  await gm.eval(moduleId => game.settings.set(moduleId, "naturalSaveOutcomes", false), MODULE_ID);
   const cast = await gm.eval(async defence => {
     const scene = game.scenes.active;
     const tokens = {};
@@ -64,7 +68,9 @@ async function cleanUp(gm) {
     for ( const name of ["Aria", "Borin"] ) {
       await game.actors.getName(name).update({ "system.traits.dr.value": [], "system.traits.di.value": [] });
     }
-    if ( !game.settings.get(moduleId, "naturalSaves") ) await game.settings.set(moduleId, "naturalSaves", true);
+    for ( const key of ["naturalSaves", "naturalSaveOutcomes"] ) {
+      if ( !game.settings.get(moduleId, key) ) await game.settings.set(moduleId, key, true);
+    }
   }, MODULE_ID);
 }
 

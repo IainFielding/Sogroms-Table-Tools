@@ -11,7 +11,7 @@ const MENUS = {
   diceRolling: {
     id: "stt-settings-dice-rolling",
     settings: [
-      "markNaturals", "naturalSaves", "naturalSaveOutcomes", "naturalInitiative", "naturalChecks", "naturalRollOff"
+      "markNaturals", "naturalChecks", "naturalSaveOutcomes", "naturalSaves", "naturalRollOff", "naturalInitiative"
     ]
   },
   rollRequests: {

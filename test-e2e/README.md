@@ -98,6 +98,10 @@ the end of both consoles.
   and a natural 1 last, for the GM and the player, whatever the totals around them. An initiative typed over one has
   no natural, and with the setting off totals alone decide the order.
 
+- `tests-natural-outcomes.mjs`: natural 1s and 20s that decide a roll. On a request card, and on a check or save dnd5e
+  rolls against a DC itself, a natural 20 passes and a natural 1 fails whatever the DC. In a Roll-Off a natural 20 beats
+  a higher total and a natural 1 loses to a lower one. With each setting off, totals alone decide.
+
 - `tests-death-saves.mjs`: death save requests at the start of a dying creature's turn: who is asked, the pop-ups,
   once a round, stable creatures, and removing a request when the creature is healed.
 - `tests-world-scripts.mjs`: the four settings menus, each holding its own settings, the GM's welcome card, and the five Gameplay
