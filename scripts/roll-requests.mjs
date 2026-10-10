@@ -208,6 +208,19 @@ function registerSettings() {
     choices: Object.fromEntries(Object.entries(SCORING).map(([key, { label }]) => [key, label])),
     default: "average"
   });
+  game.settings.register(MODULE_ID, "naturalRollOff", {
+    name: "STT.Settings.NaturalRollOff.Name",
+    hint: "STT.Settings.NaturalRollOff.Hint",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: true,
+    onChange: () => {
+      for ( const message of game.messages ) {
+        if ( message.getFlag(MODULE_ID, "request")?.mode === "rolloff" ) ui.chat?.updateMessage(message);
+      }
+    }
+  });
   game.settings.register(MODULE_ID, "attachRolls", {
     name: "STT.Settings.AttachRolls.Name",
     hint: "STT.Settings.AttachRolls.Hint",
@@ -1016,6 +1029,7 @@ export function scoreTeam(entries, scoring="average", dc=null, places=0) {
  * @property {boolean} complete        Everyone in the group has rolled.
  * @property {boolean} hidden          Some of the group's rolls are hidden from this user.
  * @property {number} [score]          The group's result: its team score, or its only roll.
+ * @property {number} [natural]        For a group that isn't pooled, the d20 its only roll kept.
  * @property {Map<string, string>} removed  Rolls taken out of the pool, and why.
  * @property {Map<string, string>} notes    What each roll did, in a team scored by its successes.
  */
@@ -1040,11 +1054,34 @@ export function getGroupOutcome(uuids, results, pooled, { scoring="average", dc=
   const complete = entries.every(e => e.result && !e.result.rolling);
   const hidden = entries.some(e => e.result && !e.result.visible);
   if ( !complete || hidden ) return { complete, hidden, ...none };
-  if ( !pooled ) return { complete, hidden, score: entries[0].result.total, ...none };
+  if ( !pooled ) {
+    const { total, natural } = entries[0].result;
+    return { complete, hidden, score: total, natural, ...none };
+  }
   const rolls = entries.map(({ uuid, result }) => {
     return { uuid, total: result.total, natural: result.natural, kind: result.kind };
   });
   return { complete, hidden, ...scoreTeam(rolls, scoring, dc, places) };
+}
+
+/* -------------------------------------------- */
+
+/**
+ * Decide a contest between two sides that have both rolled. The higher score wins, and equal scores tie. In a Roll-Off
+ * between two d20 rolls, while the setting is on, a natural 20 first beats anything but another natural 20, and a
+ * natural 1 loses to anything but another natural 1.
+ * @param {GroupOutcome[]} groups  Both sides.
+ * @returns {{ side: 0|1|null, natural: 20|1|0 }}  The side that won, or null for a tie, and the natural 20 or 1 that
+ *   decided it, if one did.
+ */
+export function getContestWinner([a, b]) {
+  const sign = diff => (diff > 0 ? 0 : (diff < 0 ? 1 : null));
+  if ( [a, b].every(g => Number.isNumeric(g.natural)) && game.settings.get(MODULE_ID, "naturalRollOff") ) {
+    const place = g => ({ 20: 2, 1: 0 }[g.natural] ?? 1);
+    const side = sign(place(a) - place(b));
+    if ( side !== null ) return { side, natural: [a, b][side].natural === 20 ? 20 : 1 };
+  }
+  return { side: sign(a.score - b.score), natural: 0 };
 }
 
 /* -------------------------------------------- */
@@ -1307,7 +1344,8 @@ function renderContest(card, message, request, results) {
   const groups = request.sides.map(uuids => getGroupOutcome(uuids, results, pooled, { places: VERSUS_PLACES }));
   const settled = groups.every(isSettled);
   const [a, b] = groups.map(g => g.score);
-  const winner = !settled ? undefined : (a > b ? 0 : (b > a ? 1 : null));
+  const decided = settled ? getContestWinner(groups) : null;
+  const winner = decided?.side;
   const names = MODES[request.mode].sides.map(side => localize(side));
 
   const sides = document.createElement("div");
@@ -1346,8 +1384,11 @@ function renderContest(card, message, request, results) {
   if ( winner !== undefined ) {
     const label = side => (pooled ? names[side] : fromUuidSync(request.sides[side][0])?.name) ?? names[side];
     const scores = `${label(0)} ${a} · ${label(1)} ${b}`;
-    const verdict = winner === null ? localize("STT.Request.Contest.Tie")
-      : localize(pooled ? "STT.Request.Contest.TeamWins" : "STT.Request.Contest.Wins", { name: label(winner) });
+    // A natural that decided a Roll-Off is named, since the totals alone may say otherwise.
+    let verdict = "STT.Request.Contest.Tie";
+    if ( decided.natural ) verdict = `STT.Request.Contest.WinsNatural${decided.natural}`;
+    else if ( winner !== null ) verdict = pooled ? "STT.Request.Contest.TeamWins" : "STT.Request.Contest.Wins";
+    verdict = localize(verdict, { name: label(winner ?? 0), loser: label(winner ? 0 : 1) });
     summary.classList.add(winner === null ? "tie" : "success");
     summary.append(textElement("span", scores), textElement("strong", verdict));
   } else if ( groups.every(g => g.complete) ) {

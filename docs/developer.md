@@ -106,7 +106,7 @@ interface RequestPart {
 | `standard` | Standard Roll | 1 | | Each actor rolls once against the DC. While `naturalChecks` is on, a natural 20 on a `skill`, `check`, `tool` or `d20` roll meets any DC and a natural 1 meets none, here and wherever a roll is judged against a DC below. Allows `alternatives`, and a `death` part with none. |
 | `team` | Team Challenge | 1 | | Scored by `scoring`. `average`: everyone's totals averaged, rounded down, against the DC; each natural 1 removes the highest roll, each natural 20 the lowest. `half`: succeeds if at least half meet the DC. `leader`: the roll with the highest modifier (total less the kept d20), +1 per other success, −1 per other failure, against the DC. `weakest`: the lowest modifier, +1 per other success. All but `average` need a `dc`. Allows `alternatives`. |
 | `challenge` | Skill Challenge | 3 | | Three rolls in turn, each with its own DC; `successes` of them needed. Allows `alternatives`. |
-| `rolloff` | Roll-Off | 2 (one per side) | Required, exactly one actor each | Higher total wins. An actor no player owns rolls as a private GM roll until the GM shows it. |
+| `rolloff` | Roll-Off | 2 (one per side) | Required, exactly one actor each | Higher total wins. While `naturalRollOff` is on and both rolls are d20 rolls, a natural 20 first beats anything but another natural 20, and a natural 1 loses to anything but another natural 1. An actor no player owns rolls as a private GM roll until the GM shows it. |
 | `versus` | Team vs Team | 2 (one per side) | Required, at least one actor each | Each side pooled like a Team Challenge, its average rounded down to one decimal place; higher average wins. An actor no player owns rolls as a private GM roll until the GM shows it. |
 | `divine` | Divine Intervention | 1, which must be `d100` | | Exactly one actor. It picks `range` numbers in a row from 1 to 100, then must roll one of them. `dc` is ignored. |
 
@@ -383,6 +383,7 @@ in `settings-menus.mjs`. A setting is added to a menu through its class's `SETTI
 | `naturalSaves` | Boolean | `true` | A natural 20 on a save against an activity's damage takes none, and a natural 1 takes its maximum, ignoring resistances and immunities. |
 | `naturalInitiative` | Boolean | `true` | A natural 20 on initiative goes first in the initiative order, and a natural 1 last. Changing it sorts every combat again. |
 | `naturalChecks` | Boolean | `true` | A natural 20 on a check made against a DC always succeeds, and a natural 1 always fails. Changing it redraws the chat log. |
+| `naturalRollOff` | Boolean | `true` | In a Roll-Off between two d20 rolls, a natural 20 wins outright and a natural 1 loses, unless both rolled the same natural. Changing it redraws every Roll-Off card. |
 | `showPlayedCards` | Boolean | `true` | Show played cards' art on screen. |
 | `defaultDC` | Number or `null` | `null` | The DC each roll starts with in the request window; `null` for none. |
 | `showDCDefault` | Boolean | `false` | Whether **Show DC to Players** starts ticked, and the default for `createRequest`'s `showDC`. |

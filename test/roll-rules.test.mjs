@@ -3,7 +3,7 @@ import { actorNames, actorOwners, settingValues } from "./helpers/foundry-shims.
 import { requestMessage, rollMessage } from "./helpers/messages.mjs";
 import {
   DIVINE_RANGE, MAX_CHOICES, MODES, createRequest, formatRun, getChallengeState, getChoiceDC, getChoiceLabel, getChoices,
-  getGroupOutcome, getPartLabel, getRequest, getRequestSubtitle, getRequestTitle, getResults, getRowGroup, hasChoiceDCs,
+  getContestWinner, getGroupOutcome, getPartLabel, getRequest, getRequestSubtitle, getRequestTitle, getResults, getRowGroup, hasChoiceDCs,
   isContest, poolTeamRolls, postRequest, validateRequest, withDefaults
 } from "../scripts/roll-requests.mjs";
 
@@ -613,6 +613,12 @@ describe("Group outcomes", () => {
     expect(getGroupOutcome(["A"], results({ A: roll(73) }), false)).toMatchObject({ score: 73 });
   });
 
+  it("notes the d20 a roll-off side kept, and none for a team", () => {
+    expect(getGroupOutcome(["A"], results({ A: roll(24, 20) }), false)).toMatchObject({ score: 24, natural: 20 });
+    expect(getGroupOutcome(["A"], results({ A: roll(73) }), false).natural).toBeUndefined();
+    expect(getGroupOutcome(["A"], results({ A: roll(24, 20) }), true).natural).toBeUndefined();
+  });
+
   it("never settles a side with no one on it", () => {
     expect(getGroupOutcome([], new Map(), true)).toMatchObject({ complete: false, hidden: false });
     expect(getGroupOutcome([], new Map(), false).score).toBeUndefined();
@@ -628,6 +634,57 @@ describe("Group outcomes", () => {
     const outcome = getGroupOutcome(["A", "B", "C"], results({ A: roll(1, 1), B: roll(15, 15), C: roll(10, 10) }), true);
     expect(outcome.score).toBe(5);
     expect([...outcome.removed.keys()]).toEqual(["B"]);
+  });
+});
+
+/* -------------------------------------------- */
+
+describe("A contest's winner", () => {
+  const side = (score, natural) => ({ score, natural });
+
+  beforeEach(() => settingValues.set("naturalRollOff", true));
+
+  it("is the higher score, or no one on equal scores", () => {
+    expect(getContestWinner([side(14, 10), side(9, 7)])).toEqual({ side: 0, natural: 0 });
+    expect(getContestWinner([side(9, 7), side(14, 10)])).toEqual({ side: 1, natural: 0 });
+    expect(getContestWinner([side(12, 10), side(12, 7)])).toEqual({ side: null, natural: 0 });
+  });
+
+  it("is a natural 20, even against a higher total", () => {
+    expect(getContestWinner([side(21, 20), side(27, 19)])).toEqual({ side: 0, natural: 20 });
+    expect(getContestWinner([side(27, 19), side(21, 20)])).toEqual({ side: 1, natural: 20 });
+  });
+
+  it("is whoever faces a natural 1, even with a lower total", () => {
+    expect(getContestWinner([side(12, 1), side(4, 3)])).toEqual({ side: 1, natural: 1 });
+    expect(getContestWinner([side(4, 3), side(12, 1)])).toEqual({ side: 0, natural: 1 });
+  });
+
+  it("names the natural 20 when it beats a natural 1", () => {
+    expect(getContestWinner([side(3, 1), side(20, 20)])).toEqual({ side: 1, natural: 20 });
+  });
+
+  it("goes back to the totals when both roll the same natural", () => {
+    expect(getContestWinner([side(22, 20), side(25, 20)])).toEqual({ side: 1, natural: 0 });
+    expect(getContestWinner([side(6, 1), side(3, 1)])).toEqual({ side: 0, natural: 0 });
+    expect(getContestWinner([side(24, 20), side(24, 20)])).toEqual({ side: null, natural: 0 });
+  });
+
+  it("goes by the totals unless both sides rolled a d20", () => {
+    expect(getContestWinner([side(21, 20), side(73)])).toEqual({ side: 1, natural: 0 });
+    expect(getContestWinner([side(2), side(1, 1)])).toEqual({ side: 0, natural: 0 });
+  });
+
+  it("goes by the totals with the setting off", () => {
+    settingValues.set("naturalRollOff", false);
+    expect(getContestWinner([side(21, 20), side(27, 19)])).toEqual({ side: 1, natural: 0 });
+    expect(getContestWinner([side(12, 1), side(4, 3)])).toEqual({ side: 0, natural: 0 });
+  });
+
+  it("goes by the averages in a Team vs Team, whose sides have no natural of their own", () => {
+    const sides = new Map([["A", [{ total: 25, natural: 20, visible: true }]], ["B", [{ total: 30, natural: 15, visible: true }]]]);
+    const groups = [["A"], ["B"]].map(uuids => getGroupOutcome(uuids, sides, true, { places: 1 }));
+    expect(getContestWinner(groups)).toEqual({ side: 1, natural: 0 });
   });
 });
 

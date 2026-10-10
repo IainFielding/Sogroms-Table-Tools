@@ -14,6 +14,9 @@ All notable changes to Sogrom's Table Tools.
   always succeeds, and a natural 1 always fails, whatever the total: on request cards, where a plain d20 is judged the
   same way, and on any check D&D 5e rolls against a DC. On by default; turn it off with **Natural 1s and 20s on
   checks**, under **Dice Rolling**.
+- **Natural 1s and 20s in a Roll-Off.** In a Roll-Off between two d20 rolls, a natural 20 wins outright, against any
+  total but another natural 20, and a natural 1 loses to anything but another natural 1. The card says when a natural
+  decided it. On by default; turn it off with **Natural 1s and 20s in a Roll-Off**, under **Dice Rolling**.
 
 ### Fixes
 

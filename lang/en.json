@@ -15,7 +15,7 @@
         "DiceRolling": {
           "Name": "Dice Rolling",
           "Label": "Dice Rolling Settings",
-          "Hint": "Control how natural 1s and 20s are highlighted in chat, how critical saving throws against damage are handled, whether a natural 1 or 20 on initiative decides who goes last or first, and whether one decides a check."
+          "Hint": "Control how natural 1s and 20s are highlighted in chat, how critical saving throws against damage are handled, whether a natural 1 or 20 on initiative decides who goes last or first, and whether one decides a check or a Roll-Off."
         },
         "RollRequests": {
           "Name": "Roll Requests",
@@ -67,6 +67,10 @@
       "NaturalChecks": {
         "Name": "Natural 1s and 20s on checks",
         "Hint": "A natural 20 on an ability check, skill check or tool check made against a DC always succeeds, and a natural 1 always fails, whatever the total. It counts on roll request cards, where a plain d20 is judged the same way, and on any check D&D 5e rolls against a DC. Turn it off to judge every check by its total alone."
+      },
+      "NaturalRollOff": {
+        "Name": "Natural 1s and 20s in a Roll-Off",
+        "Hint": "In a Roll-Off between two d20 rolls, a natural 20 wins outright, against any total but another natural 20, and a natural 1 loses to anything but another natural 1. Two natural 20s, or two natural 1s, are decided by their totals. Turn it off for the higher total to win every time."
       },
       "ShowPlayedCards": {
         "Name": "Show Played Cards on Screen",
@@ -124,7 +128,8 @@
         "BlindRoll": "Blind GM Roll is a third Roll Visibility in the request window: only you see the results.",
         "ShownDC": "A public Standard Roll with Show DC to Players ticked shows players who passed straight away.",
         "NaturalInitiative": "A natural 20 on initiative goes first in the initiative order and a natural 1 goes last, whatever their totals. Turn it off with Natural 1s and 20s on initiative, under Dice Rolling.",
-        "NaturalChecks": "A natural 20 on a check made against a DC always succeeds and a natural 1 always fails, whatever the total. Turn it off with Natural 1s and 20s on checks, under Dice Rolling."
+        "NaturalChecks": "A natural 20 on a check made against a DC always succeeds and a natural 1 always fails, whatever the total. Turn it off with Natural 1s and 20s on checks, under Dice Rolling.",
+        "NaturalRollOff": "In a Roll-Off, a natural 20 wins outright and a natural 1 loses, whatever the totals. Turn it off with Natural 1s and 20s in a Roll-Off, under Dice Rolling."
       },
       "SettingsTitle": "Worth a look before your players start",
       "Guide": "Read the GM guide"
@@ -300,6 +305,8 @@
       "Contest": {
         "Tie": "Tie",
         "Wins": "{name} wins",
+        "WinsNatural20": "{name} wins on a natural 20",
+        "WinsNatural1": "{name} wins: {loser} rolled a natural 1",
         "TeamWins": "{name} win",
         "Hidden": "The result is hidden."
       },
