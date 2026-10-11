@@ -11,6 +11,8 @@ All notable changes to Sogrom's Table Tools.
   giving a total with two d20s in it.
 - **Lucky is no longer offered on damage with no dice.** Playing it on a flat amount of damage, which has nothing to
   reroll, showed an error and gave the card back.
+- **Several natural 20s in chat no longer drag the frame rate down.** The gold ring and glow stay, but the glow no
+  longer breathes.
 
 ## 1.0.1
 
@@ -34,8 +36,8 @@ All notable changes to Sogrom's Table Tools.
 
 ### Fixes
 
-- **Natural 20s in chat no longer drag the frame rate down.** The gold ring and glow are now still, however many are
-  on screen.
+- **A natural 20 in chat no longer halves the frame rate.** Its gold ring is now still, and its glow breathes without
+  the browser redrawing it on every frame.
 
 ## 1.0.0
 
