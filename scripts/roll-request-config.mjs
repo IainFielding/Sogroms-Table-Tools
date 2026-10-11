@@ -32,6 +32,7 @@ const { FormDataExtended } = foundry.applications.ux;
  * @property {Record<string, [string, string]>} sideRolls  Each contest mode's roll for each side, keyed by mode,
  *   starting as d20 against d20.
  * @property {number} successes
+ * @property {number} range  How many consecutive numbers a Divine Intervention roll is given.
  * @property {string} scoring  How a Team Challenge is scored: a key in SCORING.
  * @property {boolean} showDC
  * @property {"public"|"gm"|"blind"} rollMode

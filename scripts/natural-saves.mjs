@@ -203,7 +203,9 @@ export function seedTargetOptions(tray, uuid, options) {
   const usage = getSaveUsage(damage);
   const natural = usage && getSaveNaturals(usage).get(uuid);
   options[MODULE_ID] = { seeded: true, maximize: natural === 1 };
-  if ( natural ) setNaturalOptions(options, natural, fromUuidSync(uuid)?.actor ?? fromUuidSync(uuid), tray.damages);
+  if ( !natural ) return;
+  const target = fromUuidSync(uuid);
+  setNaturalOptions(options, natural, target?.actor ?? target, tray.damages);
 }
 
 /* -------------------------------------------- */

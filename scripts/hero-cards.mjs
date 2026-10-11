@@ -626,7 +626,7 @@ function getCardArt(activity) {
 /**
  * Determine which cards the current user may spend on this message right now.
  * @param {ChatMessage5e} message
- * @returns {{ key: string, activity: Activity, label: string, icon: string }[]}
+ * @returns {{ key: string, activity: Activity, label: string, img: string }[]}
  */
 export function getCardOptions(message) {
   const kind = getRollKind(message);
@@ -637,7 +637,7 @@ export function getCardOptions(message) {
   const roll = message.rolls[0];
   const d20 = (roll instanceof CONFIG.Dice.D20Roll) ? roll.d20 : null;
   const natural = getNatural(roll);
-  const locked = [1, 20].includes(natural) && game.settings.get(MODULE_ID, "lockNaturals");
+  if ( [1, 20].includes(natural) && game.settings.get(MODULE_ID, "lockNaturals") ) return [];
   const options = [];
 
   for ( const item of getCardItems(actor) ) {
@@ -646,7 +646,6 @@ export function getCardOptions(message) {
       const card = CARDS[key];
       if ( !card?.appliesTo.includes(kind) ) continue;
       if ( !hasUsesLeft(activity) ) continue;
-      if ( locked ) continue;
       // A natural 1 is fixed in Sogrom's Table Tools: nothing rerolls it, whatever the Natural 1s and 20s setting.
       if ( card.rerolls && (natural === 1) ) continue;
 
@@ -655,7 +654,11 @@ export function getCardOptions(message) {
           if ( !activity.roll?.formula ) continue;
           break;
         case "luck":
-          if ( ["damage", "divine"].includes(kind) ) break;
+          if ( ["damage", "divine"].includes(kind) ) {
+            // Damage with no dice in it, such as a flat 1, has nothing to reroll.
+            if ( !message.rolls.some(r => r.dice.some(die => die.results.some(result => result.active))) ) continue;
+            break;
+          }
           if ( !d20 || [1, 20].includes(natural) ) continue;
           break;
         case "advantage":
@@ -1147,9 +1150,11 @@ export function finalize(roll) {
 
 /**
  * @param {number[]} values  The d20s rolled again.
- * @returns {string}  "the d20", or "both d20s" for a roll with advantage or disadvantage.
+ * @returns {string}  "the d20", "both d20s" for a roll with advantage or disadvantage, or "all 3 d20s" for one with
+ *   Elven Accuracy.
  */
 export function describeD20s(values) {
+  if ( values.length > 2 ) return localize("STT.Cards.Log.AllD20s", { count: values.length });
   return localize(values.length > 1 ? "STT.Cards.Log.BothD20s" : "STT.Cards.Log.TheD20");
 }
 
@@ -1194,13 +1199,16 @@ async function showDice(roll, message) {
 /* -------------------------------------------- */
 
 /**
- * The d20 results currently in play: the last two not yet rerolled for advantage or disadvantage, otherwise the kept one.
+ * The d20 results currently in play: for advantage or disadvantage the last pair not yet rerolled, or the last three
+ * where Elven Accuracy rolled a third, otherwise the kept one.
  * @param {D20Roll} roll
  * @returns {object[]}
  */
 function getLiveResults(roll) {
   const live = roll.d20.results.filter(r => !r.rerolled);
-  return (roll.hasAdvantage || roll.hasDisadvantage) ? live.slice(-2) : live.filter(r => r.active);
+  if ( !roll.hasAdvantage && !roll.hasDisadvantage ) return live.filter(r => r.active);
+  // dnd5e marks a d20 rolled three times for Elven Accuracy with its "adv2" modifier.
+  return live.slice(roll.d20.modifiers?.includes("adv2") ? -3 : -2);
 }
 
 /* -------------------------------------------- */

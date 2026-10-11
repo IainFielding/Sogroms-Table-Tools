@@ -174,6 +174,7 @@
         "RerollKeepHigher": "rerolled {dice} ({old} → {new}): {before} or {rerolled}, keeping {after}",
         "TheD20": "the d20",
         "BothD20s": "both d20s",
+        "AllD20s": "all {count} d20s",
         "DivineAdvantage": "rolled with advantage ({first} and {second}), keeping {total}",
         "CancelDisadvantage": "cancelled disadvantage: {before} → {after}",
         "Advantage": "rolled with advantage ({first} and {second}): {before} → {after}"
