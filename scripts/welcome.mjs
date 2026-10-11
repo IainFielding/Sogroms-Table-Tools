@@ -196,9 +196,9 @@ function formatPlace(key, cards) {
 /* -------------------------------------------- */
 
 /**
- * Make the card's buttons open the settings menu each names, or the request window. One listener on the document, added on init, rather than
- * one per card as it is drawn: the chat log draws the messages already in it before ready, so a
- * card from an earlier session would otherwise have buttons that do nothing. It also covers a popped-out chat log.
+ * Make the card's buttons open the settings menu each names, or the request window. One listener on the document,
+ * added on init, rather than one per card as it is drawn: the chat log draws the messages already in it before ready,
+ * so a card from an earlier session would otherwise have buttons that do nothing. It also covers a popped-out chat log.
  */
 export function registerWelcomeButtons() {
   document.addEventListener("click", event => {

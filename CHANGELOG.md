@@ -2,6 +2,16 @@
 
 All notable changes to Sogrom's Table Tools.
 
+## 1.0.2
+
+### Fixes
+
+- **Rerolling an Elven Accuracy roll rerolls all three d20s.** Lucky, Indomitable or Relentless played on a roll made
+  with Elven Accuracy rerolled only two of its three d20s, and could count the one left behind as well as the new roll,
+  giving a total with two d20s in it.
+- **Lucky is no longer offered on damage with no dice.** Playing it on a flat amount of damage, which has nothing to
+  reroll, showed an error and gave the card back.
+
 ## 1.0.1
 
 ### Dice rolling
@@ -24,8 +34,8 @@ All notable changes to Sogrom's Table Tools.
 
 ### Fixes
 
-- **A natural 20 in chat no longer halves the frame rate.** Its gold ring is now still, and its glow breathes without
-  the browser redrawing it on every frame.
+- **Natural 20s in chat no longer drag the frame rate down.** The gold ring and glow are now still, however many are
+  on screen.
 
 ## 1.0.0
 

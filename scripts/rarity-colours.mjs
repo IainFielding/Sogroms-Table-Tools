@@ -61,10 +61,10 @@ function onRenderActorSheet(app, html) {
     if ( !item ) continue;
 
     // Resolve rarity: prefer roll data (handles overrides / enriched data), fall back to the raw system field.
-    let rarity = item.getRollData()?.item?.rarity || item?.system?.rarity || undefined;
+    let rarity = item.getRollData()?.item?.rarity || item.system?.rarity || undefined;
 
     // Normalise: strip whitespace and lowercase so e.g. "Very Rare" becomes "veryrare", matching the CSS class names.
-    rarity = rarity ? rarity.replaceAll(/\s/g, "").toLowerCase().trim() : undefined;
+    rarity = rarity ? rarity.replaceAll(/\s/g, "").toLowerCase() : undefined;
 
     // Apply the rarity class (e.g. "rarity-color-rare") to the row element so the CSS rules can colour it.
     if ( rarity ) itemElement.classList.add(`rarity-color-${rarity}`);

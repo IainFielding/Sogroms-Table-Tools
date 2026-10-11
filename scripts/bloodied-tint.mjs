@@ -38,7 +38,6 @@ function onPreCreateActiveEffect(effect) {
   changes.push(
     { key: "token.texture.tint", type: "override", value: "#f19393" },
     { key: "token.ring.colors.background", type: "override", value: "#ff0000" }
-//    { key: "token.ring.colors.ring", type: "override", value: "#ff0000" }
   );
 
   effect.updateSource({ "system.changes": changes });
