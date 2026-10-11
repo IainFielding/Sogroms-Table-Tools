@@ -2,7 +2,9 @@
 
 All notable changes to Sogrom's Table Tools.
 
-## 1.0.2
+## 1.0.3
+
+These fixes were announced for 1.0.2, which was published without them: 1.0.2 holds the same code as 1.0.1.
 
 ### Fixes
 
