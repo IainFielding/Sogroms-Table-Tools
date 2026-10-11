@@ -100,6 +100,16 @@ By default:
 - Damage rolls aren't affected by these restrictions.
 - On a saving throw against a spell's or feature's damage, a natural 20 takes no damage and a natural 1 takes the
   maximum: every die counts as its highest, and your resistances and immunities don't reduce it.
+- On initiative, a natural 20 puts you first in the initiative order and a natural 1 puts you last, whatever your
+  total.
+- On an ability check, skill check or tool check against a DC, a natural 20 always succeeds and a natural 1 always
+  fails, whatever your total.
+- On any saving throw against a DC, a natural 20 always succeeds and a natural 1 always fails, whatever your total.
+  Death saves keep their own rules.
+- In a Roll-Off between two d20 rolls, a natural 20 wins outright and a natural 1 loses, whatever the totals, unless
+  you both roll the same natural.
+
+<img src="images/initiative-naturals.webp" alt="The combat tracker: Aria first with a natural 20 in gold, above Borin's higher total, and the Goblin last with a natural 1 in red" width="300">
 
 Your GM can customise these rules, so the exact behaviour at your table may differ.
 

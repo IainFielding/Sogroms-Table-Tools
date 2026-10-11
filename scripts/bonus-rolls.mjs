@@ -7,7 +7,7 @@
  */
 
 import {
-  EMBEDDED_ROLLS, MODULE_ID, findCombatant, finalize, getRollKind, localize, onEmbeddedRolls, reportError, sumTotals
+  EMBEDDED_ROLLS, MODULE_ID, finalize, getRollKind, localize, onEmbeddedRolls, reportError, sumTotals, updateInitiative
 } from "./hero-cards.mjs";
 
 /**
@@ -337,9 +337,7 @@ export async function applyBonus(source, target, sign) {
       throw err;
     }
     // The roll now holds the bonus, so it stays spent, and counts as applied, even if the tracker can't be updated.
-    if ( getRollKind(target) === "initiative" ) {
-      await findCombatant(target)?.update({ initiative: target.rolls[0].total }).catch(reportError);
-    }
+    if ( getRollKind(target) === "initiative" ) await updateInitiative(target);
     return true;
   } finally {
     spending.delete(source.id);

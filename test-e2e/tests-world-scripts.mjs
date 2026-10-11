@@ -8,7 +8,12 @@ import { assert, assertEqual, test, waitFor } from "./lib/harness.mjs";
 
 const MENUS = {
   heroCards: { id: "stt-settings-hero-cards", settings: ["lockNaturals", "showPlayedCards"] },
-  diceRolling: { id: "stt-settings-dice-rolling", settings: ["markNaturals", "naturalSaves"] },
+  diceRolling: {
+    id: "stt-settings-dice-rolling",
+    settings: [
+      "markNaturals", "naturalChecks", "naturalSaveOutcomes", "naturalSaves", "naturalRollOff", "naturalInitiative"
+    ]
+  },
   rollRequests: {
     id: "stt-settings-roll-requests",
     settings: ["defaultDC", "showDCDefault", "teamScoring", "attachRolls", "popupPlayers", "popupGM", "deathSavePrompt"]

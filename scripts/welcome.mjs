@@ -39,6 +39,15 @@ export const WHATS_NEW = [
       "STT.Welcome.New.BlindRoll",
       "STT.Welcome.New.ShownDC"
     ]
+  },
+  {
+    version: "1.0.1",
+    lines: [
+      "STT.Welcome.New.NaturalChecks",
+      "STT.Welcome.New.NaturalSaveOutcomes",
+      "STT.Welcome.New.NaturalRollOff",
+      "STT.Welcome.New.NaturalInitiative"
+    ]
   }
 ];
 

@@ -119,7 +119,8 @@ class DiceRollingSettings extends SettingsMenu {
   };
 
   /** @override */
-  static SETTINGS = ["markNaturals", "naturalSaves"];
+  static SETTINGS = ["markNaturals", "naturalChecks", "naturalSaveOutcomes", "naturalSaves", "naturalRollOff",
+    "naturalInitiative"];
 }
 
 class RollRequestSettings extends SettingsMenu {

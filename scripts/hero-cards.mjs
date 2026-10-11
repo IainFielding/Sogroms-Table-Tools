@@ -158,6 +158,24 @@ function registerSettings() {
     default: true,
     onChange: () => game.messages.filter(m => m.type === "damage").forEach(m => ui.chat.updateMessage(m))
   });
+  game.settings.register(MODULE_ID, "naturalChecks", {
+    name: "STT.Settings.NaturalChecks.Name",
+    hint: "STT.Settings.NaturalChecks.Hint",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: true,
+    onChange: () => game.messages.forEach(m => ui.chat.updateMessage(m))
+  });
+  game.settings.register(MODULE_ID, "naturalSaveOutcomes", {
+    name: "STT.Settings.NaturalSaveOutcomes.Name",
+    hint: "STT.Settings.NaturalSaveOutcomes.Hint",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: true,
+    onChange: () => game.messages.forEach(m => ui.chat.updateMessage(m))
+  });
   game.settings.register(MODULE_ID, "showPlayedCards", {
     name: "STT.Settings.ShowPlayedCards.Name",
     hint: "STT.Settings.ShowPlayedCards.Hint",
@@ -670,6 +688,38 @@ export function getNatural(roll) {
 /* -------------------------------------------- */
 
 /**
+ * The setting under which a natural 20 always succeeds and a natural 1 always fails, for each kind of roll made
+ * against a DC.
+ */
+const NATURAL_OUTCOMES = { check: "naturalChecks", save: "naturalSaveOutcomes" };
+
+/**
+ * @param {number|void} natural  The d20 a roll kept.
+ * @param {string|void} kind     The kind of roll: "check" or "save".
+ * @returns {boolean|null}  Whether the roll succeeds whatever its total, on a natural 20, or fails whatever its total,
+ *   on a natural 1, while the setting for its kind is on. Null if its total decides it.
+ */
+export function getNaturalOutcome(natural, kind) {
+  const setting = NATURAL_OUTCOMES[kind];
+  if ( ![1, 20].includes(natural) || !setting || !game.settings.get(MODULE_ID, setting) ) return null;
+  return natural === 20;
+}
+
+/**
+ * @param {number} total
+ * @param {number} dc
+ * @param {number|void} [natural]  The d20 the roll kept.
+ * @param {string|void} [kind]     The kind of roll: "check" or "save".
+ * @returns {boolean}  Whether the roll succeeds against the DC: by its natural 1 or 20, where that decides it, or by
+ *   its total.
+ */
+export function meetsDC(total, dc, natural, kind) {
+  return getNaturalOutcome(natural, kind) ?? (total >= dc);
+}
+
+/* -------------------------------------------- */
+
+/**
  * Whether this user may treat a saving throw as failed, for a card or feature that rerolls a failed save. Offering one
  * would tell them it failed, so it waits until they can see that: for a roll request's roll, until the GM shows the
  * result; otherwise, whenever dnd5e shows them the roll's outcome. A save with no DC to judge it by is left to them.
@@ -680,7 +730,8 @@ export function isKnownFailure(message) {
   const roll = message.rolls[0];
   const target = getRollTarget(message, roll);
   if ( !Number.isNumeric(target) ) return true;
-  if ( roll.total >= target ) return false;
+  // A natural 20 under the DC may have saved all the same, and a natural 1 over it failed.
+  if ( meetsDC(roll.total, target, getNatural(roll), getRollKind(message)) ) return false;
   if ( game.user.isGM ) return true;
   const request = message.getFlag(MODULE_ID, "requestRoll")?.request;
   if ( request ) return !!game.messages.get(request)?.getFlag(MODULE_ID, "revealed");
@@ -715,6 +766,22 @@ export function getRollTarget(message, roll) {
 export function findCombatant(message) {
   const { actor, token } = message.speaker;
   return game.combat?.combatants.find(c => token ? c.tokenId === token : c.actorId === actor);
+}
+
+/* -------------------------------------------- */
+
+/**
+ * Give a combatant the total of its initiative roll, once a card or a bonus has changed the roll, with the natural 1
+ * or 20 the roll now shows, which decides its place in the initiative order (see natural-initiative.mjs).
+ * @param {ChatMessage5e} message  An initiative roll message.
+ */
+export async function updateInitiative(message) {
+  const roll = message.rolls[0];
+  const natural = getNatural(roll);
+  await findCombatant(message)?.update({
+    initiative: roll.total,
+    flags: { [MODULE_ID]: { natural: [1, 20].includes(natural) ? natural : 0 } }
+  }).catch(reportError);
 }
 
 /* -------------------------------------------- */
@@ -983,9 +1050,7 @@ async function applyCard(message, { key, activity, label }) {
     throw err;
   }
   // The roll now holds the card's effect, so the card stays spent even if the tracker can't be updated.
-  if ( getRollKind(message) === "initiative" ) {
-    await findCombatant(message)?.update({ initiative: message.rolls[0].total }).catch(reportError);
-  }
+  if ( getRollKind(message) === "initiative" ) await updateInitiative(message);
 }
 
 /* -------------------------------------------- */

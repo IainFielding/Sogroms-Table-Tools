@@ -19,21 +19,18 @@
   margin-top: 4px;
 }
 
-/* A natural 20, ringed in gold as the Character Creator's Level Up button is once the XP is there: a gold ring that
-   turns and a glow that breathes. The ring is a masked conic gradient on ::before, so it follows the element's own
-   rounding. */
-@property --stt-nat20-angle {
-  syntax: "<angle>";
-  initial-value: 0deg;
-  inherits: false;
-}
+/* A natural 20, ringed in gold as the Character Creator's Level Up button is once the XP is there: a gold ring and a
+   glow that breathes. The ring is a masked conic gradient on ::before, so it follows the element's own rounding.
 
+   Only opacity is animated, on a glow of its own on ::after, which the browser fades without painting anything again.
+   A ring whose gradient turns, or a shadow that grows, is painted afresh on every frame, and with a natural 20 in chat
+   that halved the canvas's frame rate. */
 .chat-message .stt-natural-20,
 :is(.chat-message, .stt-request-popup) .stt-request-result.critical {
   position: relative;
   overflow: visible;
   color: #f5c542;
-  animation: stt-nat20-glow 1.8s ease-in-out infinite;
+  box-shadow: 0 0 4px 1px rgba(245, 197, 66, 0.55);
 }
 
 .chat-message .stt-natural-20::before,
@@ -43,33 +40,34 @@
   inset: -3px;
   border-radius: inherit;
   padding: 2px;
-  background: conic-gradient(from var(--stt-nat20-angle),
-    #fff4c2, #f5c542 20%, #a8741a 40%, #f5c542 60%, #fff4c2 80%, #f5c542);
+  background: conic-gradient(from 315deg, #fff4c2, #f5c542 20%, #a8741a 40%, #f5c542 60%, #fff4c2 80%, #f5c542);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   mask-composite: exclude;
   pointer-events: none;
-  animation: stt-nat20-spin 2.4s linear infinite;
 }
 
-@keyframes stt-nat20-spin { to { --stt-nat20-angle: 360deg; } }
-@keyframes stt-nat20-glow {
-  0%, 100% { box-shadow: 0 0 4px 1px rgba(245, 197, 66, 0.55); }
-  50% { box-shadow: 0 0 12px 4px rgba(255, 214, 92, 0.95); }
+.chat-message .stt-natural-20::after,
+:is(.chat-message, .stt-request-popup) .stt-request-result.critical::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 12px 4px rgba(255, 214, 92, 0.95);
+  opacity: 0;
+  pointer-events: none;
+  animation: stt-nat20-glow 1.8s ease-in-out infinite alternate;
 }
+
+@keyframes stt-nat20-glow { to { opacity: 1; } }
 
 /* No motion: a steady gold ring and glow, still unmistakable. */
 @media (prefers-reduced-motion: reduce) {
-  .chat-message .stt-natural-20,
-  .chat-message .stt-natural-20::before,
-  :is(.chat-message, .stt-request-popup) .stt-request-result.critical,
-  :is(.chat-message, .stt-request-popup) .stt-request-result.critical::before {
+  .chat-message .stt-natural-20::after,
+  :is(.chat-message, .stt-request-popup) .stt-request-result.critical::after {
     animation: none;
-  }
-  .chat-message .stt-natural-20,
-  :is(.chat-message, .stt-request-popup) .stt-request-result.critical {
-    box-shadow: 0 0 8px 2px rgba(245, 197, 66, 0.8);
+    opacity: 0.6;
   }
 }
 
@@ -91,6 +89,19 @@
   border-radius: inherit;
   border: 2px solid #8f3b2e;
   pointer-events: none;
+}
+
+/* A natural 20 or 1 on initiative, in the combat tracker: the colours of the rings in chat, without the rings, on the
+   initiative of a combatant its natural has put first or last. */
+.combat-tracker .token-initiative.stt-natural-20 :is(span, input) {
+  color: #f5c542;
+  font-weight: bold;
+  text-shadow: 0 0 6px rgba(245, 197, 66, 0.8);
+}
+
+.combat-tracker .token-initiative.stt-natural-1 :is(span, input) {
+  color: #c96a5a;
+  font-weight: bold;
 }
 
 /* -------------------------------------------- */

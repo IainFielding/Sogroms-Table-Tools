@@ -2,6 +2,31 @@
 
 All notable changes to Sogrom's Table Tools.
 
+## 1.0.1
+
+### Dice rolling
+
+- **Natural 1s and 20s on checks.** A natural 20 on an ability check, skill check or tool check made against a DC
+  always succeeds, and a natural 1 always fails, whatever the total: on request cards, where a plain d20 is judged the
+  same way, and on any check D&D 5e rolls against a DC. On by default; turn it off with **Natural 1s and 20s on
+  checks**, under **Dice Rolling**.
+- **Natural 1s and 20s on all saves.** A natural 20 on a saving throw made against a DC always succeeds, and a natural
+  1 always fails, whatever the total: saves against spells and features, concentration saves, and saves on request
+  cards. Death saves keep D&D 5e's own rules. On by default; turn it off with **Natural 1s and 20s on all saves**, under
+  **Dice Rolling**.
+- **Natural 1s and 20s in a Roll-Off.** In a Roll-Off between two d20 rolls, a natural 20 wins outright, against any
+  total but another natural 20, and a natural 1 loses to anything but another natural 1. The card says when a natural
+  decided it. On by default; turn it off with **Natural 1s and 20s in a Roll-Off**, under **Dice Rolling**.
+- **Natural 1s and 20s on initiative.** A creature whose initiative roll shows a natural 20 goes first in the
+  initiative order, above any higher total, and one whose roll shows a natural 1 goes last. Each keeps the initiative
+  it rolled, shown in gold or red in the combat tracker. On by default; turn it off with **Natural 1s and 20s on
+  initiative**, under **Dice Rolling**.
+
+### Fixes
+
+- **A natural 20 in chat no longer halves the frame rate.** Its gold ring is now still, and its glow breathes without
+  the browser redrawing it on every frame.
+
 ## 1.0.0
 
 The first stable release, for Foundry VTT v14 and the D&D 5e system 6.x, tested on 6.0.6. It changes nothing in how

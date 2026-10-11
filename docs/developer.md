@@ -103,10 +103,10 @@ interface RequestPart {
 
 | `mode` | Window label | `parts` used | `sides` | Notes |
 |---|---|---|---|---|
-| `standard` | Standard Roll | 1 | | Each actor rolls once against the DC. Allows `alternatives`, and a `death` part with none. |
+| `standard` | Standard Roll | 1 | | Each actor rolls once against the DC. While `naturalChecks` is on, a natural 20 on a `skill`, `check`, `tool` or `d20` roll meets any DC and a natural 1 meets none, here and wherever a roll is judged against a DC below. `naturalSaveOutcomes` does the same for a `save` roll. Allows `alternatives`, and a `death` part with none. |
 | `team` | Team Challenge | 1 | | Scored by `scoring`. `average`: everyone's totals averaged, rounded down, against the DC; each natural 1 removes the highest roll, each natural 20 the lowest. `half`: succeeds if at least half meet the DC. `leader`: the roll with the highest modifier (total less the kept d20), +1 per other success, −1 per other failure, against the DC. `weakest`: the lowest modifier, +1 per other success. All but `average` need a `dc`. Allows `alternatives`. |
 | `challenge` | Skill Challenge | 3 | | Three rolls in turn, each with its own DC; `successes` of them needed. Allows `alternatives`. |
-| `rolloff` | Roll-Off | 2 (one per side) | Required, exactly one actor each | Higher total wins. An actor no player owns rolls as a private GM roll until the GM shows it. |
+| `rolloff` | Roll-Off | 2 (one per side) | Required, exactly one actor each | Higher total wins. While `naturalRollOff` is on and both rolls are d20 rolls, a natural 20 first beats anything but another natural 20, and a natural 1 loses to anything but another natural 1. An actor no player owns rolls as a private GM roll until the GM shows it. |
 | `versus` | Team vs Team | 2 (one per side) | Required, at least one actor each | Each side pooled like a Team Challenge, its average rounded down to one decimal place; higher average wins. An actor no player owns rolls as a private GM roll until the GM shows it. |
 | `divine` | Divine Intervention | 1, which must be `d100` | | Exactly one actor. It picks `range` numbers in a row from 1 to 100, then must roll one of them. `dc` is ignored. |
 
@@ -364,6 +364,12 @@ out hit, miss and save results again.
 | `advantage` | `true` | The Advantage card was played from the sheet. The next d20 test gets advantage, and the flag is cleared once that roll is confirmed. |
 | `stable` | `boolean` | Set in the same update as a death save that stabilizes the actor, while `deathSavePrompt` is on, since dnd5e clears the successes and leaves nothing else to show it. Set to `false` when the actor is healed or takes a death save failure. While `true`, no death save is asked for. |
 
+### On a combatant
+
+| Flag | Type | Meaning |
+|---|---|---|
+| `natural` | `20 \| 1 \| 0` | The natural 20 or 1 its initiative roll shows, or `0` for neither. Set in the same update as its initiative, and again when a card or a bonus changes the roll. While `naturalInitiative` is on, a `20` sorts it first in the initiative order and a `1` last. |
+
 ## Settings
 
 All are world settings, read with `game.settings.get("sogrom-table-tools", key)`. None is listed in **Configure
@@ -374,7 +380,11 @@ in `settings-menus.mjs`. A setting is added to a menu through its class's `SETTI
 |---|---|---|---|
 | `lockNaturals` | Boolean | `true` | No card can be played on a natural 1 or 20. |
 | `markNaturals` | Boolean | `true` | Ring natural 1s and 20s in chat and on request cards. |
+| `naturalChecks` | Boolean | `true` | A natural 20 on a check made against a DC always succeeds, and a natural 1 always fails. Changing it redraws the chat log. |
+| `naturalSaveOutcomes` | Boolean | `true` | A natural 20 on a saving throw made against a DC always succeeds, and a natural 1 always fails. Death saves are left to dnd5e. Changing it redraws the chat log. |
 | `naturalSaves` | Boolean | `true` | A natural 20 on a save against an activity's damage takes none, and a natural 1 takes its maximum, ignoring resistances and immunities. |
+| `naturalRollOff` | Boolean | `true` | In a Roll-Off between two d20 rolls, a natural 20 wins outright and a natural 1 loses, unless both rolled the same natural. Changing it redraws every Roll-Off card. |
+| `naturalInitiative` | Boolean | `true` | A natural 20 on initiative goes first in the initiative order, and a natural 1 last. Changing it sorts every combat again. |
 | `showPlayedCards` | Boolean | `true` | Show played cards' art on screen. |
 | `defaultDC` | Number or `null` | `null` | The DC each roll starts with in the request window; `null` for none. |
 | `showDCDefault` | Boolean | `false` | Whether **Show DC to Players** starts ticked, and the default for `createRequest`'s `showDC`. |
@@ -434,8 +444,8 @@ Sogrom's Table Tools fires no hooks of its own. It listens to these:
 
 | Hook | Script | Why |
 |---|---|---|
-| `init` | Every script with a setting, and `settings-menus.mjs` | Register settings and their menus, and set the API. |
-| `setup` | `hero-cards.mjs`, `natural-saves.mjs` | Wrap `Item#use` and the damage tray's target options (see below). |
+| `init` | Every script with a setting, and `settings-menus.mjs` | Register settings and their menus, and set the API. `natural-initiative.mjs` also wraps `Combat#_sortCombatants` and `Combatant#getInitiativeRoll` here, as Foundry sorts each combat's turns before `setup`. |
+| `setup` | `hero-cards.mjs`, `natural-saves.mjs`, `natural-outcomes.mjs` | Wrap `Item#use`, the damage tray's target options (see below), and `D20Roll#isSuccess` and `D20Roll#isFailure`, so dnd5e judges a roll that carries its DC by its natural 1 or 20 where a setting says so. |
 | `ready` | `bonus-rolls.mjs`, `roll-request-popup.mjs`, `natural-saves.mjs`, `welcome.mjs`, `chat-button-labels.mjs`, `one-tab-activities.mjs` | Start listening on the socket, open pop-ups for recent requests, watch RSReforged's Apply buttons, post a welcome or what's new card that is due, and apply the two layout settings. |
 | `dnd5e.renderChatMessage` | `hero-cards.mjs`, `roll-requests.mjs`, `bonus-rolls.mjs`, `class-features.mjs` | Add card buttons, natural 1/20 rings, notes, request cards, and the Indomitable button. |
 | `createChatMessage`, `updateChatMessage`, `deleteChatMessage` | `hero-cards.mjs`, `roll-requests.mjs`, `roll-request-popup.mjs` | Show played cards, redraw request cards, and open or close pop-ups. |
@@ -444,6 +454,8 @@ Sogrom's Table Tools fires no hooks of its own. It listens to these:
 | `preDeleteChatMessage` | `roll-requests.mjs` | Stop players deleting a roll made for a request. |
 | `getChatMessageContextOptions` | `bonus-rolls.mjs`, `class-features.mjs` | Add **Add to a roll…**, **Subtract from a roll…** and **Use Indomitable** to the right-click menu. |
 | `renderChatInput` | `roll-requests.mjs` | Add the GM's tankard button to the chat controls. |
+| `preUpdateCombatant` | `natural-initiative.mjs` | Add the `natural` flag to an update that changes a combatant's initiative. |
+| `renderCombatTracker` | `natural-initiative.mjs` | Colour the initiative of a combatant a natural 1 or 20 has moved. |
 | `combatTurnChange` | `death-saves.mjs` | On the active GM's client, post a death save request for the creature whose turn started, while `deathSavePrompt` is on. |
 | `dnd5e.rollDeathSave` | `death-saves.mjs` | Add the `stable` flag to the updates of a save that stabilizes the actor. |
 | `preUpdateActor`, `updateActor` | `death-saves.mjs` | Clear the `stable` flag when the actor is healed or takes a failure, and remove its unrolled death save requests when it is healed. |
@@ -487,6 +499,8 @@ scripts/
   bonus-rolls.mjs           Adding another feature's die to a roll, and the socket messages for it.
   class-features.mjs        Fighter's Indomitable.
   natural-saves.mjs         Natural 1s and 20s on saves against an activity's damage.
+  natural-initiative.mjs    Natural 1s and 20s on initiative: first and last in the initiative order.
+  natural-outcomes.mjs      Natural 1s and 20s that decide a roll made against a DC, for the rolls dnd5e judges.
   bloodied-tint.mjs         Gameplay Enhancements: the red tint on D&D 5e's Bloodied effect.
   fade-unprepared.mjs       Gameplay Enhancements: fading unprepared spells on actor sheets.
   rarity-colours.mjs        Gameplay Enhancements: tinting item rows on actor sheets by rarity.

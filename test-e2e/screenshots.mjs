@@ -274,6 +274,35 @@ shot("natural 20 and natural 1", async ({ player }) => {
   await capture(player, "naturals", [message(player, twenty), message(player, one)]);
 });
 
+shot("natural 20 and natural 1 on initiative", async ({ gm, player }) => {
+  await gm.eval(async () => {
+    const combat = await Combat.create({ active: true });
+    await combat.createEmbeddedDocuments("Combatant",
+      ["Aria", "Borin", "Goblin"].map(name => ({ actorId: game.actors.getName(name).id })));
+    await combat.activate();
+  });
+  await waitFor(player, () => game.combat?.combatants.size === 3, null, "the combat to reach the player");
+  const rollFor = async (session, name, natural) => {
+    await forceDice(session, [d20(natural)]);
+    await session.eval(name => game.combat.rollInitiative([game.combat.combatants.getName(name).id]), name);
+  };
+  await rollFor(player, "Aria", 20);
+  await rollFor(gm, "Goblin", 1);
+  // Typed in, so one total sits above the natural 20's and below nothing: the naturals alone decide first and last.
+  await gm.eval(() => game.combat.combatants.getName("Borin").update({ initiative: 27 }));
+  await waitFor(player, () => game.combat.turns.map(c => c.name).join() === "Aria,Borin,Goblin", null,
+    "the initiative order to reach the player");
+  try {
+    await player.eval(() => ui.sidebar.changeTab("combat", "primary"));
+    const tracker = player.page.locator("#combat .combat-tracker");
+    await tracker.locator(".token-initiative.stt-natural-1").waitFor({ timeout: 10_000 });
+    // Its rows alone: the tracker is as tall as the sidebar, and empty below them.
+    await capture(player, "initiative-naturals", [tracker.locator(".combatant").first(), tracker.locator(".combatant").last()]);
+  } finally {
+    await player.eval(() => ui.sidebar.changeTab("chat", "primary"));
+  }
+});
+
 shot("adding another feature's die to a roll", async (ctx) => {
   const { gm, player } = ctx;
   await equipBorin(gm);

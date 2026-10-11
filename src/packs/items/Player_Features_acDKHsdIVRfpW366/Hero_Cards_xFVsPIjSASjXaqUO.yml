@@ -709,8 +709,18 @@ system:
     max: ''
   description:
     value: >-
-      <p>These Cards can be used once per long rest to influence things in the
-      game.</p>
+      <p><em>A hand of heroic moments.</em> Each Hero Card can be played once,
+      and every card you've played returns when you finish a long
+      rest.</p><p><strong>Playing a Card</strong></p><ul><li><p><strong>On a
+      roll you've made.</strong> Click the Hero Card button under your roll in
+      chat and choose a card.</p></li><li><p><strong>From your sheet.</strong>
+      Click this feature and choose a card.
+      </p></li></ul><p><strong>Limits</strong></p><ul><li><p>You can play cards
+      only on your own rolls.</p></li><li><p>A natural 1 is final: nothing
+      rerolls it.</p></li><li><p>Unless your GM allows it, no card can be played
+      on a natural 1 or 20.</p></li><li><p>A death saving throw
+      can't be changed once it's rolled.</p></li><li><p>Play a card on damage
+      before the damage is applied.</p></li></ul>
     chat: <p> </p>
   identifier: hero-cards
   source:
@@ -744,10 +754,10 @@ _stats:
   compendiumSource: null
   duplicateSource: null
   exportSource: null
-  coreVersion: '14.368'
+  coreVersion: '14.369'
   systemId: dnd5e
-  systemVersion: 6.0.5
+  systemVersion: 6.0.6
   createdTime: 1748768316573
-  modifiedTime: 1790547562901
-  lastModifiedBy: kA3WMBmNO8WoBNb4
+  modifiedTime: 1791673129938
+  lastModifiedBy: 8eEotViZefC7xQFR
 _key: '!items!xFVsPIjSASjXaqUO'

@@ -49,6 +49,7 @@ Give important rolls the spotlight they deserve. Critical successes and failures
 
 - Natural 1s and 20s stand out with distinctive red and gold highlights.
 - Critical save outcomes can deal maximum damage or avoid damage entirely.
+- A natural 20 on a check or a saving throw always succeeds, and a natural 1 always fails.
 - Add Bardic Inspiration, Cutting Words, and other feature dice directly from chat.
 
 
