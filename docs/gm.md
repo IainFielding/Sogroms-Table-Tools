@@ -378,8 +378,8 @@ Sogrom's Table Tools works alongside modules that change how D&D 5e rolls and sh
   and a natural 1 takes the damage's maximum past resistances and immunities, following **Natural 1s and 20s on saves
   against damage**. A feature's die that Midi shows on the feature's card, such as Bardic Inspiration, can be added to
   a roll from the card's right-click menu. Natural 1s and 20s on the saves Midi lists on its card are ringed. Midi judges
-  the saves it rolls itself, by its own settings, so **Natural 1s and 20s on all saves** doesn't change who it counts as
-  saved.
+  the saves it rolls itself by their totals, so **Natural 1s and 20s on all saves** doesn't change who it counts as
+  saved. For the same rule there, turn on Midi's own **Critical/Fumble always succeed/fail for saving throws**.
 
   What isn't supported: a card played after Midi has resolved a roll changes the roll in chat, but not the hits,
   saves or damage Midi has already worked out and applied. If you want cards to decide outcomes, set Midi's hit
