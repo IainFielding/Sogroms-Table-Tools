@@ -73,6 +73,19 @@ jobs:
         uses: actions/checkout@v7
 
 
+      # A release published against a tag that already exists builds whatever commit that tag
+      # points at, which may be older than main: 1.0.2 was published this way, with 1.0.1's code.
+      # So the tag must be on the commit main is at now.
+      - name: Check The Tag Is At The Tip Of Main
+        run: |
+          TAG_SHA="$(git rev-parse HEAD)"
+          MAIN_SHA="$(git ls-remote origin refs/heads/main | cut -f1)"
+          if [ "$TAG_SHA" != "$MAIN_SHA" ]; then
+            echo "::error::Tag \"$GITHUB_REF_NAME\" is at $TAG_SHA, but main is at $MAIN_SHA. Delete the release and its tag, then publish it again with a new tag created from main."
+            exit 1
+          fi
+
+
       # Extract version embedded in the tag.
       # This step expects the tag to be one of the following formats:
       #   - "v<major>.<minor>.<patch>" (e.g., "v1.2.3")
