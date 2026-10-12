@@ -69,7 +69,7 @@ test("the theme's fonts load from the module, and nothing is fetched from Google
   assert(fonts.cinzel.length, "No Cinzel font loaded for the request card's heading.");
   assert(fonts.spectral.length, "No Spectral font loaded for the request card's text.");
   assertEqual(fonts.remote, [], "font files fetched from Google");
-});
+}, { skip: { crlngn: "Carolingian UI fetches its own fonts from Google." } });
 
 test("the API opens the request window for the GM only", async ({ gm, player }) => {
   const open = s => s.eval(async moduleId => {

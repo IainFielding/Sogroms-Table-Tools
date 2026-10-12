@@ -329,7 +329,7 @@ test("chat button labels: a compact card's icon buttons show their names, only w
   await waitFor(player, () => document.body.classList.contains("stt-chat-button-labels"), null, "the labels to turn on");
   const on = await labels();
   for ( const button of on ) assertEqual(button.before, `"${button.label}"`, `the ${button.label} button's label`);
-});
+}, { skip: { crlngn: "Carolingian UI labels the buttons itself, so the setting stays off; see the compatibility tests." } });
 
 test("one-tab activities: an activity's three tabs are shown side by side, only with the setting on", async ({ gm, player }) => {
   const open = () => player.eval(async () => {

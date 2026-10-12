@@ -12,7 +12,7 @@
             {{else if number}}
             <input type="number" id="{{id}}" name="{{key}}" value="{{value}}" min="0" step="1" placeholder="—">
             {{else}}
-            <input type="checkbox" id="{{id}}" name="{{key}}" {{checked value}}>
+            <input type="checkbox" id="{{id}}" name="{{key}}" {{checked value}} {{disabled disabled}}>
             {{/if}}
         </div>
         <p class="hint">{{hint}}</p>

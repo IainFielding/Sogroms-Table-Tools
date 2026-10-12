@@ -101,7 +101,7 @@ What's New Cards**, which starts on.
 |---|---|---|
 | **Bloodied Token Tint** | Off | When D&D 5e marks a creature Bloodied, its token is tinted red and its token ring's background turns red. A token that's already Bloodied when you turn this on changes the next time it becomes Bloodied. |
 | **Fade Unprepared Spells** | Off | On actor sheets, spells of level 1 or higher that could be prepared but aren't are faded. Cantrips, always-prepared spells, and spells from items or at-will and innate sections stay as they are. |
-| **Chat Button Labels** | Off | On compact chat cards, each icon button shows its name beside its icon, so you don't have to hover over it to see what it does. |
+| **Chat Button Labels** | Off | On compact chat cards, each icon button shows its name beside its icon, so you don't have to hover over it to see what it does. Switched off while Carolingian UI is enabled, which labels them itself: see [Other modules](#other-modules). |
 | **One-Tab Activities** | Off | An activity's **Identity**, **Activation** and **Effect** tabs are laid out side by side in one wide window, without their hints. Handy when you're making a lot of content. |
 | **Item Rarity Colours** | Off | Tints each item row on actor sheets by its rarity: green for uncommon, blue for rare, purple for very rare, orange for legendary and gold for artifact. |
 | **Welcome and What's New Cards** | On | Whispers the GMs a welcome card the first time the module runs in a world, and a short note of what's new after an update that adds features. See [Setting up](#setting-up). |
@@ -384,6 +384,52 @@ Sogrom's Table Tools works alongside modules that change how D&D 5e rolls and sh
   What isn't supported: a card played after Midi has resolved a roll changes the roll in chat, but not the hits,
   saves or damage Midi has already worked out and applied. If you want cards to decide outcomes, set Midi's hit
   checking and damage application to manual, so the card can be played before the result is applied.
+- **Carolingian UI.** The request card, its pop-up, the card chooser and the request window keep their own look under
+  Carolingian UI's chat styles, fonts and colour themes, in its dark and light themes alike. Carolingian UI's hint
+  tooltips work in the request window: each hint is behind the **?** beside its setting. On its compact chat cards,
+  where an attack and its damage are rows inside the weapon's card, the Hero Card button is beside each row's title,
+  notes on cards played are under the row, and natural 1s and 20s are ringed. Natural 1s and 20s on initiative are
+  coloured in its combat tracker too.
+
+  Carolingian UI writes the labels on a chat card's buttons itself, so **Chat Button Labels** is switched off while it
+  is enabled, and greyed out in **Gameplay Enhancements**. Use **Labeled card buttons** in Carolingian UI's chat
+  message settings instead.
+
+  Its **Retroactive advantage buttons**, the arrows either side of a roll's total, change a roll after it was made,
+  as a Hero Card does. They work alongside the cards: a request card counts the changed roll, and a card played
+  afterwards works on the dice the arrows kept. They aren't Hero Cards, though. They cost nothing, they aren't held
+  back by **Lock natural 1s and 20s**, and the roll's own player can click them. If you want Hero Cards to be the only
+  way to change a roll, turn them off in Carolingian UI's chat message settings.
+
+  **Custom CSS.** Keeping that look means that, while Carolingian UI is enabled, an ordinary rule in its **Custom CSS**
+  field, or in any other custom CSS module, has no effect on the request card, the card windows or the played card
+  shown on screen. Without Carolingian UI, custom CSS reaches them as it always has. There are two ways to restyle
+  them with it enabled:
+
+  - **Change the theme's colours and fonts.** They are CSS variables, which still take a plain rule. This turns the
+    teal accents purple and the headings into Georgia:
+
+    ```css
+    .chat-message .stt-request,
+    .stt-card-dialog,
+    .stt-played-card {
+      --cc-open: #a070e0;
+      --cc-font-heading: Georgia, serif;
+    }
+    ```
+
+    The variables are `--cc-open` (teal accents), `--cc-settled` and `--cc-settled-bright` (brass), `--cc-bg`,
+    `--cc-panel-2`, `--cc-line`, `--cc-line-2`, `--cc-text`, `--cc-muted`, `--cc-bright`, `--cc-fail`,
+    `--cc-font-heading` and `--cc-font-body`. The full list is at the top of the card windows' styles, in
+    `styles/hero-cards.css`.
+  - **Change anything else.** Mark the declaration `!important`, and start the selector as below, with `:not(#\#)`
+    four times, so it outranks the rule that protects the theme:
+
+    ```css
+    body.crlngn-ui:not(#\#):not(#\#):not(#\#):not(#\#) .stt-request h3 {
+      font-size: 18px !important;
+    }
+    ```
 
 ## Macros
 

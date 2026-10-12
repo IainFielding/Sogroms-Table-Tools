@@ -38,7 +38,8 @@
       },
       "ChatButtonLabels": {
         "Name": "Chat Button Labels",
-        "Hint": "Fixes the small attack and damage buttons from dnd 6.0 update, adds words making them much easier to see and use."
+        "Hint": "Fixes the small attack and damage buttons from dnd 6.0 update, adds words making them much easier to see and use.",
+        "Superseded": "Switched off while Carolingian UI is enabled: it labels these buttons itself. See Labeled card buttons in its chat message settings."
       },
       "OneTabActivities": {
         "Name": "One-Tab Activities",

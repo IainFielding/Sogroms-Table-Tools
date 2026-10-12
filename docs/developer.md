@@ -485,6 +485,18 @@ message, rather than posting a new one. A module that caches a roll message's to
 **Dice So Nice.** Dice rolled by a card or by Indomitable are shown with the speaker's dice appearance, so they look
 like the roll they change.
 
+**Carolingian UI.** Foundry loads a module's stylesheets into the `modules` cascade layer, and Carolingian UI adds its
+own outside any layer, where each of its rules beats every layered rule whatever the selectors. So
+`styles/compat-carolingian-ui.css` is listed in the manifest with `"layer": null`, which loads it outside the layers
+too, and uses `revert-layer` to hand the request card, the played card and the card windows back to the module's own
+rules. A new themed element inside `.stt-request` or a `.stt-card-dialog` window is covered without a change there; a
+new themed element anywhere else needs adding to it. `placeSummaryButton()` in `hero-cards.mjs` puts a roll's card
+button in the rows that Carolingian UI's compact cards draw, found through `globalThis.dnd5eCompactCards`, the registry
+those cards share with Flash Token Bar 5e. `labelsSuperseded()` in `chat-button-labels.mjs` keeps **Chat Button
+Labels** off while Carolingian UI is active. The `revert-layer` rules also override a user's own custom CSS on those
+elements, apart from the theme's `--cc-*` variables, which `all` doesn't cover: the GM guide's **Other modules**
+section says how to restyle them.
+
 ## Code layout
 
 ```
@@ -512,7 +524,8 @@ templates/roll-request.hbs  The request window's form.
 templates/settings-menu.hbs A settings menu's form.
 templates/welcome.hbs       The welcome and what's new cards.
 styles/                     fonts.css (Cinzel and Spectral, shipped in assets/fonts), hero-cards.css, roll-requests.css,
-                            world-scripts.css, settings-menus.css, welcome.css.
+                            world-scripts.css, settings-menus.css, welcome.css, and compat-carolingian-ui.css, loaded
+                            outside the cascade layers.
 lang/en.json                Every string the module shows.
 assets/                     Card art, campaign art, fonts, and the module's image on Foundry's setup screen.
 src/packs/                  Compendium sources, as YAML. Built into packs/ (not committed).

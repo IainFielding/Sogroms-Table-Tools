@@ -1,14 +1,14 @@
 /**
- * Compatibility checks, run against other modules that change dnd5e's rolls or chat cards: RSReforged and Midi-QOL.
- * `STT_COMPAT=rsr npm run test:e2e -- compat` (or `midi`) runs them in a world with that module enabled; without
- * `STT_COMPAT` they run in the plain test world, which is the baseline.
+ * Compatibility checks, run against other modules that change dnd5e's rolls or chat cards: RSReforged, Midi-QOL and
+ * Carolingian UI. `STT_COMPAT=rsr npm run test:e2e -- compat` (or `midi`, or `crlngn`) runs them in a world with that
+ * module enabled; without `STT_COMPAT` they run in the plain test world, which is the baseline.
  *
  * Unlike the other tests, rolls here go through `activity.use()`, as a click on the character sheet does, since that is
  * the path the other modules take over.
  */
 
 import { MODULE_ID } from "./config.mjs";
-import { assert, assertEqual, forceDice, postRequest, test, waitFor, waitForCard } from "./lib/harness.mjs";
+import { assert, assertEqual, forceDice, postRequest, test, waitFor, waitForCard, waitForRoll } from "./lib/harness.mjs";
 
 const d20 = n => [n, 20];
 
@@ -107,7 +107,7 @@ async function rollAthletics(player) {
 
 test("compat: the modules under test are active", async ({ gm }) => {
   await configureMidi(gm);
-  const active = await gm.eval(() => ["rsreforged", "midi-qol"].filter(id => game.modules.get(id)?.active));
+  const active = await gm.eval(() => ["rsreforged", "midi-qol", "crlngn-ui"].filter(id => game.modules.get(id)?.active));
   console.log(`      active: ${active.join(", ") || "none (baseline)"}`);
 });
 
@@ -356,5 +356,142 @@ test("compat: a natural 20 save that Midi-QOL lists on its card is ringed in gol
     "the save's total to be ringed in gold", 15_000);
   } finally {
     await gm.eval(token => fromUuidSync(token)?.delete().catch(() => {}), token);
+  }
+});
+
+/* -------------------------------------------- */
+/*  Carolingian UI                              */
+/* -------------------------------------------- */
+
+/**
+ * How a user sees parts of a request card: the fonts of its title and of an actor's name, and a Roll button's colours.
+ * @param {import("./lib/session.mjs").Session} session
+ * @param {string} within  A selector for the element holding the card.
+ * @returns {Promise<object|null>}
+ */
+function requestLook(session, within) {
+  return session.eval(within => {
+    const card = document.querySelector(`${within} .stt-request`);
+    if ( !card ) return null;
+    const style = selector => getComputedStyle(card.querySelector(selector));
+    const roll = style(".stt-request-roll");
+    return {
+      title: style(".stt-request-header h3").fontFamily,
+      name: style(".stt-request-name").fontFamily,
+      roll: [roll.fontFamily, roll.backgroundColor, roll.borderTopColor, roll.color].join(" / ")
+    };
+  }, within);
+}
+
+test("compat: a request card in chat is drawn like its pop-up, in the module's own theme", async ({ gm, player, ids }) => {
+  // Another module's chat styles reach the card in chat, but not the pop-up, which is a window.
+  await gm.eval(moduleId => game.settings.set(moduleId, "popupPlayers", true), MODULE_ID);
+  await waitFor(player, moduleId => game.settings.get(moduleId, "popupPlayers"), MODULE_ID, "the pop-up setting");
+  const id = await postRequest({ gm, player }, { mode: "standard", actors: [ids.aria], parts: [{ type: "skill", key: "ath", dc: 10 }] });
+  await player.page.locator(".stt-request-popup .stt-request-roll").first().waitFor({ timeout: 10_000 });
+  const chat = await requestLook(player, `#chat .chat-log [data-message-id="${id}"]`);
+  const popup = await requestLook(player, ".stt-request-popup");
+  assert(chat.title.includes("Cinzel"), `The card's title is in ${chat.title}.`);
+  assert(chat.name.includes("Spectral"), `An actor's name is in ${chat.name}.`);
+  assertEqual(chat.title, popup.title, "the title's font, in chat as in the pop-up");
+  assertEqual(chat.name, popup.name, "a name's font, in chat as in the pop-up");
+  assertEqual(chat.roll, popup.roll, "the Roll button, in chat as in the pop-up");
+});
+
+test("compat: Carolingian UI's compact cards hold a roll's Hero Card button beside the row's title", async ({ gm, player }) => {
+  if ( !(await gm.eval(() => !!globalThis.dnd5eCompactCards?.isActive)) ) return;
+  await forceDice(player, [d20(8), [2, 4]]);
+  const rolls = await player.eval(async () => {
+    const activity = game.actors.getName("Aria").items.getName("Dagger").system.activities.find(a => a.type === "attack");
+    const { message } = await activity.use({}, { configure: false }, {});
+    const data = { system: { origin: message.id } };
+    const [attack] = await activity.rollAttack({}, { configure: false }, { data });
+    const [damage] = await activity.rollDamage({}, { configure: false }, { data });
+    return { card: message.id, attack: attack.parent.id, damage: damage.parent.id };
+  });
+  for ( const id of [rolls.attack, rolls.damage] ) {
+    const button = await waitFor(player, ({ card, id }) => {
+      const summary = document.querySelector(`#chat .chat-log [data-message-id="${card}"] .card-summary[data-message-id="${id}"]`);
+      const button = summary?.querySelector(".stt-card-button");
+      if ( !button || !summary.querySelector(".dcc-roll-row .dice-roll") ) return null;
+      const inside = (a, b) => (a.left >= b.left - 1) && (a.right <= b.right + 1) && (a.top >= b.top - 1) && (a.bottom <= b.bottom + 1);
+      return {
+        parent: button.parentElement.className,
+        inside: inside(button.getBoundingClientRect(), summary.getBoundingClientRect()),
+        rowHeight: summary.querySelector(".dcc-roll-row").offsetHeight
+      };
+    }, { card: rolls.card, id }, "the roll's row and its Hero Card button");
+    assertEqual(button.parent, "dcc-row-title", "where the button is");
+    assert(button.inside, "The button is drawn outside its row.");
+    assert(button.rowHeight < 40, `The row has wrapped onto a second line: it is ${button.rowHeight}px tall.`);
+  }
+  // The button plays a card on the roll its row shows.
+  await forceDice(player, [d20(17)]);
+  await playCardOn(player, rolls.attack, "Advantage");
+  await waitFor(player, ({ id, moduleId }) => !!game.messages.get(id)?.getFlag(moduleId, "log")?.length,
+    { id: rolls.attack, moduleId: MODULE_ID }, "Advantage to be recorded");
+  await player.page.waitForTimeout(800);
+  const shown = await shownTotals(player, rolls.attack);
+  assert(shown.some(t => t.includes("17")), `The new total isn't shown. Shown: ${shown.join(" | ")}`);
+});
+
+test("compat: advantage Carolingian UI gives a roll afterwards is counted on the request card", async ({ gm, player, ids }) => {
+  if ( !(await gm.eval(() => !!globalThis.dnd5eCompactCards?.active?.setAdvantageMode)) ) return;
+  const id = await postRequest({ gm, player }, { mode: "standard", actors: [ids.aria], parts: [{ type: "skill", key: "ath", dc: 15 }] });
+  await forceDice(player, [d20(4)]);
+  await player.page.locator(`#chat .chat-log [data-message-id="${id}"] .stt-request-roll`).first().click({ modifiers: ["Shift"] });
+  const roll = await waitForRoll(player, id, ids.aria);
+  await waitForCard(gm, id, card => card.rows[0]?.results[0]?.text === "4", "Aria's 4 on the card");
+  await forceDice(player, [d20(18)]);
+  await player.eval(roll => globalThis.dnd5eCompactCards.active.setAdvantageMode(game.messages.get(roll),
+    CONFIG.Dice.D20Roll.ADV_MODE.ADVANTAGE), roll.id);
+  for ( const session of [gm, player] ) {
+    await waitForCard(session, id, card => card.rows[0]?.results[0]?.text === "18", "the new total on the card");
+  }
+});
+
+test("compat: a card played after Carolingian UI changed a roll's advantage works on the dice it kept", async ({ gm, player }) => {
+  if ( !(await gm.eval(() => !!globalThis.dnd5eCompactCards?.active?.setAdvantageMode)) ) return;
+  await forceDice(player, [d20(12)]);
+  const id = await rollAthletics(player);
+  await forceDice(player, [d20(5)]);
+  await player.eval(id => globalThis.dnd5eCompactCards.active.setAdvantageMode(game.messages.get(id),
+    CONFIG.Dice.D20Roll.ADV_MODE.DISADVANTAGE), id);
+  await waitFor(player, id => game.messages.get(id).rolls[0].total === 5, id, "disadvantage to keep the 5");
+  await player.page.waitForTimeout(800);
+  assert(await visibleCardButtons(player, id), "The check has no visible Hero Card button.");
+  await forceDice(player, [d20(16)]);
+  await playCardOn(player, id, "Lucky");
+  const roll = await waitFor(player, ({ id, moduleId }) => {
+    const m = game.messages.get(id);
+    return m?.getFlag(moduleId, "log")?.length ? { total: m.rolls[0].total, disadvantage: m.rolls[0].hasDisadvantage } : null;
+  }, { id, moduleId: MODULE_ID }, "Lucky to be recorded");
+  assert(roll.disadvantage, "The roll lost the disadvantage it was given.");
+  await player.page.waitForTimeout(800);
+  const shown = await shownTotals(player, id);
+  assert(shown.some(t => t.includes(String(roll.total))), `The new total ${roll.total} isn't shown. Shown: ${shown.join(" | ")}`);
+});
+
+test("compat: Chat Button Labels stay off while Carolingian UI is enabled, and keep what was saved", async ({ gm }) => {
+  if ( !(await gm.eval(() => !!game.modules.get("crlngn-ui")?.active)) ) return;
+  await gm.eval(moduleId => game.settings.set(moduleId, "chatButtonLabels", true), MODULE_ID);
+  try {
+    assert(!(await gm.eval(() => document.body.classList.contains("stt-chat-button-labels"))),
+      "The labels are on, beside the labels Carolingian UI writes.");
+    await gm.eval(moduleId => new (game.settings.menus.get(`${moduleId}.worldScripts`).type)().render({ force: true }),
+      MODULE_ID);
+    const menu = gm.page.locator("#stt-settings-world-scripts");
+    const box = menu.locator('input[name="chatButtonLabels"]');
+    await box.waitFor({ timeout: 10_000 });
+    assert(await box.isDisabled(), "The setting can be changed.");
+    assert(!(await box.isChecked()), "The setting is shown switched on.");
+    const hint = await menu.locator('.form-group:has(input[name="chatButtonLabels"]) .hint').textContent();
+    assert(hint.includes("Carolingian UI"), `The setting's hint doesn't say why: ${hint}`);
+    await menu.locator('button[type="submit"]').click();
+    await menu.waitFor({ state: "detached", timeout: 5000 });
+    assertEqual(await gm.eval(moduleId => game.settings.get(moduleId, "chatButtonLabels"), MODULE_ID), true,
+      "the saved setting, after saving the menu");
+  } finally {
+    await gm.eval(moduleId => game.settings.set(moduleId, "chatButtonLabels", false), MODULE_ID);
   }
 });

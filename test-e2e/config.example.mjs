@@ -39,12 +39,14 @@ export const MODULE_ID = "sogrom-table-tools";
 
 /** The disposable test world. Its id is also its directory name under `Data/worlds`. */
 /**
- * `STT_COMPAT=rsr` or `STT_COMPAT=midi` runs in a world of its own with that module enabled too, to check compatibility.
+ * `STT_COMPAT=rsr`, `STT_COMPAT=midi` or `STT_COMPAT=crlngn` runs in a world of its own with that module enabled too,
+ * to check compatibility.
  * The modules must be installed in `Data/modules`: see `README.md`.
  */
 const COMPAT = {
   rsr: ["rsreforged"],
-  midi: ["midi-qol", "dae", "socketlib", "lib-wrapper"]
+  midi: ["midi-qol", "dae", "socketlib", "lib-wrapper"],
+  crlngn: ["crlngn-ui"]
 }[process.env.STT_COMPAT] ?? null;
 
 export const WORLD = COMPAT ? {

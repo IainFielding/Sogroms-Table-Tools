@@ -264,10 +264,7 @@ function onRenderChatMessage(message, html) {
   for ( const summary of html.querySelectorAll(".card-summary[data-message-id]") ) {
     const child = game.messages.get(summary.dataset.messageId);
     if ( !child ) continue;
-    if ( getCardOptions(child).length ) {
-      const row = summary.querySelector(".icon-row") ?? summary;
-      row.append(createCardButton(child, { compact: true }));
-    }
+    if ( getCardOptions(child).length ) placeSummaryButton(summary, createCardButton(child, { compact: true }));
     summary.append(...renderLog(child));
   }
 
@@ -284,6 +281,29 @@ function onRenderChatMessage(message, html) {
       (element.querySelector(".rsr-header") ?? element).append(createCardButton(roll, { compact: true }));
     }
   });
+}
+
+/* -------------------------------------------- */
+
+/**
+ * Put a roll's card button in its summary inside an activity's card: at the end of dnd5e's row for the roll.
+ *
+ * Carolingian UI's compact cards, which Flash Token Bar 5e draws too, lay a summary out as their own row, its total in
+ * a column every row of the card shares, flanked by the buttons that change the roll's advantage. An attack or damage
+ * row has a title above it, with room for the button beside its label; a save or check has none, and there the button
+ * follows the row's pills. Either way the totals stay in line.
+ * @param {HTMLElement} summary  The roll's summary.
+ * @param {HTMLButtonElement} button
+ */
+function placeSummaryButton(summary, button) {
+  const row = summary.querySelector(".icon-row");
+  if ( globalThis.dnd5eCompactCards?.isActive ) {
+    const label = summary.querySelector(".dcc-row-title .dcc-row-label");
+    if ( label ) return label.after(button);
+    const pills = row?.querySelector(":scope > ul.pills");
+    if ( pills ) return pills.after(button);
+  }
+  (row ?? summary).append(button);
 }
 
 /* -------------------------------------------- */

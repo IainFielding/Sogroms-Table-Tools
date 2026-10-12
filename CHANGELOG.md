@@ -2,6 +2,18 @@
 
 All notable changes to Sogrom's Table Tools.
 
+## Unreleased
+
+### Other modules
+
+- **Carolingian UI is supported.** The request card, its pop-up, the card chooser and the request window keep their own
+  look under Carolingian UI's chat styles, fonts and colour themes; before, the request card in chat lost its fonts and
+  its teal Roll buttons, and the card chooser's Cancel button was drawn as Carolingian UI's. On its compact chat cards,
+  the Hero Card button is beside each attack and damage row's title, rather than a bar under the row, and stays with
+  the target's name on a save's row. **Chat Button Labels** is switched off while Carolingian UI is enabled, since it
+  labels those buttons itself and both at once wrote every label twice. Its retroactive advantage buttons work
+  alongside Hero Cards and request cards. See **Other modules** in the GM guide.
+
 ## 1.0.3
 
 These fixes were announced for 1.0.2, which was published without them: 1.0.2 holds the same code as 1.0.1.
