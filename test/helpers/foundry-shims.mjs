@@ -49,6 +49,9 @@ globalThis.foundry = {
   }
 };
 
+// Foundry's own token dispositions (common/constants.mjs).
+globalThis.CONST = { TOKEN_DISPOSITIONS: { SECRET: -2, HOSTILE: -1, NEUTRAL: 0, FRIENDLY: 1 } };
+
 globalThis.CONFIG = {
   Dice: { D20Roll: class {}, BasicRoll: class {}, DamageRoll: class {} },
   DND5E: {

@@ -12,7 +12,7 @@ const MENUS = {
     id: "stt-settings-dice-rolling",
     settings: [
       "markNaturals", "naturalChecks", "naturalSaveOutcomes", "naturalSaves", "naturalRollOff", "naturalInitiative",
-      "heavyWeapons", "loadingWeapons", "reloadWeapons", "lanceDisadvantage"
+      "heavyWeapons", "loadingWeapons", "reloadWeapons", "lanceDisadvantage", "flanking"
     ]
   },
   rollRequests: {

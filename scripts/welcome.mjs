@@ -55,6 +55,7 @@ export const WHATS_NEW = [
       "STT.Welcome.New.HeavyWeapons",
       "STT.Welcome.New.LoadingWeapons",
       "STT.Welcome.New.ReloadWeapons",
+      "STT.Welcome.New.Flanking",
       "STT.Welcome.New.SpellComponents"
     ]
   }

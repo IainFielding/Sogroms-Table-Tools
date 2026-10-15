@@ -107,7 +107,8 @@ function warningsSaying(session, text) {
  */
 function advantageModes(session) {
   return session.eval(() => ({
-    disadvantage: CONFIG.Dice.D20Roll.ADV_MODE.DISADVANTAGE, normal: CONFIG.Dice.D20Roll.ADV_MODE.NORMAL
+    advantage: CONFIG.Dice.D20Roll.ADV_MODE.ADVANTAGE, disadvantage: CONFIG.Dice.D20Roll.ADV_MODE.DISADVANTAGE,
+    normal: CONFIG.Dice.D20Roll.ADV_MODE.NORMAL
   }));
 }
 
@@ -144,17 +145,18 @@ async function expectUses(gm, name, expected, what) {
 /*  Heavy                                       */
 /* -------------------------------------------- */
 
-test("weapon properties: each rule has its setting, on by default, and spell component warnings off", async ({ gm }) => {
+test("weapon properties: each rule has its setting, on by default, and flanking and spell component warnings off", async ({ gm }) => {
   const defaults = await gm.eval(moduleId => Object.fromEntries(
-    ["heavyWeapons", "loadingWeapons", "reloadWeapons", "lanceDisadvantage", "spellComponentWarnings"].map(key => {
-      const s = game.settings.settings.get(`${moduleId}.${key}`);
-      return [key, { config: s?.config, scope: s?.scope, default: s?.default }];
-    })
+    ["heavyWeapons", "loadingWeapons", "reloadWeapons", "lanceDisadvantage", "flanking", "spellComponentWarnings"]
+      .map(key => {
+        const s = game.settings.settings.get(`${moduleId}.${key}`);
+        return [key, { config: s?.config, scope: s?.scope, default: s?.default }];
+      })
   ), MODULE_ID);
   const on = { config: false, scope: "world", default: true };
   assertEqual(defaults, {
     heavyWeapons: on, loadingWeapons: on, reloadWeapons: on, lanceDisadvantage: on,
-    spellComponentWarnings: { ...on, default: false }
+    flanking: { ...on, default: false }, spellComponentWarnings: { ...on, default: false }
   }, "the settings");
 });
 
@@ -442,6 +444,71 @@ if ( process.env.STT_CANVAS ) {
       await player.eval(() => canvas.tokens.setTargets([], { mode: "replace" }));
       await gm.eval(id => canvas.scene.tokens.get(id)?.delete(), token);
       await takeItems(gm, ids);
+    }
+  });
+}
+
+/* -------------------------------------------- */
+/*  Flanking                                    */
+/* -------------------------------------------- */
+
+if ( process.env.STT_CANVAS ) {
+  test("flanking: Aria and Borin either side of the Goblin attack it with advantage", async ({ gm, player }) => {
+    const modes = await advantageModes(player);
+    const { FRIENDLY, HOSTILE } = await gm.eval(() => CONST.TOKEN_DISPOSITIONS);
+    // The Goblin stands at (100, 100): Aria starts on its left and Borin on its right.
+    const tokens = await gm.eval(async ({ FRIENDLY, HOSTILE }) => {
+      await canvas.scene.tokens.getName("Goblin").update({ disposition: HOSTILE });
+      const created = await canvas.scene.createEmbeddedDocuments("Token", ["Aria", "Borin"].map((name, i) => ({
+        name, actorId: game.actors.getName(name).id, actorLink: true, x: i ? 200 : 0, y: 100, disposition: FRIENDLY
+      })));
+      return Object.fromEntries(created.map(t => [t.name, t.id]));
+    }, { FRIENDLY, HOSTILE });
+    const moveBorin = (x, y) => gm.eval(({ id, x, y }) => canvas.scene.tokens.get(id).update({ x, y }, { animate: false }),
+      { id: tokens.Borin, x, y });
+    const borinAt = (x, y) => waitFor(player, ({ id, x, y }) => {
+      const t = canvas.tokens.get(id)?.document;
+      return (t?.x === x) && (t?.y === y);
+    }, { id: tokens.Borin, x, y }, `Borin at (${x}, ${y})`);
+    // While Midi-QOL's own flanking is on, flanking is left to Midi-QOL, which this test doesn't roll through.
+    const midi = await player.eval(() => {
+      const rule = game.modules.get("midi-qol")?.active && globalThis.MidiQOL?.checkRule?.("checkFlanking");
+      return !!rule && (rule !== "off");
+    });
+    const flanked = midi ? modes.normal : modes.advantage;
+    try {
+      await setSetting(gm, "flanking", true);
+      await waitFor(player, ids => ids.every(id => canvas.tokens.get(id)), Object.values(tokens), "the tokens");
+      await waitFor(player, moduleId => game.settings.get(moduleId, "flanking"), MODULE_ID, "the setting to turn on");
+      assertEqual(await player.eval(() => {
+        canvas.tokens.placeables.find(t => t.document.name === "Goblin").setTarget(true, { releaseOthers: true });
+        return game.user.targets.size;
+      }), 1, "targets");
+      assertEqual(await attackWith(player, "Dagger"), flanked, "a Dagger attack with Borin on the Goblin's far side");
+
+      // Beside the Goblin, but not opposite Aria.
+      await moveBorin(200, 200);
+      await borinAt(200, 200);
+      assertEqual(await attackWith(player, "Dagger"), modes.normal, "a Dagger attack with Borin at the Goblin's corner");
+
+      // Opposite again, but unable to act.
+      await moveBorin(200, 100);
+      await borinAt(200, 100);
+      await gm.eval(() => game.actors.getName("Borin").toggleStatusEffect("unconscious", { active: true }));
+      await waitFor(player, () => game.actors.getName("Borin").statuses.has("incapacitated"), null, "Borin unconscious");
+      assertEqual(await attackWith(player, "Dagger"), modes.normal, "a Dagger attack with Borin unconscious");
+
+      await gm.eval(() => game.actors.getName("Borin").toggleStatusEffect("unconscious", { active: false }));
+      await waitFor(player, () => !game.actors.getName("Borin").statuses.has("incapacitated"), null, "Borin awake");
+      await setSetting(gm, "flanking", false);
+      await waitFor(player, moduleId => !game.settings.get(moduleId, "flanking"), MODULE_ID, "the setting to turn off");
+      assertEqual(await attackWith(player, "Dagger"), modes.normal, "a Dagger attack with the setting off");
+    } finally {
+      await player.eval(() => canvas.tokens.setTargets([], { mode: "replace" }));
+      await gm.eval(async ids => {
+        await game.actors.getName("Borin").toggleStatusEffect("unconscious", { active: false });
+        await canvas.scene.deleteEmbeddedDocuments("Token", ids.filter(id => canvas.scene.tokens.has(id)));
+      }, Object.values(tokens));
     }
   });
 }

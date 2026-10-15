@@ -134,7 +134,7 @@ class DiceRollingSettings extends SettingsMenu {
 
   /** @override */
   static SETTINGS = ["markNaturals", "naturalChecks", "naturalSaveOutcomes", "naturalSaves", "naturalRollOff",
-    "naturalInitiative", "heavyWeapons", "loadingWeapons", "reloadWeapons", "lanceDisadvantage"];
+    "naturalInitiative", "heavyWeapons", "loadingWeapons", "reloadWeapons", "lanceDisadvantage", "flanking"];
 }
 
 class RollRequestSettings extends SettingsMenu {

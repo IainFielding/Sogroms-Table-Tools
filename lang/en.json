@@ -93,6 +93,10 @@
         "Name": "Lance Disadvantage",
         "Hint": "An attack with the 2014 Lance, marked Special, starts at disadvantage against a target within 5 feet. It needs one target, with both tokens on the scene. The 2024 Lance has no such rule. The roll dialog still lets the player change it. Turn it off to leave the Lance as D&D 5e has it."
       },
+      "Flanking": {
+        "Name": "Flanking",
+        "Hint": "The Dungeon Master's Guide's optional flanking rule. A creature and an ally both beside an enemy, on opposite sides or corners of its space, have advantage on melee attacks against it. Allies share the attacker's token disposition, and one that's incapacitated or dead doesn't count. It needs one target and a square grid. Like the other rules here, it's one more source of advantage, and the roll dialog still lets the player change it. While Midi-QOL's own flanking is turned on, it's left to Midi-QOL."
+      },
       "NaturalRollOff": {
         "Name": "Natural 1s and 20s in a Roll-Off",
         "Hint": "In a Roll-Off between two d20 rolls, a natural 20 wins outright, against any total but another natural 20, and a natural 1 loses to anything but another natural 1. Two natural 20s, or two natural 1s, are decided by their totals. Turn it off for the higher total to win every time."
@@ -159,6 +163,7 @@
         "HeavyWeapons": "Attacks with a Heavy weapon start at disadvantage when the wielder can't handle it, by your world's 2014 or 2024 rules. Turn it off with Heavy Weapon Disadvantage, under Dice Rolling.",
         "LoadingWeapons": "A second attack in a turn with the same Loading weapon shows a warning. Turn it off with Loading Weapon Warning, under Dice Rolling.",
         "ReloadWeapons": "Reload weapons count their shots with their Limited Uses, and offer to reload when empty. Turn it off with Reload Weapon Shots, under Dice Rolling.",
+        "Flanking": "Turn on Flanking, under Dice Rolling, for the Dungeon Master's Guide's optional rule: advantage on melee attacks against an enemy you and an ally stand on opposite sides of.",
         "SpellComponents": "Turn on Spell Component Warnings, under Gameplay Enhancements, to warn when a spell is cast while Silenced, or without a spellcasting focus or component pouch."
       },
       "SettingsTitle": "Worth a look before your players start",

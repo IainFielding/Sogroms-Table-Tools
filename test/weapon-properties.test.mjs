@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { settingValues } from "./helpers/foundry-shims.mjs";
 import {
-  addRollModes, getTokenDistance, hasHeavyDisadvantage, hasLanceDisadvantage, ignoresLoading, isReloading,
-  onPostRollAttack, onPreRollAttack
+  addRollModes, flanks, getSpaces, getTokenDistance, hasHeavyDisadvantage, hasLanceDisadvantage, ignoresLoading,
+  isFlanking, isReloading, onPostRollAttack, onPreRollAttack
 } from "../scripts/weapon-properties.mjs";
 
 /**
@@ -277,5 +277,177 @@ describe("Adding to the attack's own roll modes", () => {
   it("asks nothing of D&D 5e when no property applies", () => {
     rollWith(attack({ str: 16 }));
     expect(combined).toHaveLength(0);
+  });
+});
+
+/* -------------------------------------------- */
+/*  Flanking                                    */
+/* -------------------------------------------- */
+
+const { FRIENDLY, HOSTILE, NEUTRAL } = CONST.TOKEN_DISPOSITIONS;
+
+/**
+ * @param {number} i  Row.
+ * @param {number} j  Column.
+ * @returns {{ i: number, j: number }}
+ */
+const at = (i, j) => ({ i, j });
+
+describe("The line between two flankers", () => {
+  const goblin = [at(0, 0)];
+
+  it("flanks across opposite sides", () => {
+    expect(flanks([at(0, -1)], [at(0, 1)], goblin)).toBe(true);
+    expect(flanks([at(-1, 0)], [at(1, 0)], goblin)).toBe(true);
+  });
+
+  it("flanks across opposite corners", () => {
+    expect(flanks([at(-1, -1)], [at(1, 1)], goblin)).toBe(true);
+    expect(flanks([at(-1, 1)], [at(1, -1)], goblin)).toBe(true);
+  });
+
+  it("doesn't flank from a side to a corner that isn't opposite it", () => {
+    expect(flanks([at(0, -1)], [at(1, 1)], goblin)).toBe(false);
+    expect(flanks([at(-1, 0)], [at(1, 1)], goblin)).toBe(false);
+  });
+
+  it("doesn't flank from beside each other on one side", () => {
+    expect(flanks([at(-1, -1)], [at(-1, 0)], goblin)).toBe(false);
+  });
+
+  it("flanks a Large target from opposite faces, by any of its spaces", () => {
+    const ogre = [at(0, 0), at(0, 1), at(1, 0), at(1, 1)];
+    expect(flanks([at(1, -1)], [at(1, 2)], ogre)).toBe(true);
+    expect(flanks([at(-1, 0)], [at(2, 1)], ogre)).toBe(true);
+    expect(flanks([at(-1, 0)], [at(1, 2)], ogre)).toBe(false);
+  });
+
+  it("flanks with a Large flanker if any of its spaces does", () => {
+    expect(flanks([at(-1, -2), at(-1, -1), at(0, -2), at(0, -1)], [at(0, 1)], goblin)).toBe(true);
+  });
+});
+
+/**
+ * @param {object} [options]
+ * @param {number} [options.i]  The row it stands in.
+ * @param {number} [options.j]  The column it stands in.
+ * @param {number} [options.size]  Its width and height, in spaces.
+ * @param {number} [options.disposition]
+ * @param {string[]} [options.statuses]  Its actor's statuses.
+ * @param {object} [options.grid]
+ * @returns {object}  A stand-in for a token document on a square grid of 100-pixel spaces.
+ */
+function token({ i = 0, j = 0, size = 1, disposition = FRIENDLY, statuses = [], grid = squareGrid } = {}) {
+  return {
+    parent: { grid }, x: j * 100, y: i * 100, width: size, height: size, disposition,
+    actor: { statuses: new Set(statuses) }
+  };
+}
+
+const squareGrid = { isSquare: true, isGridless: false, size: 100 };
+
+describe("The spaces a token covers", () => {
+  it("covers its own space, or each of a larger token's", () => {
+    expect(getSpaces(token({ i: 2, j: 3 }))).toEqual([at(2, 3)]);
+    expect(getSpaces(token({ i: 2, j: 3, size: 2 }))).toEqual([at(2, 3), at(2, 4), at(3, 3), at(3, 4)]);
+  });
+
+  it("covers the one space a Tiny token's centre is in", () => {
+    expect(getSpaces({ ...token(), x: 325, y: 225, width: 0.5, height: 0.5 })).toEqual([at(2, 3)]);
+  });
+});
+
+describe("Flanking a target", () => {
+  const goblin = () => token({ i: 1, j: 1, disposition: HOSTILE });
+  const flank = (ally, attacker = token({ i: 1, j: 0 }), target = goblin()) => isFlanking(attacker, target,
+    [attacker, target, ally]);
+
+  it("flanks with an ally on the target's far side", () => {
+    expect(flank(token({ i: 1, j: 2 }))).toBe(true);
+  });
+
+  it("doesn't flank with an ally beside the target but not opposite", () => {
+    expect(flank(token({ i: 2, j: 2 }))).toBe(false);
+  });
+
+  it("doesn't count an ally that can't act", () => {
+    expect(flank(token({ i: 1, j: 2, statuses: ["incapacitated"] }))).toBe(false);
+    expect(flank(token({ i: 1, j: 2, statuses: ["dead"] }))).toBe(false);
+  });
+
+  it("only counts a token of the attacker's disposition as an ally", () => {
+    expect(flank(token({ i: 1, j: 2, disposition: NEUTRAL }))).toBe(false);
+    expect(flank(token({ i: 1, j: 2, disposition: HOSTILE }))).toBe(false);
+  });
+
+  it("works the same for hostile creatures flanking a friendly one", () => {
+    const hero = token({ i: 1, j: 1, disposition: FRIENDLY });
+    const attacker = token({ i: 1, j: 0, disposition: HOSTILE });
+    expect(flank(token({ i: 1, j: 2, disposition: HOSTILE }), attacker, hero)).toBe(true);
+  });
+
+  it("needs the attacker beside the target too", () => {
+    expect(flank(token({ i: 1, j: 2 }), token({ i: 1, j: -1 }))).toBe(false);
+  });
+
+  it("doesn't flank a target of the attacker's own disposition", () => {
+    expect(flank(token({ i: 1, j: 2 }), token({ i: 1, j: 0 }), token({ i: 1, j: 1 }))).toBe(false);
+  });
+
+  it("doesn't flank on a grid that isn't square", () => {
+    const hex = { ...squareGrid, isSquare: false };
+    const attacker = token({ i: 1, j: 0, grid: hex });
+    expect(flank(token({ i: 1, j: 2, grid: hex }), attacker, token({ i: 1, j: 1, disposition: HOSTILE, grid: hex })))
+      .toBe(false);
+  });
+});
+
+describe("Advantage from flanking", () => {
+  const attacker = token({ i: 1, j: 0 });
+  const goblin = token({ i: 1, j: 1, disposition: HOSTILE });
+  const ally = token({ i: 1, j: 2 });
+  goblin.parent = attacker.parent = ally.parent = { grid: squareGrid, tokens: [attacker, goblin, ally] };
+  const user = game.user;
+
+  /**
+   * @param {string} [actionType]
+   * @returns {object}  The options of an attack by the attacker on the goblin.
+   */
+  function attackGoblin(actionType = "mwak") {
+    const subject = { ...attack({ properties: [] }), getActionType: () => actionType };
+    subject.actor.token = attacker;
+    return rollWith(subject).rolls[0].options;
+  }
+
+  beforeEach(() => {
+    settingValues.set("flanking", true);
+    game.user = { ...user, targets: { size: 1, first: () => ({ document: goblin }) } };
+  });
+
+  afterEach(() => {
+    game.user = user;
+    delete globalThis.MidiQOL;
+  });
+
+  it("gives a melee attack advantage", () => {
+    expect(attackGoblin().advantage).toBe(true);
+    expect(attackGoblin("msak").advantage).toBe(true);
+  });
+
+  it("gives a ranged attack none", () => {
+    expect(attackGoblin("rwak").advantage).toBeUndefined();
+  });
+
+  it("does nothing with the setting off", () => {
+    settingValues.set("flanking", false);
+    expect(attackGoblin().advantage).toBeUndefined();
+  });
+
+  it("leaves flanking to Midi-QOL while its own is turned on", () => {
+    game.modules.set("midi-qol", { id: "midi-qol", active: true });
+    globalThis.MidiQOL = { checkRule: () => "ceflanked" };
+    expect(attackGoblin().advantage).toBeUndefined();
+    globalThis.MidiQOL = { checkRule: () => "off" };
+    expect(attackGoblin().advantage).toBe(true);
   });
 });
