@@ -769,12 +769,21 @@ test("played cards: a card played from the sheet is shown on screen, with a shor
   assert(state.hoverArt?.includes("charger.webp"), `The header's art has no full-size hover: ${state.hoverArt}`);
   assert(state.height < 200, `The chat record is ${state.height}px tall.`);
 
-  // Clicking the header still opens the description.
-  await record.locator(".card-header").click();
-  await waitFor(player, () => {
+  // Clicking the header still opens the description. A click that lands while the chat log is drawn again, as it can be
+  // with Midi-QOL, is lost with the element it hit, so the header is clicked again if the description stays shut. Each
+  // click waits long enough to have opened it, so a second click can't close a description the first one opened.
+  const opened = () => player.eval(() => {
     const li = [...document.querySelectorAll("#chat .chat-log li.chat-message.stt-card-usage")].at(-1);
     return !li.querySelector(".card-description").classList.contains("collapsed");
-  }, null, "the description to open");
+  });
+  for ( let i = 0; (i < 5) && !await opened(); i++ ) {
+    await record.locator(".card-header").click();
+    await waitFor(player, () => {
+      const li = [...document.querySelectorAll("#chat .chat-log li.chat-message.stt-card-usage")].at(-1);
+      return !li.querySelector(".card-description").classList.contains("collapsed");
+    }, null, "the description to open", 2000).catch(() => {});
+  }
+  assert(await opened(), "Clicking the record's header didn't open its description.");
 });
 
 test("sheet: Divine Intervention whispers the GM a button that opens the request window set up for it", async ({ gm, player }) => {
