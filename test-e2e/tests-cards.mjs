@@ -684,18 +684,22 @@ test("played cards: up to three played together show side by side, and the rest 
   for ( const session of [gm, player] ) {
     await waitFor(session, () => document.querySelectorAll("#stt-played-card .stt-played-card-entry").length === 3,
       null, `three cards on ${session.user}'s screen`, 3000);
-    // They slide in, so they are measured once they have settled in one row.
-    await waitFor(session, () => new Set([...document.querySelectorAll("#stt-played-card .stt-played-card-entry img")]
-      .map(img => Math.round(img.getBoundingClientRect().top))).size === 1, null, `one row on ${session.user}'s screen`, 3000)
-      .catch(() => {});
+    // They slide in, so they are measured once they have settled in one row. A card shows for a few seconds and then
+    // lifts away; with Midi-QOL's canvas drawing slowly, the first may already be leaving by then, so only the cards
+    // still showing are measured.
+    await waitFor(session, () => new Set(
+      [...document.querySelectorAll("#stt-played-card .stt-played-card-entry:not(.leaving) img")]
+        .map(img => Math.round(img.getBoundingClientRect().top))
+    ).size === 1, null, `one row on ${session.user}'s screen`, 3000).catch(() => {});
     const shown = await session.eval(() => [...document.querySelectorAll("#stt-played-card .stt-played-card-entry")]
       .map(el => ({
         name: el.querySelector(".stt-played-card-name").textContent,
+        leaving: el.classList.contains("leaving"),
         top: Math.round(el.querySelector("img").getBoundingClientRect().top)
       })));
     assertEqual(shown.length, 3, `cards on ${session.user}'s screen, with one waiting`);
     assert(shown.every(c => cards.includes(c.name)), `Unexpected cards shown: ${shown.map(c => c.name).join(", ")}`);
-    assertEqual(new Set(shown.map(c => c.top)).size, 1, `rows the cards sit in (${session.user})`);
+    assertEqual(new Set(shown.filter(c => !c.leaving).map(c => c.top)).size, 1, `rows the cards sit in (${session.user})`);
     if ( session === player ) first = shown.map(c => c.name);
   }
 
