@@ -242,7 +242,7 @@ test("luck: rerolls the d20 of a check, and the new result stands", async ({ pla
 });
 
 /**
- * Turn the "Natural 1s and 20s lock Hero Cards" setting on or off, and wait for the player to see it.
+ * Turn the "Natural 1s and 20s Lock Hero Cards" setting on or off, and wait for the player to see it.
  * @param {import("./lib/session.mjs").Session} gm
  * @param {import("./lib/session.mjs").Session} player
  * @param {boolean} value

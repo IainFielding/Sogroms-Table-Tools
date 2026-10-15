@@ -8,6 +8,9 @@ All notable changes to Sogrom's Table Tools.
 
 - **Inspiration cards can no longer be played on initiative.** The 1d6, 1d8 and 1d10 Inspiration cards are offered on
   attacks, damage, ability checks and saving throws only.
+- **Setting names follow D&D 5e's style.** Every setting is named in title case, as D&D 5e names its own, and the
+  request window's defaults lead with "Default": **DC by default** is now **Default DC**, and **Team Challenge scoring
+  by default** is now **Default Team Challenge Scoring**. What each setting does, and what it's set to, is unchanged.
 
 ### Fixes
 

@@ -60,7 +60,7 @@ can open them, and each setting applies to the whole world.
 
 | Setting | Default | What it does |
 |---|---|---|
-| **Natural 1s and 20s lock Hero Cards** | On | No card can be played on a roll whose d20 shows a natural 1 or 20. Turn it off to allow Advantage and Inspiration on them. Either way, Lucky can't be played on a natural 20, and nothing rerolls a natural 1. |
+| **Natural 1s and 20s Lock Hero Cards** | On | No card can be played on a roll whose d20 shows a natural 1 or 20. Turn it off to allow Advantage and Inspiration on them. Either way, Lucky can't be played on a natural 20, and nothing rerolls a natural 1. |
 | **Show Played Cards on Screen** | On | A played card's art appears in the middle of the screen for everyone who can see the roll. Chat keeps a record either way. |
 
 ### Dice Rolling
@@ -69,12 +69,12 @@ can open them, and each setting applies to the whole world.
 
 | Setting | Default | What it does |
 |---|---|---|
-| **Ring natural 1s and 20s** | On | A roll whose d20 shows a natural 20 is ringed in gold in chat, and a natural 1 in red: checks, saving throws and attacks, a save summarised inside the card of the spell that called for it, and a result on a request card. Turn it off for plain totals. |
-| **Natural 1s and 20s on checks** | On | A natural 20 on an ability check, skill check or tool check made against a DC always succeeds, and a natural 1 always fails, whatever the total. It counts on request cards, where a plain d20 is judged the same way: in a Standard Roll, a Skill Challenge, and for each roll a Team Challenge judges against its DC. It also counts on any check D&D 5e rolls against a DC, such as one asked for from a journal. Turn it off to judge every check by its total alone. |
-| **Natural 1s and 20s on all saves** | On | A natural 20 on a saving throw made against a DC always succeeds, and a natural 1 always fails, whatever the total: saves against spells and features, concentration saves, and saves on request cards. D&D 5e then treats the save that way throughout: a natural 20 under the DC is shown as saved and starts at the damage its spell or feature deals on a save, usually half, and a natural 1 over it can break concentration or be turned by a Legendary Resistance. With **Natural 1s and 20s on saves against damage** on as well, the natural 20 takes no damage and the natural 1 the maximum. Death saves keep D&D 5e's own rules. Turn it off to judge every save by its total alone. |
-| **Natural 1s and 20s on saves against damage** | On | When a spell or feature calls for a save and deals damage, a natural 20 on the save takes no damage, and a natural 1 takes the damage's maximum, every die at its highest (36 from 6d6), ignoring resistances and immunities. Each starts that way in the damage's **Apply** tray, where you can still change it. Turn it off for D&D 5e's own rules. |
+| **Ring Natural 1s and 20s** | On | A roll whose d20 shows a natural 20 is ringed in gold in chat, and a natural 1 in red: checks, saving throws and attacks, a save summarised inside the card of the spell that called for it, and a result on a request card. Turn it off for plain totals. |
+| **Natural 1s and 20s on Checks** | On | A natural 20 on an ability check, skill check or tool check made against a DC always succeeds, and a natural 1 always fails, whatever the total. It counts on request cards, where a plain d20 is judged the same way: in a Standard Roll, a Skill Challenge, and for each roll a Team Challenge judges against its DC. It also counts on any check D&D 5e rolls against a DC, such as one asked for from a journal. Turn it off to judge every check by its total alone. |
+| **Natural 1s and 20s on All Saves** | On | A natural 20 on a saving throw made against a DC always succeeds, and a natural 1 always fails, whatever the total: saves against spells and features, concentration saves, and saves on request cards. D&D 5e then treats the save that way throughout: a natural 20 under the DC is shown as saved and starts at the damage its spell or feature deals on a save, usually half, and a natural 1 over it can break concentration or be turned by a Legendary Resistance. With **Natural 1s and 20s on Saves against Damage** on as well, the natural 20 takes no damage and the natural 1 the maximum. Death saves keep D&D 5e's own rules. Turn it off to judge every save by its total alone. |
+| **Natural 1s and 20s on Saves against Damage** | On | When a spell or feature calls for a save and deals damage, a natural 20 on the save takes no damage, and a natural 1 takes the damage's maximum, every die at its highest (36 from 6d6), ignoring resistances and immunities. Each starts that way in the damage's **Apply** tray, where you can still change it. Turn it off for D&D 5e's own rules. |
 | **Natural 1s and 20s in a Roll-Off** | On | In a [Roll-Off](#roll-off) between two d20 rolls, a natural 20 wins outright, against any total but another natural 20, and a natural 1 loses to anything but another natural 1. Two natural 20s, or two natural 1s, are decided by their totals. Turn it off for the higher total to win every time. |
-| **Natural 1s and 20s on initiative** | On | A creature whose initiative roll shows a natural 20 goes first in the initiative order, above any higher total, and one whose roll shows a natural 1 goes last, below any lower total. Each keeps the initiative it rolled, shown in gold or red in the combat tracker, and several natural 20s, or several natural 1s, are ordered among themselves by it. A Hero Card or a bonus that changes the roll's d20 moves the creature to match, and an initiative you type in has no natural. Turn it off to order everyone by their totals alone. |
+| **Natural 1s and 20s on Initiative** | On | A creature whose initiative roll shows a natural 20 goes first in the initiative order, above any higher total, and one whose roll shows a natural 1 goes last, below any lower total. Each keeps the initiative it rolled, shown in gold or red in the combat tracker, and several natural 20s, or several natural 1s, are ordered among themselves by it. A Hero Card or a bonus that changes the roll's d20 moves the creature to match, and an initiative you type in has no natural. Turn it off to order everyone by their totals alone. |
 
 ### Roll Requests
 
@@ -82,9 +82,9 @@ can open them, and each setting applies to the whole world.
 
 | Setting | Default | What it does |
 |---|---|---|
-| **DC by default** | Blank | The DC each roll starts with when you open the request window. Leave it blank for none; you can still set or change the DC for each request, or later from the card. |
-| **Show the DC to players by default** | Off | Whether **Show DC to Players** starts ticked in the request window. You can still change it for each request. |
-| **Team Challenge scoring by default** | Average of the rolls | How a Team Challenge is scored when you open the request window. You can still change it for each request. See [Team Challenge](#team-challenge). |
+| **Default DC** | Blank | The DC each roll starts with when you open the request window. Leave it blank for none; you can still set or change the DC for each request, or later from the card. |
+| **Show the DC to Players by Default** | Off | Whether **Show DC to Players** starts ticked in the request window. You can still change it for each request. |
+| **Default Team Challenge Scoring** | Average of the rolls | How a Team Challenge is scored when you open the request window. You can still change it for each request. See [Team Challenge](#team-challenge). |
 | **Attach Rolls to Request Cards** | On | The rolls made for a request show on its card rather than as messages of their own, as D&D 5e does for an item's saves. Click a result to see its dice. |
 | **Pop Up Roll Requests for Players** | Off | Opens a window for each player with a character in a request, with a Roll button for each of their characters. |
 | **Pop Up Roll Requests for the GM** | Off | Opens a window for you when a request includes NPCs, or any actor no player owns. |
@@ -131,7 +131,7 @@ buttons.
 1. **Kind of roll.** Pick one of the six kinds described below. The fields below change to suit it, and anything
    you've filled in carries over when you switch.
 2. **Rolls.** Choose the roll: a plain die (a d20 by default, or a d6, d8, d10, d12 or d100), any skill or tool check,
-   ability check, or saving throw. The DC starts blank each time you open the window, or as the **DC by default**
+   ability check, or saving throw. The DC starts blank each time you open the window, or as the **Default DC**
    setting if you've set one: set one, or leave it blank for none and set it later from the card. A Skill Challenge, and a Team Challenge not scored by its average, need
    one before you can send them.
 3. **Who rolls.** The actors of any tokens you have selected are ticked for you; otherwise the player characters
@@ -371,14 +371,14 @@ Sogrom's Table Tools works alongside modules that change how D&D 5e rolls and sh
 - **RSReforged.** Its quick rolls draw an activity's attack, damage and formula rolls inside the activity's card. The
   Hero Card button, notes on cards played, and natural 1 and 20 rings appear there, and a feature's die shown there,
   such as Bardic Inspiration, can be added to a roll from the card's right-click menu. Damage applied with
-  RSReforged's own Apply buttons follows **Natural 1s and 20s on saves against damage**. RSReforged swaps Shift on a
+  RSReforged's own Apply buttons follows **Natural 1s and 20s on Saves against Damage**. RSReforged swaps Shift on a
   Roll button: a plain click rolls straight away, and Shift-click opens the roll window.
 - **Midi-QOL: partly supported.** Using the Hero Cards feature from the sheet opens the card chooser, as it does
   without Midi. When Midi rolls the saves and applies a spell's damage itself, a natural 20 on the save takes no damage
   and a natural 1 takes the damage's maximum past resistances and immunities, following **Natural 1s and 20s on saves
   against damage**. A feature's die that Midi shows on the feature's card, such as Bardic Inspiration, can be added to
   a roll from the card's right-click menu. Natural 1s and 20s on the saves Midi lists on its card are ringed. Midi judges
-  the saves it rolls itself by their totals, so **Natural 1s and 20s on all saves** doesn't change who it counts as
+  the saves it rolls itself by their totals, so **Natural 1s and 20s on All Saves** doesn't change who it counts as
   saved. For the same rule there, turn on Midi's own **Critical/Fumble always succeed/fail for saving throws**.
 
   What isn't supported: a card played after Midi has resolved a roll changes the roll in chat, but not the hits,

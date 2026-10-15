@@ -188,7 +188,7 @@ test("welcome card: whispered to the GM once, its buttons opening the settings m
   await app.waitFor({ state: "detached", timeout: 5000 });
 });
 
-test("settings menus: the DC by default starts blank, saves a number, and clears again", async ({ gm }) => {
+test("settings menus: the Default DC starts blank, saves a number, and clears again", async ({ gm }) => {
   const open = async () => {
     await gm.eval(moduleId => new (game.settings.menus.get(`${moduleId}.rollRequests`).type)().render({ force: true }),
       MODULE_ID);
@@ -204,10 +204,10 @@ test("settings menus: the DC by default starts blank, saves a number, and clears
   };
   try {
     let app = await open();
-    assertEqual(await app.locator('input[name="defaultDC"]').inputValue(), "", "the DC by default, to start with");
+    assertEqual(await app.locator('input[name="defaultDC"]').inputValue(), "", "the Default DC, to start with");
     assertEqual(await save(app, "14"), 14, "the setting after saving 14");
     app = await open();
-    assertEqual(await app.locator('input[name="defaultDC"]').inputValue(), "14", "the DC by default once saved");
+    assertEqual(await app.locator('input[name="defaultDC"]').inputValue(), "14", "the Default DC once saved");
     assertEqual(await save(app, ""), null, "the setting after clearing it");
   } finally {
     await gm.eval(moduleId => game.settings.set(moduleId, "defaultDC", null), MODULE_ID);

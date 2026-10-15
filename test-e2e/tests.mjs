@@ -309,7 +309,7 @@ test("the Show DC to Players box starts from the GM's setting", async ({ gm }) =
   }
 });
 
-test("the DC starts from the GM's DC by default setting", async ({ gm }) => {
+test("the DC starts from the GM's Default DC setting", async ({ gm }) => {
   await gm.eval(moduleId => game.settings.set(moduleId, "defaultDC", 14), MODULE_ID);
   try {
     const app = await openWindow(gm);
