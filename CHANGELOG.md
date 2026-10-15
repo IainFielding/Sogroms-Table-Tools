@@ -2,7 +2,7 @@
 
 All notable changes to Sogrom's Table Tools.
 
-## Unreleased
+## 1.1.0
 
 ### Changes
 
