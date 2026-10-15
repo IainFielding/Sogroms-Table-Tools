@@ -544,6 +544,47 @@ test("sheet: Advantage gives advantage on the next d20 roll, once", async ({ pla
   assertEqual(await player.eval(id => game.messages.get(id).rolls[0].hasAdvantage, second), false, "the check after");
 });
 
+/**
+ * Leave an Advantage card pending for Aria's next d20 roll, as playing it from the sheet does.
+ * @param {import("./lib/session.mjs").Session} gm
+ * @param {import("./lib/session.mjs").Session} player
+ */
+async function pendAdvantage(gm, player) {
+  await gm.eval(moduleId => game.actors.getName("Aria").setFlag(moduleId, "advantage", true), MODULE_ID);
+  await waitFor(player, moduleId => game.actors.getName("Aria").getFlag(moduleId, "advantage"), MODULE_ID,
+    "the pending Advantage");
+}
+
+/**
+ * @param {import("./lib/session.mjs").Session} session
+ * @param {string} id  A roll message's ID.
+ * @returns {Promise<[boolean, boolean, number]>}  Whether its roll has advantage and disadvantage, and its total.
+ */
+function rollMode(session, id) {
+  return session.eval(id => {
+    const r = game.messages.get(id).rolls[0];
+    return [r.hasAdvantage, r.hasDisadvantage, r.total];
+  }, id);
+}
+
+test("sheet: a pending Advantage turns a roll with disadvantage into a straight roll", async ({ gm, player }) => {
+  await pendAdvantage(gm, player);
+  await forceDice(player, [d20(15)]);
+  const id = await roll(player, "Aria", "skill", { config: { disadvantage: true } });
+  assertEqual(await rollMode(player, id), [false, false, 15], "advantage, disadvantage and total");
+  await waitFor(player, moduleId => !game.actors.getName("Aria").getFlag(moduleId, "advantage"), MODULE_ID,
+    "the pending Advantage to clear");
+});
+
+test("sheet: a pending Advantage leaves a roll with advantage as it is", async ({ gm, player }) => {
+  await pendAdvantage(gm, player);
+  await forceDice(player, [d20(4), d20(17)]);
+  const id = await roll(player, "Aria", "skill", { config: { advantage: true } });
+  assertEqual(await rollMode(player, id), [true, false, 17], "advantage, disadvantage and total");
+  await waitFor(player, moduleId => !game.actors.getName("Aria").getFlag(moduleId, "advantage"), MODULE_ID,
+    "the pending Advantage to clear");
+});
+
 test("sheet: a warning when every card is spent", async ({ gm, player }) => {
   await gm.eval(async () => {
     const item = game.actors.getName("Aria").items.getName("Hero Cards");

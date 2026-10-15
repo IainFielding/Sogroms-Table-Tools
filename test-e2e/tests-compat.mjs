@@ -57,10 +57,12 @@ async function useDaggerAttack(player, name = "Dagger", { rollFromCard = true } 
  * a message of the attack type. Only if no module rolled it is it rolled as the card's Attack button would.
  * @param {import("./lib/session.mjs").Session} player
  * @param {string} name
+ * @param {object} [options]
+ * @param {boolean} [options.rollFromCard=true]  Roll the attack as the card's Attack button would if no module did.
  * @returns {Promise<boolean|null>}  Null if no attack was rolled.
  */
-function attackDisadvantage(player, name) {
-  return player.eval(async name => {
+function attackDisadvantage(player, name, { rollFromCard = true } = {}) {
+  return player.eval(async ({ name, rollFromCard }) => {
     for ( let i = 0; (i < 50) && !game.actors.getName("Aria").items.getName(name); i++ ) {
       await new Promise(r => setTimeout(r, 100));
     }
@@ -71,9 +73,9 @@ function attackDisadvantage(player, name) {
     await activity.use({}, { configure: false }, {});
     const wait = game.modules.get("midi-qol")?.active ? 80 : 20;
     for ( let i = 0; (i < wait) && !rolled(); i++ ) await new Promise(r => setTimeout(r, 100));
-    if ( !rolled() ) await activity.rollAttack({}, { configure: false });
+    if ( !rolled() && rollFromCard ) await activity.rollAttack({}, { configure: false });
     return rolled()?.hasDisadvantage ?? null;
-  }, name);
+  }, { name, rollFromCard });
 }
 
 /**
@@ -231,12 +233,12 @@ test("compat: a Reload weapon used from the sheet spends a shot, and isn't fired
   const spent = () => gm.eval(id => game.actors.getName("Aria").items.get(id).system.uses.spent, id);
   try {
     await forceDice(player, [d20(8), [2, 4], [2, 4]]);
-    assert(await useDaggerAttack(player, "Pistol"), "No attack roll message was created.");
+    assert(await attackDisadvantage(player, "Pistol") !== null, "No attack was rolled.");
     await waitFor(gm, id => game.actors.getName("Aria").items.get(id).system.uses.spent === 1, id, "a shot to be spent")
       .catch(() => {});
     assertEqual(await spent(), 1, "shots spent after one attack");
 
-    assertEqual(await useDaggerAttack(player, "Pistol", { rollFromCard: false }), null, "an attack with the Pistol empty");
+    assertEqual(await attackDisadvantage(player, "Pistol", { rollFromCard: false }), null, "an attack with the Pistol empty");
     const dialog = player.page.locator(".application.dialog", { hasText: "Pistol is out of shots" }).first();
     await dialog.waitFor({ timeout: 10_000 });
     await dialog.locator('button[data-action="no"]').click();

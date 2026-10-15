@@ -221,25 +221,39 @@ function giveRollModeEffect(gm, name, type, value) {
 test("heavy weapons: the disadvantage is resolved with Aria's own roll modes", async ({ gm, player }) => {
   const modes = await advantageModes(player);
   const ids = await giveItems(gm, [{ name: "Greatsword" }]);
+  // Aria may have effects of her own, from another module, so each of the test's is waited for by its ID.
   const effects = [];
-  const removeEffects = () => gm.eval(ids => {
-    const aria = game.actors.getName("Aria");
-    return aria.deleteEmbeddedDocuments("ActiveEffect", ids.filter(id => aria.effects.has(id)));
-  }, effects.splice(0));
+  const addEffect = async (name, type, value) => {
+    const id = await giveRollModeEffect(gm, name, type, value);
+    effects.push(id);
+    await waitFor(player, id => game.actors.getName("Aria").effects.has(id), id, `${name} to reach the player`);
+  };
+  const removeEffects = async () => {
+    const gone = effects.splice(0);
+    await gm.eval(ids => {
+      const aria = game.actors.getName("Aria");
+      return aria.deleteEmbeddedDocuments("ActiveEffect", ids.filter(id => aria.effects.has(id)));
+    }, gone);
+    await waitFor(player, ids => !ids.some(id => game.actors.getName("Aria").effects.has(id)), gone,
+      "the effects to go");
+  };
   try {
     // Advantage on melee attacks cancels it out, as any two sources would.
-    effects.push(await giveRollModeEffect(gm, "Advantage on Melee Attacks", "add", 1));
-    await waitFor(player, () => game.actors.getName("Aria").effects.size > 0, null, "the effect");
+    await addEffect("Advantage on Melee Attacks", "add", 1);
     assertEqual(await attackWith(player, "Greatsword"), modes.normal, "a Greatsword with advantage on melee attacks");
     await removeEffects();
 
     // An effect saying the attack can't have disadvantage stops it.
-    effects.push(await giveRollModeEffect(gm, "No Disadvantage on Melee Attacks", "upgrade", 0));
-    await waitFor(player, () => game.actors.getName("Aria").effects.size > 0, null, "the effect");
+    await addEffect("No Disadvantage on Melee Attacks", "upgrade", 0);
     assertEqual(await attackWith(player, "Greatsword"), modes.normal, "a Greatsword that can't have disadvantage");
     await removeEffects();
-    await waitFor(player, () => game.actors.getName("Aria").effects.size === 0, null, "the effects to go");
     assertEqual(await attackWith(player, "Greatsword"), modes.disadvantage, "a Greatsword with neither effect");
+
+    // A pending Advantage card cancels it, as advantage from any source would.
+    await gm.eval(moduleId => game.actors.getName("Aria").setFlag(moduleId, "advantage", true), MODULE_ID);
+    await waitFor(player, moduleId => game.actors.getName("Aria").getFlag(moduleId, "advantage"), MODULE_ID,
+      "the pending Advantage card");
+    assertEqual(await attackWith(player, "Greatsword"), modes.normal, "a Greatsword with a pending Advantage card");
   } finally {
     await removeEffects();
     await takeItems(gm, ids);
