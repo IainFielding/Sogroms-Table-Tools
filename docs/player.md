@@ -74,7 +74,7 @@ A few things to keep in mind:
 
 | Card | What it does |
 |---|---|
-| **Inspiration** (1d6, 1d8 or 1d10) | Add the card's die to the roll. |
+| **Inspiration** (1d6, 1d8 or 1d10) | Add the card's die to the roll. Can't be played on initiative. |
 | **Lucky** | Reroll the relevant dice and use the new result. |
 | **Advantage** | Roll an additional d20 and keep the higher result. |
 | **Indomitable** | Reroll a failed saving throw and keep the new result. |

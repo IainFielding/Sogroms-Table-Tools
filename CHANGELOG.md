@@ -4,6 +4,11 @@ All notable changes to Sogrom's Table Tools.
 
 ## Unreleased
 
+### Changes
+
+- **Inspiration cards can no longer be played on initiative.** The 1d6, 1d8 and 1d10 Inspiration cards are offered on
+  attacks, damage, ability checks and saving throws only.
+
 ### Other modules
 
 - **Carolingian UI is supported.** The request card, its pop-up, the card chooser and the request window keep their own

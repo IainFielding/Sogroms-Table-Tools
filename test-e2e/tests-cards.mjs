@@ -437,6 +437,9 @@ test("relentless: rerolls initiative in the first round and updates the tracker"
   await forceDice(player, [d20(19)]);
   const offered = await cardsOffered(player, id, "Relentless");
   assert(!offered.includes("Indomitable"), "Indomitable was offered on initiative.");
+  for ( const card of ["Inspiration - 1d6", "Inspiration - 1d8", "Inspiration - 1d10"] ) {
+    assert(!offered.includes(card), `${card} was offered on initiative.`);
+  }
   const result = await afterCard(player, id);
   const initiative = await waitFor(gm, total => {
     const value = game.combat.combatants.contents[0].initiative;

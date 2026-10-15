@@ -18,7 +18,7 @@ const CARDS = {
   inspiration: {
     ids: ["iE0w9Rp70zne6zuJ", "na7uWxkaPiGn00ZK", "l1s90u72J3Q34HFN"],
     names: ["inspiration - 1d6", "inspiration - 1d8", "inspiration - 1d10"],
-    appliesTo: ["attack", "damage", "check", "save", "initiative"]
+    appliesTo: ["attack", "damage", "check", "save"]
   },
   luck: {
     ids: ["uPqHABvpmYZr0ASg"],
