@@ -11,7 +11,8 @@ const MENUS = {
   diceRolling: {
     id: "stt-settings-dice-rolling",
     settings: [
-      "markNaturals", "naturalChecks", "naturalSaveOutcomes", "naturalSaves", "naturalRollOff", "naturalInitiative"
+      "markNaturals", "naturalChecks", "naturalSaveOutcomes", "naturalSaves", "naturalRollOff", "naturalInitiative",
+      "heavyWeapons", "loadingWeapons", "reloadWeapons", "lanceDisadvantage", "flanking"
     ]
   },
   rollRequests: {
@@ -20,7 +21,8 @@ const MENUS = {
   },
   worldScripts: {
     id: "stt-settings-world-scripts",
-    settings: ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities", "welcomeCards"]
+    settings: ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities", "spellComponentWarnings",
+      "welcomeCards"]
   }
 };
 
@@ -126,7 +128,7 @@ test("settings menus: four buttons for the GM, each holding its own settings and
 
 test("settings menus: ticking a box and saving changes that setting, and only that one", async ({ gm }) => {
   const before = await gm.eval(moduleId => Object.fromEntries(
-    ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities"]
+    ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities", "spellComponentWarnings"]
       .map(key => [key, game.settings.get(moduleId, key)])
   ), MODULE_ID);
   assert(Object.values(before).every(v => v === false), "A Gameplay Enhancement started on.");
@@ -140,7 +142,7 @@ test("settings menus: ticking a box and saving changes that setting, and only th
   await app.waitFor({ state: "detached", timeout: 5000 });
 
   const after = await gm.eval(moduleId => Object.fromEntries(
-    ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities"]
+    ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities", "spellComponentWarnings"]
       .map(key => [key, game.settings.get(moduleId, key)])
   ), MODULE_ID);
   assertEqual(after, { ...before, rarityColours: true }, "Gameplay Enhancements after saving");
@@ -188,7 +190,7 @@ test("welcome card: whispered to the GM once, its buttons opening the settings m
   await app.waitFor({ state: "detached", timeout: 5000 });
 });
 
-test("settings menus: the DC by default starts blank, saves a number, and clears again", async ({ gm }) => {
+test("settings menus: the Default DC starts blank, saves a number, and clears again", async ({ gm }) => {
   const open = async () => {
     await gm.eval(moduleId => new (game.settings.menus.get(`${moduleId}.rollRequests`).type)().render({ force: true }),
       MODULE_ID);
@@ -204,10 +206,10 @@ test("settings menus: the DC by default starts blank, saves a number, and clears
   };
   try {
     let app = await open();
-    assertEqual(await app.locator('input[name="defaultDC"]').inputValue(), "", "the DC by default, to start with");
+    assertEqual(await app.locator('input[name="defaultDC"]').inputValue(), "", "the Default DC, to start with");
     assertEqual(await save(app, "14"), 14, "the setting after saving 14");
     app = await open();
-    assertEqual(await app.locator('input[name="defaultDC"]').inputValue(), "14", "the DC by default once saved");
+    assertEqual(await app.locator('input[name="defaultDC"]').inputValue(), "14", "the Default DC once saved");
     assertEqual(await save(app, ""), null, "the setting after clearing it");
   } finally {
     await gm.eval(moduleId => game.settings.set(moduleId, "defaultDC", null), MODULE_ID);
@@ -220,11 +222,12 @@ test("settings menus: the DC by default starts blank, saves a number, and clears
 
 test("world scripts: every one is off by default", async ({ gm }) => {
   const defaults = await gm.eval(moduleId => Object.fromEntries(
-    ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities"]
+    ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities", "spellComponentWarnings"]
       .map(key => [key, game.settings.settings.get(`${moduleId}.${key}`).default])
   ), MODULE_ID);
   assertEqual(defaults, {
-    bloodiedTint: false, fadeUnprepared: false, rarityColours: false, chatButtonLabels: false, oneTabActivities: false
+    bloodiedTint: false, fadeUnprepared: false, rarityColours: false, chatButtonLabels: false, oneTabActivities: false,
+    spellComponentWarnings: false
   }, "defaults");
 });
 
@@ -329,7 +332,7 @@ test("chat button labels: a compact card's icon buttons show their names, only w
   await waitFor(player, () => document.body.classList.contains("stt-chat-button-labels"), null, "the labels to turn on");
   const on = await labels();
   for ( const button of on ) assertEqual(button.before, `"${button.label}"`, `the ${button.label} button's label`);
-});
+}, { skip: { crlngn: "Carolingian UI labels the buttons itself, so the setting stays off; see the compatibility tests." } });
 
 test("one-tab activities: an activity's three tabs are shown side by side, only with the setting on", async ({ gm, player }) => {
   const open = () => player.eval(async () => {

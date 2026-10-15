@@ -12,11 +12,8 @@
  * The actual colour values are defined in styles/world-scripts.css via
  * classes like `.rarity-color-uncommon`, `.rarity-color-rare`, etc.
  *
- * Rarity is resolved from the item's roll data first (covers most
- * cases including compendium items), falling back to the raw
- * system.rarity field. The value is normalised to lowercase with
- * whitespace stripped so "Very Rare" becomes the class
- * `rarity-color-veryrare`.
+ * The class is the item's rarity key in lowercase, so dnd5e's "veryRare"
+ * becomes `rarity-color-veryrare`.
  */
 
 import { MODULE_ID } from "./hero-cards.mjs";
@@ -50,23 +47,13 @@ function registerSettings() {
 function onRenderActorSheet(app, html) {
   if ( !game.settings.get(MODULE_ID, "rarityColours") ) return;
 
-  // Query all item rows on the sheet (legacy and V2 selectors).
+  // dnd5e's sheets list items in .item-list, and some of its parts still in .items-list.
   const items = html.querySelectorAll(".items-list .item, .item-list .item");
   for ( const itemElement of items ) {
-    // Extract the item ID from the element's data attribute.
     const id = itemElement.dataset.itemId;
     if ( !id ) continue;
-
-    const item = app.document.items.get(id);
-    if ( !item ) continue;
-
-    // Resolve rarity: prefer roll data (handles overrides / enriched data), fall back to the raw system field.
-    let rarity = item.getRollData()?.item?.rarity || item.system?.rarity || undefined;
-
-    // Normalise: strip whitespace and lowercase so e.g. "Very Rare" becomes "veryrare", matching the CSS class names.
-    rarity = rarity ? rarity.replaceAll(/\s/g, "").toLowerCase() : undefined;
-
-    // Apply the rarity class (e.g. "rarity-color-rare") to the row element so the CSS rules can colour it.
-    if ( rarity ) itemElement.classList.add(`rarity-color-${rarity}`);
+    // Read from the item's own data: its roll data would rebuild the actor's for every row.
+    const rarity = app.document.items.get(id)?.system.rarity;
+    if ( typeof rarity === "string" && rarity ) itemElement.classList.add(`rarity-color-${rarity.toLowerCase()}`);
   }
 }

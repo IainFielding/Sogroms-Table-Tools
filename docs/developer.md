@@ -314,6 +314,12 @@ them out from its roll messages each time it draws.
 |---|---|---|---|
 | `divineSetup` | `string` | `hero-cards.mjs`, on the player's client | The UUID of the actor who played the Divine Intervention card from their sheet. The note is whispered to the GMs, whose Foundry adds a button that opens the request window set to Divine Intervention for that actor. A player could write the flag on a message of their own, but all it can do is preset the GM's window. |
 
+### On a welcome card
+
+| Flag | Type | Written by | Meaning |
+|---|---|---|---|
+| `welcome` | `"welcome" \| "whatsNew"` | `welcome.mjs` | Which card the message is. Nothing in the module reads it; it marks the card for macros and the tests. |
+
 ### On a roll made for a request
 
 | Flag | Type | Meaning |
@@ -410,7 +416,7 @@ makes the change.
 | `action` | Sent by | To | Payload | Effect |
 |---|---|---|---|---|
 | `applyBonus` | The player spending the die | The active GM only | `{ source, target, sign }`: the bonus and target message IDs, and `1` or `-1` | The GM's client checks the request again as the sender, whose ID Foundry's server supplies, then applies it. With no GM online, nothing is sent and the player is warned. |
-| `bonusNotApplied` | The active GM | The sender only | `{ reason: "invalid" \| "error" }` | Warns the player that the GM refused it or couldn't apply it. The die isn't spent. |
+| `bonusNotApplied` | The active GM | The sender only | `{ reason: "invalid" \| "error" }` | Warns the player that the GM refused it or couldn't apply it. The die isn't spent. Ignored unless a GM sent it. |
 
 ## How the Hero Cards are found
 
@@ -425,7 +431,7 @@ recognised by activity ID, falling back to the activity's name, case-insensitive
 
 | Card | Activity IDs | Name | Rolls it can be played on |
 |---|---|---|---|
-| Inspiration | `iE0w9Rp70zne6zuJ`, `na7uWxkaPiGn00ZK`, `l1s90u72J3Q34HFN` | `inspiration - 1d6` / `1d8` / `1d10` | attack, damage, check, save, initiative |
+| Inspiration | `iE0w9Rp70zne6zuJ`, `na7uWxkaPiGn00ZK`, `l1s90u72J3Q34HFN` | `inspiration - 1d6` / `1d8` / `1d10` | attack, damage, check, save |
 | Lucky | `uPqHABvpmYZr0ASg` | `lucky` | attack, damage, check, save, initiative, divine |
 | Advantage | `OkUWoFMxuyT5TxX7` | `advantage` | attack, check, save, initiative, divine |
 | Indomitable | `aE8dyIQUgvXfcu3M` | `indomitable` | save (a known failure) |
@@ -444,7 +450,7 @@ Sogrom's Table Tools fires no hooks of its own. It listens to these:
 
 | Hook | Script | Why |
 |---|---|---|
-| `init` | Every script with a setting, and `settings-menus.mjs` | Register settings and their menus, and set the API. `natural-initiative.mjs` also wraps `Combat#_sortCombatants` and `Combatant#getInitiativeRoll` here, as Foundry sorts each combat's turns before `setup`. |
+| `init` | Every script with a setting, and `settings-menus.mjs` | Register settings and their menus, and set the API. `natural-initiative.mjs` also wraps `Combat#_sortCombatants` and `Combatant#getInitiativeRoll` here, as Foundry sorts each combat's turns before `setup`. `welcome.mjs` adds one click listener to the document for the welcome card's buttons, since the chat log draws earlier sessions' cards before `ready`. |
 | `setup` | `hero-cards.mjs`, `natural-saves.mjs`, `natural-outcomes.mjs` | Wrap `Item#use`, the damage tray's target options (see below), and `D20Roll#isSuccess` and `D20Roll#isFailure`, so dnd5e judges a roll that carries its DC by its natural 1 or 20 where a setting says so. |
 | `ready` | `bonus-rolls.mjs`, `roll-request-popup.mjs`, `natural-saves.mjs`, `welcome.mjs`, `chat-button-labels.mjs`, `one-tab-activities.mjs` | Start listening on the socket, open pop-ups for recent requests, watch RSReforged's Apply buttons, post a welcome or what's new card that is due, and apply the two layout settings. |
 | `dnd5e.renderChatMessage` | `hero-cards.mjs`, `roll-requests.mjs`, `bonus-rolls.mjs`, `class-features.mjs` | Add card buttons, natural 1/20 rings, notes, request cards, and the Indomitable button. |
@@ -485,6 +491,18 @@ message, rather than posting a new one. A module that caches a roll message's to
 **Dice So Nice.** Dice rolled by a card or by Indomitable are shown with the speaker's dice appearance, so they look
 like the roll they change.
 
+**Carolingian UI.** Foundry loads a module's stylesheets into the `modules` cascade layer, and Carolingian UI adds its
+own outside any layer, where each of its rules beats every layered rule whatever the selectors. So
+`styles/compat-carolingian-ui.css` is listed in the manifest with `"layer": null`, which loads it outside the layers
+too, and uses `revert-layer` to hand the request card, the played card and the card windows back to the module's own
+rules. A new themed element inside `.stt-request` or a `.stt-card-dialog` window is covered without a change there; a
+new themed element anywhere else needs adding to it. `placeSummaryButton()` in `hero-cards.mjs` puts a roll's card
+button in the rows that Carolingian UI's compact cards draw, found through `globalThis.dnd5eCompactCards`, the registry
+those cards share with Flash Token Bar 5e. `labelsSuperseded()` in `chat-button-labels.mjs` keeps **Chat Button
+Labels** off while Carolingian UI is active. The `revert-layer` rules also override a user's own custom CSS on those
+elements, apart from the theme's `--cc-*` variables, which `all` doesn't cover: the GM guide's **Other modules**
+section says how to restyle them.
+
 ## Code layout
 
 ```
@@ -512,7 +530,8 @@ templates/roll-request.hbs  The request window's form.
 templates/settings-menu.hbs A settings menu's form.
 templates/welcome.hbs       The welcome and what's new cards.
 styles/                     fonts.css (Cinzel and Spectral, shipped in assets/fonts), hero-cards.css, roll-requests.css,
-                            world-scripts.css, settings-menus.css, welcome.css.
+                            world-scripts.css, settings-menus.css, welcome.css, and compat-carolingian-ui.css, loaded
+                            outside the cascade layers.
 lang/en.json                Every string the module shows.
 assets/                     Card art, campaign art, fonts, and the module's image on Foundry's setup screen.
 src/packs/                  Compendium sources, as YAML. Built into packs/ (not committed).

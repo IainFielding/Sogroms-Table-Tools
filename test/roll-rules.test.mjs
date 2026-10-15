@@ -4,8 +4,9 @@ import { requestMessage, rollMessage } from "./helpers/messages.mjs";
 import {
   DIVINE_RANGE, MAX_CHOICES, MODES, createRequest, formatRun, getChallengeState, getChoiceDC, getChoiceLabel, getChoices,
   getContestWinner, getGroupOutcome, getPartLabel, getRequest, getRequestSubtitle, getRequestTitle, getResults, getRowGroup, hasChoiceDCs,
-  isContest, poolTeamRolls, postRequest, validateRequest, withDefaults
+  formatNodes, isContest, poolTeamRolls, postRequest, validateRequest, withDefaults
 } from "../scripts/roll-requests.mjs";
+import { MODULE_ID, getRollTarget } from "../scripts/hero-cards.mjs";
 
 const entries = rows => rows.map(([uuid, total, natural]) => ({ uuid, total, natural }));
 const pass = { success: true };
@@ -196,7 +197,7 @@ describe("Results from tagged roll messages", () => {
     const message = requestMessage({ mode: "standard", actors: ["A"], parts: [{ type: "skill", key: "ath", dc: 12 }] });
     const roll = Object.assign(rollMessage({ actor: "A", total: 15, natural: 13 }), { _dice3danimating: true });
     game.messages = [roll];
-    game.modules = new Map([["dice-so-nice", { active: true }]]);
+    game.modules.set("dice-so-nice", { active: true });
     try {
       expect(getResults(message).get("A")[0]).toMatchObject({ rolling: true, visible: false, success: null });
       // With Dice So Nice set to show messages straight away, there is nothing to hold back.
@@ -206,7 +207,7 @@ describe("Results from tagged roll messages", () => {
       delete roll._dice3danimating;
       expect(getResults(message).get("A")[0]).toMatchObject({ rolling: false, visible: true, success: true });
     } finally {
-      delete game.modules;
+      game.modules.delete("dice-so-nice");
       settingValues.delete("immediatelyDisplayChatMessages");
     }
   });
@@ -820,5 +821,54 @@ describe("A choice of rolls", () => {
     expect(getRequestTitle({ mode: "standard", parts: [{ type: "d20", alternatives: [{ type: "save", key: "wis" }] }] }))
       .toBe("d20 or Wisdom Save");
     expect(getRequestTitle({ mode: "standard", parts: [{ type: "d20" }] })).toBe("d20 Roll");
+  });
+});
+
+/* -------------------------------------------- */
+
+describe("The DC a roll is judged against", () => {
+  const request = requestMessage({
+    mode: "standard", actors: ["A"],
+    parts: [{ type: "check", key: "dex", dc: 12, alternatives: [{ type: "check", key: "str", dc: 15 }, { type: "d20" }] }]
+  });
+  const roll = (flag, target) => ({
+    getFlag: (scope, key) => (scope === MODULE_ID && key === "requestRoll" ? flag : undefined),
+    rolls: [{ options: { target } }]
+  });
+  const targetOf = message => getRollTarget(message, message.rolls[0]);
+
+  it("is the roll's own target, where dnd5e gave it one", () => {
+    expect(targetOf(roll(undefined, 9))).toBe(9);
+  });
+
+  it("is the request's DC for a roll made for one, or the chosen alternative's own", () => {
+    game.messages = [request];
+    expect(targetOf(roll({ request: "request", part: 0, choice: 0 }))).toBe(12);
+    expect(targetOf(roll({ request: "request", part: 0, choice: 1 }))).toBe(15);
+    // An alternative that gives no DC shares the part's.
+    expect(targetOf(roll({ request: "request", part: 0, choice: 2 }))).toBe(12);
+  });
+
+  it("is null for a roll with neither", () => {
+    expect(targetOf(roll(undefined))).toBeNull();
+    expect(targetOf(roll({ request: "gone", part: 0 }))).toBeNull();
+  });
+});
+
+/* -------------------------------------------- */
+
+describe("Strings with elements in them", () => {
+  // The unit tests run without a DOM, so a stand-in Node class marks what is an element.
+  globalThis.Node ??= class Node {};
+
+  it("puts each element where the string names it, as text everywhere else", () => {
+    const score = new Node();
+    expect(formatNodes("STT.Request.Team.Average", { average: score, removed: " · 1 removed" }))
+      .toEqual(["Team average ", score, " · 1 removed"]);
+  });
+
+  it("writes numbers as text, and leaves a placeholder it isn't given as it is", () => {
+    expect(formatNodes("STT.Request.Scoring.Half.Summary", { passed: 2, total: 3 }))
+      .toEqual(["2", " of ", "3", " succeeded · ", "{needed}", " needed"]);
   });
 });

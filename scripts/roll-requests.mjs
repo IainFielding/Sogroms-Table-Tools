@@ -386,8 +386,9 @@ function refreshRequest(message, changes) {
 
 /**
  * @typedef {object} RequestPart
- * @property {"skill"|"check"|"save"|"tool"|"death"|"d20"|"d100"} type
- * @property {string} [key]     Skill, ability or tool ID.
+ * @property {"skill"|"check"|"save"|"tool"|"death"|"d20"|"d6"|"d8"|"d10"|"d12"|"d100"} type  A key in PART_TYPES or
+ *   DICE.
+ * @property {string} [key]     Skill, ability or tool ID; none for a death save or a plain die.
  * @property {number|null} dc
  * @property {{ type: string, key?: string, dc?: number|null }[]} [alternatives]  Other rolls the actor may make
  *   instead. Only in a mode with choices. In a mode with choiceDCs, an alternative may give its own DC, or null for
@@ -401,7 +402,7 @@ function refreshRequest(message, changes) {
  * @property {string[]} actors       Actor UUIDs of everyone rolling.
  * @property {string[][]} [sides]    For a contest, the actor UUIDs on each side.
  * @property {number} [range]        For Divine Intervention, how many consecutive numbers each actor picks.
- * @property {number} successes      Successes a skill challenge needs.
+ * @property {number} [successes]    For a skill challenge, how many successes it needs.
  * @property {string} [scoring]      For a Team Challenge, how its rolls are scored: a key in SCORING. Requests posted
  *   before there was a choice have none, and are averaged.
  * @property {boolean} showDC        Show the DC to players.
@@ -437,7 +438,7 @@ export async function postRequest(request, flags={}) {
   request.parts = request.parts.slice(0, getPartCount(request));
   if ( isOpenResult(request) ) flags = { revealed: true, ...flags };
   return ChatMessage.create({
-    speaker: { alias: "Sogrom's Table Tools" },
+    speaker: { alias: game.modules.get(MODULE_ID)?.title ?? MODULE_ID },
     content: `<p>${foundry.utils.escapeHTML(getRequestTitle(request))}</p>`,
     flags: { [MODULE_ID]: { ...flags, request } }
   });

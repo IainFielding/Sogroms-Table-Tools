@@ -24,6 +24,7 @@ import "./tests-natural-initiative.mjs";
 import "./tests-natural-outcomes.mjs";
 import "./tests-death-saves.mjs";
 import "./tests-world-scripts.mjs";
+import "./tests-weapon-properties.mjs";
 import "./tests-compat.mjs";
 
 const filter = process.argv.slice(2).find(a => !a.startsWith("--"));

@@ -119,8 +119,10 @@ function createUsedNote(message) {
 function onSocketMessage(data, userId) {
   switch ( data?.action ) {
     case "applyBonus": return onApplyBonusRequest(data, userId);
-    case "bonusNotApplied": return ui.notifications.warn(localize(data.reason === "invalid"
-      ? "STT.Bonus.GMRefused" : "STT.Bonus.GMFailed"));
+    case "bonusNotApplied":
+      // Only a GM answers a bonus request, so a warning from anyone else is ignored.
+      if ( !game.users.get(userId)?.isGM ) return;
+      return ui.notifications.warn(localize(data.reason === "invalid" ? "STT.Bonus.GMRefused" : "STT.Bonus.GMFailed"));
   }
 }
 

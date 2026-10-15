@@ -1,0 +1,68 @@
+/*
+ * Carolingian UI (crlngn-ui), and the compact chat cards it shares with Flash Token Bar 5e.
+ *
+ * Foundry loads a module's stylesheets into the "modules" cascade layer. Carolingian UI adds its own outside any layer,
+ * so each of its rules beats every rule in this module's other stylesheets, whatever their selectors. Its chat, button
+ * and font rules reach into the request card and the card windows, which are drawn in a theme of their own, and leave
+ * them half in each.
+ *
+ * So the manifest loads this stylesheet outside the layers too, where `revert-layer` hands a property back to the
+ * layers: to this module's own rules, hover and focus states included. Nothing here applies without Carolingian UI's
+ * classes on the body.
+ */
+
+/* Carolingian UI repeats `:not(#…)` to out-rank other stylesheets, and marks some declarations important. */
+body.crlngn-ui:not(#\#):not(#\#):not(#\#) {
+
+  /* The request card in chat and the played card shown on screen: every property, on every element. */
+  .chat-message .stt-request,
+  .chat-message .stt-request :is(*, *::before, *::after),
+  .chat-message .stt-request::before,
+  .chat-message .stt-request::after,
+  .stt-played-card,
+  .stt-played-card :is(*, *::before, *::after) {
+    all: revert-layer !important;
+  }
+
+  /* The card windows: the card chooser, the request window and its pop-up, and the dialogs asking for a DC, a choice or
+     a run of numbers. Foundry places and sizes a window with its own style attribute, which an important `all` would
+     override, so the window itself only takes its look back. */
+  .stt-card-dialog.application {
+    background: revert-layer !important;
+    border: revert-layer !important;
+    border-radius: revert-layer !important;
+    box-shadow: revert-layer !important;
+    backdrop-filter: revert-layer !important;
+    color: revert-layer !important;
+    font-family: revert-layer !important;
+    font-size: revert-layer !important;
+  }
+
+  /* Everything inside one, apart from Carolingian UI's hint tooltips: it folds each setting's hint into a "?" beside
+     the label, which it adds, and shows the hint on hover over the group. */
+  .stt-card-dialog.application :is(*, *::before, *::after):not(
+    .form-group.show-hint, .form-group > :is(.hint, .notes), .crlngn-hint-icon) {
+    all: revert-layer !important;
+  }
+}
+
+/* -------------------------------------------- */
+/*  Compact Chat Cards                          */
+/* -------------------------------------------- */
+
+/* A roll's Hero Card button, in the row a compact card draws for the roll. Those cards move a row's own icon buttons to
+   its start; this one stays where placeSummaryButton() puts it, beside the row's title or after its pills, and is the
+   size of the buttons those cards add themselves. */
+body.dnd5e-compact-cards .chat-message .card-summary .stt-card-button.icon {
+  order: 0 !important;
+  flex: none !important;
+  width: var(--button-size, 24px) !important;
+  height: var(--button-size, 24px) !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+body.dnd5e-compact-cards .chat-message .card-summary .dcc-row-title .stt-card-button.icon {
+  margin-inline-start: 6px !important;
+}

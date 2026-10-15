@@ -110,8 +110,11 @@ export async function resetWorld(gm, player) {
     if ( !game.settings.get(moduleId, "attachRolls") ) await game.settings.set(moduleId, "attachRolls", true);
     if ( !game.settings.get(moduleId, "showPlayedCards") ) await game.settings.set(moduleId, "showPlayedCards", true);
     for ( const key of ["popupPlayers", "popupGM", "deathSavePrompt", "bloodiedTint", "fadeUnprepared", "rarityColours",
-      "chatButtonLabels", "oneTabActivities"] ) {
+      "chatButtonLabels", "oneTabActivities", "spellComponentWarnings", "flanking"] ) {
       if ( game.settings.get(moduleId, key) ) await game.settings.set(moduleId, key, false);
+    }
+    for ( const key of ["heavyWeapons", "loadingWeapons", "reloadWeapons", "lanceDisadvantage"] ) {
+      if ( !game.settings.get(moduleId, key) ) await game.settings.set(moduleId, key, true);
     }
     for ( const actor of game.actors ) {
       if ( actor.getFlag(moduleId, "advantage") ) await actor.unsetFlag(moduleId, "advantage");

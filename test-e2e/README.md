@@ -14,8 +14,8 @@ The harness is not shipped: the release archive in `.github/workflows/main.yml` 
 
 1. Copy `config.example.mjs` to `config.mjs` and set the paths. `FOUNDRY_ROOT` is Foundry's Node build, the
    folder holding `main.mjs`.
-2. Link the repo into Foundry's modules folder, so the tests run the working copy. From an administrator
-   prompt, or with Developer Mode on:
+2. Link the repo into Foundry's modules folder, so the tests run the working copy. A directory junction needs
+   no administrator rights. From a Command Prompt:
 
    ```
    mklink /J "%LOCALAPPDATA%\FoundryVTT\Data\modules\sogrom-table-tools" "H:\Code\FoundryModules\Sogroms-Table-Tools"
@@ -38,18 +38,20 @@ HEADED=1 npm run test:e2e        # watch the browsers
 ### Compatibility runs
 
 The same tests can run with another module that changes dnd5e's rolls or chat cards enabled, each in a world of its
-own, `stt-compat-rsr` or `stt-compat-midi`:
+own, `stt-compat-rsr`, `stt-compat-midi` or `stt-compat-crlngn`:
 
 ```
 STT_COMPAT=rsr npm run test:e2e                    # RSReforged
 STT_COMPAT=midi STT_CANVAS=1 npm run test:e2e      # Midi-QOL, with DAE, socketlib and lib-wrapper
+STT_COMPAT=crlngn npm run test:e2e                 # Carolingian UI
 STT_COMPAT=rsr npm run test:e2e -- compat          # only the compatibility checks
 ```
 
-Install the modules into `Data/modules` first: RSReforged 6.x, or Midi-QOL and DAE from their `dnd6` branches with
-socketlib and lib-wrapper. Midi-QOL places a token for every activity used, so it needs the canvas, which
-`STT_CANVAS=1` turns on. The Midi world loads Midi's "full auto" sample settings. RSReforged swaps the meaning of
-Shift on a Roll button, which `clickRoll` follows.
+Install the modules into `Data/modules` first: RSReforged 6.x, Midi-QOL and DAE from their `dnd6` branches with
+socketlib and lib-wrapper, or Carolingian UI 4.5 or later. Midi-QOL places a token for every activity used, so it
+needs the canvas, which `STT_CANVAS=1` turns on. The Midi world loads Midi's "full auto" sample settings. RSReforged
+swaps the meaning of Shift on a Roll button, which `clickRoll` follows. Carolingian UI runs with the settings it
+starts with: its chat styles, fonts, compact chat cards and retroactive advantage buttons are all on.
 
 Many tests are written against dnd5e's own roll windows and cards, which these modules skip or replace, so a failure
 in a compatibility run needs reading: `tests-compat.mjs` holds the checks that are meant to pass with either. Without
@@ -88,25 +90,23 @@ the end of both consoles.
   It also covers spent uses, death saves, the card window's art, Advantage on the next roll, the "no cards
   left" warning and shift-click. Played cards are shown only to those who can see the roll, and a note's art
   and name are never run as HTML.
-
 - `tests-natural-saves.mjs`: natural 1s and 20s on saves against a spell's damage. A natural 20 takes none, and a
   natural 1 takes the damage's maximum past resistance or immunity, whether it comes before the damage or after it,
   with nothing more rolled. With the setting off, damage is left to dnd5e. The canvas is
   off in the harness, so the damage tray is asked about each token rather than listing them itself.
-
 - `tests-natural-initiative.mjs`: natural 1s and 20s on initiative. A natural 20 goes first in the initiative order
   and a natural 1 last, for the GM and the player, whatever the totals around them. An initiative typed over one has
   no natural, and with the setting off totals alone decide the order.
-
 - `tests-natural-outcomes.mjs`: natural 1s and 20s that decide a roll. On a request card, and on a check or save dnd5e
   rolls against a DC itself, a natural 20 passes and a natural 1 fails whatever the DC. In a Roll-Off a natural 20 beats
   a higher total and a natural 1 loses to a lower one. With each setting off, totals alone decide.
-
 - `tests-death-saves.mjs`: death save requests at the start of a dying creature's turn: who is asked, the pop-ups,
   once a round, stable creatures, and removing a request when the creature is healed.
 - `tests-world-scripts.mjs`: the four settings menus, each holding its own settings, the GM's welcome card, and the five Gameplay
   Enhancements, each checked off and then on: the Bloodied tint, faded unprepared spells, rarity tints on item rows,
   labels on compact chat card buttons, and the one-tab activity layout.
+- `tests-compat.mjs`: the checks meant to pass with RSReforged, Midi-QOL or Carolingian UI enabled (see
+  [Compatibility runs](#compatibility-runs)). Without `STT_COMPAT` they run in the plain world as a baseline.
 
 The rules themselves also have unit tests in `../test`, which `npm test` runs without Foundry.
 

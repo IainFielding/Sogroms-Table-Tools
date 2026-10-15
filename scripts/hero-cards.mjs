@@ -1,6 +1,9 @@
 /**
  * Hero Cards: let a player spend a card from the "Hero Cards" feature on a roll that is already in chat.
  * The chat message's rolls are rewritten in place, so dnd5e re-evaluates hit/miss and save success on re-render.
+ *
+ * Also rings natural 1s and 20s in chat, and holds what the other scripts share: MODULE_ID, localize and reportError,
+ * the kind of roll a message holds, its natural and the DC it's judged against, and the helpers that rewrite a roll.
  */
 
 export const MODULE_ID = "sogrom-table-tools";
@@ -18,7 +21,7 @@ const CARDS = {
   inspiration: {
     ids: ["iE0w9Rp70zne6zuJ", "na7uWxkaPiGn00ZK", "l1s90u72J3Q34HFN"],
     names: ["inspiration - 1d6", "inspiration - 1d8", "inspiration - 1d10"],
-    appliesTo: ["attack", "damage", "check", "save", "initiative"]
+    appliesTo: ["attack", "damage", "check", "save"]
   },
   luck: {
     ids: ["uPqHABvpmYZr0ASg"],
@@ -264,10 +267,7 @@ function onRenderChatMessage(message, html) {
   for ( const summary of html.querySelectorAll(".card-summary[data-message-id]") ) {
     const child = game.messages.get(summary.dataset.messageId);
     if ( !child ) continue;
-    if ( getCardOptions(child).length ) {
-      const row = summary.querySelector(".icon-row") ?? summary;
-      row.append(createCardButton(child, { compact: true }));
-    }
+    if ( getCardOptions(child).length ) placeSummaryButton(summary, createCardButton(child, { compact: true }));
     summary.append(...renderLog(child));
   }
 
@@ -284,6 +284,29 @@ function onRenderChatMessage(message, html) {
       (element.querySelector(".rsr-header") ?? element).append(createCardButton(roll, { compact: true }));
     }
   });
+}
+
+/* -------------------------------------------- */
+
+/**
+ * Put a roll's card button in its summary inside an activity's card: at the end of dnd5e's row for the roll.
+ *
+ * Carolingian UI's compact cards, which Flash Token Bar 5e draws too, lay a summary out as their own row, its total in
+ * a column every row of the card shares, flanked by the buttons that change the roll's advantage. An attack or damage
+ * row has a title above it, with room for the button beside its label; a save or check has none, and there the button
+ * follows the row's pills. Either way the totals stay in line.
+ * @param {HTMLElement} summary  The roll's summary.
+ * @param {HTMLButtonElement} button
+ */
+function placeSummaryButton(summary, button) {
+  const row = summary.querySelector(".icon-row");
+  if ( globalThis.dnd5eCompactCards?.isActive ) {
+    const label = summary.querySelector(".dcc-row-title .dcc-row-label");
+    if ( label ) return label.after(button);
+    const pills = row?.querySelector(":scope > ul.pills");
+    if ( pills ) return pills.after(button);
+  }
+  (row ?? summary).append(button);
 }
 
 /* -------------------------------------------- */
@@ -332,9 +355,9 @@ function markEmbeddedNaturals(message, element) {
 /* -------------------------------------------- */
 
 /**
- * Mark the total of each of the message's d20 rolls that shows a natural 1 or 20: a natural 20 is ringed in gold, like
- * the Character Creator's Level Up button once the XP is there, and a natural 1 in a dull red. A save or check rolled
- * from an activity's card is summarised inside that card, where it is marked too.
+ * Mark the total of each of the message's d20 rolls that shows a natural 1 or 20: a natural 20 is ringed in gold and a
+ * natural 1 in a dull red. A save or check rolled from an activity's card is summarised inside that card, where it is
+ * marked too.
  * @param {ChatMessage5e} message
  * @param {HTMLElement} html
  */
@@ -484,7 +507,7 @@ function onPreRollD20Test(config) {
  */
 function onPostD20TestRollConfiguration(rolls, config) {
   const actor = getSubjectActor(config.subject);
-  if ( rolls.length && actor?.getFlag(MODULE_ID, "advantage") ) actor.unsetFlag(MODULE_ID, "advantage");
+  if ( rolls.length && actor?.getFlag(MODULE_ID, "advantage") ) actor.unsetFlag(MODULE_ID, "advantage").catch(reportError);
 }
 
 /* -------------------------------------------- */
@@ -816,11 +839,14 @@ export function createCardButton(message, { compact=false }={}) {
 /* -------------------------------------------- */
 
 /**
+ * A note on a roll of a card, bonus die or class feature played on it. See "Data stored on documents" in
+ * docs/developer.md.
  * @typedef {object} CardLogEntry
- * @property {string} text  What the card did, e.g. "Luck: rerolled the d20 (4 → 13): 4 → 13".
- * @property {string} card  The card's label.
- * @property {string} img   The card's art.
- * @property {string} by    The name of the actor who played it.
+ * @property {string} text    What it did, e.g. "Lucky: rerolled the d20 (4 → 13): 4 → 13".
+ * @property {string} card    The card's or feature's name.
+ * @property {string} by      The name of the actor who played it.
+ * @property {string} [img]   A Hero Card's art, which is also shown on screen as it is played.
+ * @property {string} [icon]  Font Awesome classes, for a note with no art: a bonus die or Indomitable.
  */
 
 /**

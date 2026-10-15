@@ -2,6 +2,61 @@
 
 All notable changes to Sogrom's Table Tools.
 
+## 1.1.0
+
+### New
+
+- **Heavy weapons have their rule.** An attack with a Heavy weapon starts at disadvantage when its wielder can't
+  handle it, by the rules D&D 5e is set to use: under the 2024 rules, a melee weapon with less than 13 Strength or a
+  ranged weapon with less than 13 Dexterity; under the 2014 rules, any Heavy weapon in a Small or Tiny creature's
+  hands. D&D 5e marks weapons Heavy but applies nothing for it. It's one more source of disadvantage, resolved with
+  those from the character's effects, so advantage cancels it and an effect that prevents disadvantage stops it. The
+  roll dialog still lets the player change it, and **Heavy Weapon Disadvantage**, under Dice Rolling, turns it off.
+- **Loading weapons warn of a second shot.** A second attack with the same Loading weapon in the same combat turn
+  shows a warning, and is still rolled. Crossbow Expert ignores Loading on crossbows. **Loading Weapon Warning**,
+  under Dice Rolling, turns it off.
+- **Reload weapons count their shots.** A Reload weapon's shots are kept as its Limited Uses, and each attack roll
+  spends one. An empty weapon's attack isn't rolled; a dialog offers to reload it instead. A Reload weapon without
+  Limited Uses is offered to be set up after its first attack, from the number in its description when there is
+  one. **Reload Weapon Shots**, under Dice Rolling, turns it off.
+- **The 2014 Lance has its rule.** Its attacks start at disadvantage against a target within 5 feet. **Lance
+  Disadvantage**, under Dice Rolling, turns it off.
+- **Flanking**, under Dice Rolling and off until you turn it on, is the Dungeon Master's Guide's optional rule: a
+  creature and an ally both beside an enemy, on opposite sides or corners of its space, have advantage on melee
+  attacks against it. It needs a square grid and one target.
+- **Spell Component Warnings**, under Gameplay Enhancements and off until you turn it on, warns when a spell is cast
+  by a creature with the Silenced status and has a verbal component, or when a character casts a spell whose
+  materials have no cost without a spellcasting focus equipped or a component pouch carried.
+
+### Changes
+
+- **Inspiration cards can no longer be played on initiative.** The 1d6, 1d8 and 1d10 Inspiration cards are offered on
+  attacks, damage, ability checks and saving throws only.
+- **Setting names follow D&D 5e's style.** Every setting is named in title case, as D&D 5e names its own, and the
+  request window's defaults lead with "Default": **DC by default** is now **Default DC**, and **Team Challenge scoring
+  by default** is now **Default Team Challenge Scoring**. What each setting does, and what it's set to, is unchanged.
+
+### Fixes
+
+- **Character sheets draw faster with Item Rarity Colours on.** Each item's rarity is read from the item itself,
+  rather than by building the whole character's roll data again for every row.
+- **Only a GM can tell a player their bonus die wasn't applied.** Another player's client could send the same warning.
+- **Setting names in the GM guide match Foundry's.** Five settings were listed under older names.
+
+### Other modules
+
+- **Midi-QOL applies the Heavy rule itself**, and lets effects excuse a creature from it, so **Heavy Weapon
+  Disadvantage** leaves Heavy to Midi-QOL while it's active.
+- **Midi-QOL has its own flanking option**, so **Flanking** leaves flanking to Midi-QOL while that's turned on.
+
+- **Carolingian UI is supported.** The request card, its pop-up, the card chooser and the request window keep their own
+  look under Carolingian UI's chat styles, fonts and colour themes; before, the request card in chat lost its fonts and
+  its teal Roll buttons, and the card chooser's Cancel button was drawn as Carolingian UI's. On its compact chat cards,
+  the Hero Card button is beside each attack and damage row's title, rather than a bar under the row, and stays with
+  the target's name on a save's row. **Chat Button Labels** is switched off while Carolingian UI is enabled, since it
+  labels those buttons itself and both at once wrote every label twice. Its retroactive advantage buttons work
+  alongside Hero Cards and request cards. See **Other modules** in the GM guide.
+
 ## 1.0.3
 
 These fixes were announced for 1.0.2, which was published without them: 1.0.2 holds the same code as 1.0.1.

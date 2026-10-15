@@ -4,6 +4,16 @@
  */
 
 import { MODULE_ID } from "./hero-cards.mjs";
+import { labelsSuperseded } from "./chat-button-labels.mjs";
+
+/**
+ * Settings another module can make moot, each with a check for that and the note shown in place of its hint. Such a
+ * setting is shown switched off and can't be changed, and what was saved for it is kept.
+ * @type {Record<string, { test: () => boolean, note: string }>}
+ */
+const SUPERSEDED = {
+  chatButtonLabels: { test: labelsSuperseded, note: "STT.Settings.ChatButtonLabels.Superseded" }
+};
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -46,7 +56,8 @@ class SettingsMenu extends HandlebarsApplicationMixin(ApplicationV2) {
     const context = await super._prepareContext(options);
     context.settings = this.constructor.SETTINGS.map(key => {
       const setting = game.settings.settings.get(`${MODULE_ID}.${key}`);
-      const value = game.settings.get(MODULE_ID, key);
+      const superseded = SUPERSEDED[key]?.test() ? SUPERSEDED[key] : null;
+      const value = superseded ? false : game.settings.get(MODULE_ID, key);
       // A setting with choices is a dropdown, a number a number field, and the others are checkboxes.
       const choices = setting.choices ? Object.entries(setting.choices).map(([choice, label]) => ({
         value: choice, label: game.i18n.localize(label), selected: choice === value
@@ -55,7 +66,8 @@ class SettingsMenu extends HandlebarsApplicationMixin(ApplicationV2) {
         key,
         id: `${this.id}-${key}`,
         label: game.i18n.localize(setting.name),
-        hint: game.i18n.localize(setting.hint),
+        hint: game.i18n.localize(superseded?.note ?? setting.hint),
+        disabled: !!superseded,
         value,
         choices,
         number: isNumber(setting)
@@ -77,6 +89,8 @@ class SettingsMenu extends HandlebarsApplicationMixin(ApplicationV2) {
   static async #onSubmit(event, form, formData) {
     const values = formData.object;
     for ( const key of this.constructor.SETTINGS ) {
+      // A disabled field isn't submitted, which would read as switched off.
+      if ( SUPERSEDED[key]?.test() ) continue;
       const setting = game.settings.settings.get(`${MODULE_ID}.${key}`);
       const { choices } = setting;
       let value = choices ? values[key] : !!values[key];
@@ -120,7 +134,7 @@ class DiceRollingSettings extends SettingsMenu {
 
   /** @override */
   static SETTINGS = ["markNaturals", "naturalChecks", "naturalSaveOutcomes", "naturalSaves", "naturalRollOff",
-    "naturalInitiative"];
+    "naturalInitiative", "heavyWeapons", "loadingWeapons", "reloadWeapons", "lanceDisadvantage", "flanking"];
 }
 
 class RollRequestSettings extends SettingsMenu {
@@ -143,7 +157,7 @@ class WorldScriptSettings extends SettingsMenu {
 
   /** @override */
   static SETTINGS = ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities",
-    "welcomeCards"];
+    "spellComponentWarnings", "welcomeCards"];
 }
 
 /* -------------------------------------------- */

@@ -242,7 +242,7 @@ test("luck: rerolls the d20 of a check, and the new result stands", async ({ pla
 });
 
 /**
- * Turn the "Natural 1s and 20s lock Hero Cards" setting on or off, and wait for the player to see it.
+ * Turn the "Natural 1s and 20s Lock Hero Cards" setting on or off, and wait for the player to see it.
  * @param {import("./lib/session.mjs").Session} gm
  * @param {import("./lib/session.mjs").Session} player
  * @param {boolean} value
@@ -437,6 +437,9 @@ test("relentless: rerolls initiative in the first round and updates the tracker"
   await forceDice(player, [d20(19)]);
   const offered = await cardsOffered(player, id, "Relentless");
   assert(!offered.includes("Indomitable"), "Indomitable was offered on initiative.");
+  for ( const card of ["Inspiration - 1d6", "Inspiration - 1d8", "Inspiration - 1d10"] ) {
+    assert(!offered.includes(card), `${card} was offered on initiative.`);
+  }
   const result = await afterCard(player, id);
   const initiative = await waitFor(gm, total => {
     const value = game.combat.combatants.contents[0].initiative;
@@ -541,6 +544,47 @@ test("sheet: Advantage gives advantage on the next d20 roll, once", async ({ pla
   assertEqual(await player.eval(id => game.messages.get(id).rolls[0].hasAdvantage, second), false, "the check after");
 });
 
+/**
+ * Leave an Advantage card pending for Aria's next d20 roll, as playing it from the sheet does.
+ * @param {import("./lib/session.mjs").Session} gm
+ * @param {import("./lib/session.mjs").Session} player
+ */
+async function pendAdvantage(gm, player) {
+  await gm.eval(moduleId => game.actors.getName("Aria").setFlag(moduleId, "advantage", true), MODULE_ID);
+  await waitFor(player, moduleId => game.actors.getName("Aria").getFlag(moduleId, "advantage"), MODULE_ID,
+    "the pending Advantage");
+}
+
+/**
+ * @param {import("./lib/session.mjs").Session} session
+ * @param {string} id  A roll message's ID.
+ * @returns {Promise<[boolean, boolean, number]>}  Whether its roll has advantage and disadvantage, and its total.
+ */
+function rollMode(session, id) {
+  return session.eval(id => {
+    const r = game.messages.get(id).rolls[0];
+    return [r.hasAdvantage, r.hasDisadvantage, r.total];
+  }, id);
+}
+
+test("sheet: a pending Advantage turns a roll with disadvantage into a straight roll", async ({ gm, player }) => {
+  await pendAdvantage(gm, player);
+  await forceDice(player, [d20(15)]);
+  const id = await roll(player, "Aria", "skill", { config: { disadvantage: true } });
+  assertEqual(await rollMode(player, id), [false, false, 15], "advantage, disadvantage and total");
+  await waitFor(player, moduleId => !game.actors.getName("Aria").getFlag(moduleId, "advantage"), MODULE_ID,
+    "the pending Advantage to clear");
+});
+
+test("sheet: a pending Advantage leaves a roll with advantage as it is", async ({ gm, player }) => {
+  await pendAdvantage(gm, player);
+  await forceDice(player, [d20(4), d20(17)]);
+  const id = await roll(player, "Aria", "skill", { config: { advantage: true } });
+  assertEqual(await rollMode(player, id), [true, false, 17], "advantage, disadvantage and total");
+  await waitFor(player, moduleId => !game.actors.getName("Aria").getFlag(moduleId, "advantage"), MODULE_ID,
+    "the pending Advantage to clear");
+});
+
 test("sheet: a warning when every card is spent", async ({ gm, player }) => {
   await gm.eval(async () => {
     const item = game.actors.getName("Aria").items.getName("Hero Cards");
@@ -640,18 +684,22 @@ test("played cards: up to three played together show side by side, and the rest 
   for ( const session of [gm, player] ) {
     await waitFor(session, () => document.querySelectorAll("#stt-played-card .stt-played-card-entry").length === 3,
       null, `three cards on ${session.user}'s screen`, 3000);
-    // They slide in, so they are measured once they have settled in one row.
-    await waitFor(session, () => new Set([...document.querySelectorAll("#stt-played-card .stt-played-card-entry img")]
-      .map(img => Math.round(img.getBoundingClientRect().top))).size === 1, null, `one row on ${session.user}'s screen`, 3000)
-      .catch(() => {});
+    // They slide in, so they are measured once they have settled in one row. A card shows for a few seconds and then
+    // lifts away; with Midi-QOL's canvas drawing slowly, the first may already be leaving by then, so only the cards
+    // still showing are measured.
+    await waitFor(session, () => new Set(
+      [...document.querySelectorAll("#stt-played-card .stt-played-card-entry:not(.leaving) img")]
+        .map(img => Math.round(img.getBoundingClientRect().top))
+    ).size === 1, null, `one row on ${session.user}'s screen`, 3000).catch(() => {});
     const shown = await session.eval(() => [...document.querySelectorAll("#stt-played-card .stt-played-card-entry")]
       .map(el => ({
         name: el.querySelector(".stt-played-card-name").textContent,
+        leaving: el.classList.contains("leaving"),
         top: Math.round(el.querySelector("img").getBoundingClientRect().top)
       })));
     assertEqual(shown.length, 3, `cards on ${session.user}'s screen, with one waiting`);
     assert(shown.every(c => cards.includes(c.name)), `Unexpected cards shown: ${shown.map(c => c.name).join(", ")}`);
-    assertEqual(new Set(shown.map(c => c.top)).size, 1, `rows the cards sit in (${session.user})`);
+    assertEqual(new Set(shown.filter(c => !c.leaving).map(c => c.top)).size, 1, `rows the cards sit in (${session.user})`);
     if ( session === player ) first = shown.map(c => c.name);
   }
 
@@ -725,12 +773,21 @@ test("played cards: a card played from the sheet is shown on screen, with a shor
   assert(state.hoverArt?.includes("charger.webp"), `The header's art has no full-size hover: ${state.hoverArt}`);
   assert(state.height < 200, `The chat record is ${state.height}px tall.`);
 
-  // Clicking the header still opens the description.
-  await record.locator(".card-header").click();
-  await waitFor(player, () => {
+  // Clicking the header still opens the description. A click that lands while the chat log is drawn again, as it can be
+  // with Midi-QOL, is lost with the element it hit, so the header is clicked again if the description stays shut. Each
+  // click waits long enough to have opened it, so a second click can't close a description the first one opened.
+  const opened = () => player.eval(() => {
     const li = [...document.querySelectorAll("#chat .chat-log li.chat-message.stt-card-usage")].at(-1);
     return !li.querySelector(".card-description").classList.contains("collapsed");
-  }, null, "the description to open");
+  });
+  for ( let i = 0; (i < 5) && !await opened(); i++ ) {
+    await record.locator(".card-header").click();
+    await waitFor(player, () => {
+      const li = [...document.querySelectorAll("#chat .chat-log li.chat-message.stt-card-usage")].at(-1);
+      return !li.querySelector(".card-description").classList.contains("collapsed");
+    }, null, "the description to open", 2000).catch(() => {});
+  }
+  assert(await opened(), "Clicking the record's header didn't open its description.");
 });
 
 test("sheet: Divine Intervention whispers the GM a button that opens the request window set up for it", async ({ gm, player }) => {

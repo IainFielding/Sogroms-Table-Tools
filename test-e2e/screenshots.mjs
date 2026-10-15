@@ -578,6 +578,23 @@ shot("each settings menu", async ({ gm }) => {
   const menus = {
     heroCards: "hero-cards", diceRolling: "dice-rolling", rollRequests: "roll-requests", worldScripts: "world-scripts"
   };
+  // Foundry keeps a window within the browser's height, so a menu longer than that would be cut short. The browser is
+  // made tall enough for the longest, then put back.
+  const viewport = gm.page.viewportSize();
+  await gm.page.setViewportSize({ width: viewport.width, height: 2000 });
+  try {
+    await captureMenus(gm, menus);
+  } finally {
+    await gm.page.setViewportSize(viewport);
+  }
+});
+
+/**
+ * Capture each settings menu, as the GM sees it.
+ * @param {import("./lib/session.mjs").Session} gm
+ * @param {Record<string, string>} menus  Each menu's setting key, and the name its window and picture take.
+ */
+async function captureMenus(gm, menus) {
   for ( const [key, name] of Object.entries(menus) ) {
     await gm.eval(({ moduleId, key }) => new (game.settings.menus.get(`${moduleId}.${key}`).type)().render({ force: true }),
       { moduleId: MODULE_ID, key });
@@ -589,7 +606,7 @@ shot("each settings menu", async ({ gm }) => {
     await gm.eval(id => foundry.applications.instances.get(id)?.close(), `stt-settings-${name}`);
     await app.waitFor({ state: "detached", timeout: 5000 });
   }
-});
+}
 
 shot("a death save request", async (ctx) => {
   const { gm, player } = ctx;

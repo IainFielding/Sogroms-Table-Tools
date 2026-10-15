@@ -5,6 +5,9 @@
  * read without hovering for a tooltip.
  * The labels themselves are in styles/world-scripts.css, which only applies them while
  * the body carries the stt-chat-button-labels class.
+ *
+ * Carolingian UI labels the same buttons itself, or leaves them as icons, by a setting of its own, so with it enabled
+ * these labels stay off: both at once would write every label twice.
  */
 
 import { MODULE_ID } from "./hero-cards.mjs";
@@ -30,8 +33,18 @@ function registerSettings() {
 /* -------------------------------------------- */
 
 /**
+ * @returns {boolean}  Whether Carolingian UI is enabled, and so draws the buttons' labels itself.
+ */
+export function labelsSuperseded() {
+  return !!game.modules.get("crlngn-ui")?.active;
+}
+
+/* -------------------------------------------- */
+
+/**
  * Show or hide the labels to match the setting.
  */
 function applyLabels() {
-  document.body.classList.toggle("stt-chat-button-labels", game.settings.get(MODULE_ID, "chatButtonLabels"));
+  const on = game.settings.get(MODULE_ID, "chatButtonLabels") && !labelsSuperseded();
+  document.body.classList.toggle("stt-chat-button-labels", on);
 }

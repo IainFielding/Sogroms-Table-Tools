@@ -43,6 +43,9 @@
     "scripts/class-features.mjs",
     "scripts/natural-saves.mjs",
     "scripts/natural-initiative.mjs",
+    "scripts/weapon-properties.mjs",
+    "scripts/reload-weapons.mjs",
+    "scripts/spell-components.mjs",
     "scripts/natural-outcomes.mjs",
     "scripts/bloodied-tint.mjs",
     "scripts/fade-unprepared.mjs",
@@ -73,7 +76,11 @@
     "styles/roll-requests.css",
     "styles/world-scripts.css",
     "styles/settings-menus.css",
-    "styles/welcome.css"
+    "styles/welcome.css",
+    {
+      "src": "styles/compat-carolingian-ui.css",
+      "layer": null
+    }
   ],
   "packs": [
     {

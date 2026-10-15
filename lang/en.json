@@ -30,7 +30,11 @@
       },
       "BloodiedTint": {
         "Name": "Bloodied Token Tint",
-        "Hint": "Automaticaly Highlights Bloodied creatures with a red tint and matching token ring colours, making them easier to spot during play."
+        "Hint": "Automatically highlights Bloodied creatures with a red tint and matching token ring colours, making them easier to spot during play."
+      },
+      "SpellComponentWarnings": {
+        "Name": "Spell Component Warnings",
+        "Hint": "Warn when a spell is cast without a component it needs. The spell is still cast. Verbal: the caster has the Silenced status. Material: a character casts a spell whose materials have no cost without a spellcasting focus equipped or a component pouch carried, so needs the materials themselves; any equipped item marked Focus counts, whichever class it suits, and spells cast through an item or an innate feature, and NPCs, aren't checked. Somatic components aren't checked, as D&D 5e doesn't track what a creature holds."
       },
       "FadeUnprepared": {
         "Name": "Fade Unprepared Spells",
@@ -38,7 +42,8 @@
       },
       "ChatButtonLabels": {
         "Name": "Chat Button Labels",
-        "Hint": "Fixes the small attack and damage buttons from dnd 6.0 update, adds words making them much easier to see and use."
+        "Hint": "Writes a label beside the small icon buttons D&D 5e 6.0 puts on compact chat cards, such as Attack and Damage, making them much easier to see and use.",
+        "Superseded": "Switched off while Carolingian UI is enabled: it labels these buttons itself. See Labeled card buttons in its chat message settings."
       },
       "OneTabActivities": {
         "Name": "One-Tab Activities",
@@ -49,28 +54,48 @@
         "Hint": "Colour-code items by rarity using familiar RPG-style colours, helping you identify valuable items more quickly."
       },
       "LockNaturals": {
-        "Name": "Natural 1s and 20s lock Hero Cards",
+        "Name": "Natural 1s and 20s Lock Hero Cards",
         "Hint": "Prevent Hero Cards from being played on natural 1s and natural 20s. Disable this setting to allow Advantage and Inspiration to affect those rolls. Natural 1s are always final, and can't be rerolled by Lucky, Indomitable, or Relentless."
       },
       "MarkNaturals": {
-        "Name": "Ring natural 1s and 20s",
+        "Name": "Ring Natural 1s and 20s",
         "Hint": "Clearly marks natural 20s in gold and natural 1s in red across chat, including attacks, checks, saves, spell and feature card rolls, and roll request results."
       },
       "NaturalSaves": {
-        "Name": "Natural 1s and 20s on saves against damage",
-        "Hint": "Natural 20 on a saving throw against a spell's or feature's damage means no damage is taken. A natural 1 deals the maximum possible damage instead, treating every damage die as though it rolled its highest value (for example, 36 from 6d6), and ignoring any resistances or immunities. The Apply tray is automatically populated with these results, but the GM remains free to adjust them before applying damage."
+        "Name": "Natural 1s and 20s on Saves against Damage",
+        "Hint": "A natural 20 on a saving throw against a spell's or feature's damage means no damage is taken. A natural 1 deals the maximum possible damage instead, treating every damage die as though it rolled its highest value (for example, 36 from 6d6), and ignoring any resistances or immunities. The Apply tray is automatically populated with these results, but the GM remains free to adjust them before applying damage."
       },
       "NaturalSaveOutcomes": {
-        "Name": "Natural 1s and 20s on all saves",
+        "Name": "Natural 1s and 20s on All Saves",
         "Hint": "A natural 20 on a saving throw made against a DC always succeeds, and a natural 1 always fails, whatever the total: saves against spells and features, concentration saves, and saves on roll request cards. Death saves keep D&D 5e's own rules. Turn it off to judge every save by its total alone."
       },
       "NaturalInitiative": {
-        "Name": "Natural 1s and 20s on initiative",
+        "Name": "Natural 1s and 20s on Initiative",
         "Hint": "A natural 20 on an initiative roll puts that creature first in the initiative order, above any higher total. A natural 1 puts it last, below any lower total. Each keeps the initiative it rolled, which still orders several natural 20s, or several natural 1s, among themselves. Turn it off to order everyone by their totals alone."
       },
       "NaturalChecks": {
-        "Name": "Natural 1s and 20s on checks",
+        "Name": "Natural 1s and 20s on Checks",
         "Hint": "A natural 20 on an ability check, skill check or tool check made against a DC always succeeds, and a natural 1 always fails, whatever the total. It counts on roll request cards, where a plain d20 is judged the same way, and on any check D&D 5e rolls against a DC. Turn it off to judge every check by its total alone."
+      },
+      "HeavyWeapons": {
+        "Name": "Heavy Weapon Disadvantage",
+        "Hint": "An attack with a Heavy weapon starts at disadvantage when its wielder can't handle it, by the rules D&D 5e is set to use. Under the 2024 rules, that's a melee weapon wielded with less than 13 Strength, or a ranged weapon with less than 13 Dexterity. Under the 2014 rules, it's any Heavy weapon wielded by a Small or Tiny creature. It counts as one more source of disadvantage, so advantage from an effect cancels it and an effect that prevents disadvantage stops it. The roll dialog still lets the player change it. While Midi-QOL is active, it applies this rule itself instead. Turn it off to leave Heavy as a label only, as D&D 5e does."
+      },
+      "LoadingWeapons": {
+        "Name": "Loading Weapon Warning",
+        "Hint": "A Loading weapon fires only one piece of ammunition per action, bonus action or reaction. A second attack with the same weapon in the same combat turn shows a warning, but is still rolled, since the module can't tell which of those each attack used. Crossbow Expert ignores Loading on crossbows. Turn it off for no warning."
+      },
+      "ReloadWeapons": {
+        "Name": "Reload Weapon Shots",
+        "Hint": "A Reload weapon's shots are counted with its Limited Uses, and each attack roll spends one. An attack with no shots left isn't rolled; you're offered to reload instead. A Reload weapon with no Limited Uses is offered to be set up after its first attack. Turn it off to stop counting shots."
+      },
+      "LanceDisadvantage": {
+        "Name": "Lance Disadvantage",
+        "Hint": "An attack with the 2014 Lance, marked Special, starts at disadvantage against a target within 5 feet. It needs one target, with both tokens on the scene. The 2024 Lance has no such rule. The roll dialog still lets the player change it. Turn it off to leave the Lance as D&D 5e has it."
+      },
+      "Flanking": {
+        "Name": "Flanking",
+        "Hint": "The Dungeon Master's Guide's optional flanking rule. A creature and an ally both beside an enemy, on opposite sides or corners of its space, have advantage on melee attacks against it. Allies share the attacker's token disposition, and one that's incapacitated or dead doesn't count. It needs one target and a square grid. Like the other rules here, it's one more source of advantage, and the roll dialog still lets the player change it. While Midi-QOL's own flanking is turned on, it's left to Midi-QOL."
       },
       "NaturalRollOff": {
         "Name": "Natural 1s and 20s in a Roll-Off",
@@ -81,15 +106,15 @@
         "Hint": "Briefly display Hero Card artwork when a card is played, creating a more cinematic experience for everyone at the table."
       },
       "ShowDCDefault": {
-        "Name": "Show the DC to players by default",
+        "Name": "Show the DC to Players by Default",
         "Hint": "Decides whether players can see the DC by default when you create a roll request. You can override it for any request. Hiding the DC removes it from the chat card."
       },
       "DefaultDC": {
-        "Name": "DC by default",
+        "Name": "Default DC",
         "Hint": "The DC each roll starts with when you open the request window. Leave it blank for none, so you set a DC only when you want one, there or later from the card."
       },
       "TeamScoring": {
-        "Name": "Team Challenge scoring by default",
+        "Name": "Default Team Challenge Scoring",
         "Hint": "How a Team Challenge's rolls are scored when you open the request window. You can change it for any request."
       },
       "AttachRolls": {
@@ -127,14 +152,19 @@
       "New": {
         "DiceSoNice": "Request cards wait for Dice So Nice's dice to land before showing a roll's result.",
         "Versus": "Team vs Team keeps the NPCs' rolls hidden from players until you click Show NPC rolls on the card.",
-        "DefaultDC": "DCs in the request window start blank. Set your own starting DC with DC by default, under Roll Requests.",
+        "DefaultDC": "DCs in the request window start blank. Set your own starting DC with Default DC, under Roll Requests.",
         "Cards": "This card: a welcome for new worlds, and a short note like it when an update adds features.",
         "BlindRoll": "Blind GM Roll is a third Roll Visibility in the request window: only you see the results.",
         "ShownDC": "A public Standard Roll with Show DC to Players ticked shows players who passed straight away.",
-        "NaturalInitiative": "A natural 20 on initiative goes first in the initiative order and a natural 1 goes last, whatever their totals. Turn it off with Natural 1s and 20s on initiative, under Dice Rolling.",
-        "NaturalChecks": "A natural 20 on a check made against a DC always succeeds and a natural 1 always fails, whatever the total. Turn it off with Natural 1s and 20s on checks, under Dice Rolling.",
+        "NaturalInitiative": "A natural 20 on initiative goes first in the initiative order and a natural 1 goes last, whatever their totals. Turn it off with Natural 1s and 20s on Initiative, under Dice Rolling.",
+        "NaturalChecks": "A natural 20 on a check made against a DC always succeeds and a natural 1 always fails, whatever the total. Turn it off with Natural 1s and 20s on Checks, under Dice Rolling.",
         "NaturalRollOff": "In a Roll-Off, a natural 20 wins outright and a natural 1 loses, whatever the totals. Turn it off with Natural 1s and 20s in a Roll-Off, under Dice Rolling.",
-        "NaturalSaveOutcomes": "A natural 20 on any saving throw made against a DC always succeeds and a natural 1 always fails, whatever the total. Turn it off with Natural 1s and 20s on all saves, under Dice Rolling."
+        "NaturalSaveOutcomes": "A natural 20 on any saving throw made against a DC always succeeds and a natural 1 always fails, whatever the total. Turn it off with Natural 1s and 20s on All Saves, under Dice Rolling.",
+        "HeavyWeapons": "Attacks with a Heavy weapon start at disadvantage when the wielder can't handle it, by your world's 2014 or 2024 rules. Turn it off with Heavy Weapon Disadvantage, under Dice Rolling.",
+        "LoadingWeapons": "A second attack in a turn with the same Loading weapon shows a warning. Turn it off with Loading Weapon Warning, under Dice Rolling.",
+        "ReloadWeapons": "Reload weapons count their shots with their Limited Uses, and offer to reload when empty. Turn it off with Reload Weapon Shots, under Dice Rolling.",
+        "Flanking": "Turn on Flanking, under Dice Rolling, for the Dungeon Master's Guide's optional rule: advantage on melee attacks against an enemy you and an ally stand on opposite sides of.",
+        "SpellComponents": "Turn on Spell Component Warnings, under Gameplay Enhancements, to warn when a spell is cast while Silenced, or without a spellcasting focus or component pouch."
       },
       "SettingsTitle": "Worth a look before your players start",
       "Guide": "Read the GM guide"
@@ -154,7 +184,7 @@
     "Cards": {
       "NoneLeft": "You have used all of your Hero Cards. They will refresh after your next long rest.",
       "ChooseFromSheet": "Choose a Hero Card to play. Once used, it remains unavailable until your next long rest.",
-      "ChooseOnRoll": "Choose a Hero Card to enhance this roll. The card will be spent until your next long rest",
+      "ChooseOnRoll": "Choose a Hero Card to enhance this roll. The card will be spent until your next long rest.",
       "NextRollAdvantage": "{name}'s next attack roll, ability check, or saving throw will be made with advantage.",
       "ButtonTooltip": "Use a Hero Card on this roll",
       "Button": "Hero Card",
@@ -178,6 +208,21 @@
         "DivineAdvantage": "rolled with advantage ({first} and {second}), keeping {total}",
         "CancelDisadvantage": "cancelled disadvantage: {before} → {after}",
         "Advantage": "rolled with advantage ({first} and {second}): {before} → {after}"
+      }
+    },
+    "SpellComponents": {
+      "Verbal": "{name} is Silenced, so can't speak {spell}'s verbal component.",
+      "Material": "{name} has no spellcasting focus equipped and no component pouch, so needs {spell}'s material components to cast it."
+    },
+    "Weapons": {
+      "LoadingWarning": "{name} has the Loading property and has already fired this turn. It fires only one piece of ammunition per action, bonus action or reaction.",
+      "Reload": {
+        "Empty": "{name} is out of shots. Reloading it takes an action. Reload it now?",
+        "Reload": "Reload",
+        "Reloaded": "{name} is reloaded, with {shots} shots. Roll the attack again.",
+        "SetupHint": "{name} has the Reload property. How many shots does it fire before it must be reloaded? Its shots are kept as its Limited Uses, and this attack counts as the first. Cancel to not count them; you won't be asked again.",
+        "Shots": "Shots",
+        "Setup": "Count Shots"
       }
     },
     "Indomitable": {

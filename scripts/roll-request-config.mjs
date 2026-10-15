@@ -498,9 +498,10 @@ export default class RollRequestConfig extends HandlebarsApplicationMixin(Applic
 /* -------------------------------------------- */
 
 /**
- * Actors the GM might ask to roll: any asked for by name, those of the selected tokens, the player characters, the
- * members of the party and other groups, the combatants, then the scene's other tokens. Past those asked for by name,
- * each group is in order of name, so the list doesn't change with the order the world happens to hold them in.
+ * Actors the GM might ask to roll: any the window was opened for, those of the selected tokens, the player characters,
+ * the members of the party and other groups, the combatants, then the scene's other tokens. Past those the window was
+ * opened for, each group is in order of name, so the list doesn't change with the order the world happens to hold them
+ * in.
  * @param {string[]} [uuids]  Actors to offer first, such as the one who played a Divine Intervention card.
  * @returns {Actor5e[]}
  */

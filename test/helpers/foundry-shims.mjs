@@ -49,6 +49,9 @@ globalThis.foundry = {
   }
 };
 
+// Foundry's own token dispositions (common/constants.mjs).
+globalThis.CONST = { TOKEN_DISPOSITIONS: { SECRET: -2, HOSTILE: -1, NEUTRAL: 0, FRIENDLY: 1 } };
+
 globalThis.CONFIG = {
   Dice: { D20Roll: class {}, BasicRoll: class {}, DamageRoll: class {} },
   DND5E: {
@@ -102,6 +105,8 @@ let messages = new MessageLog();
 globalThis.game = {
   user: { isGM: true },
   settings: { get: (_scope, key) => settingValues.get(key) },
+  // The module itself, which names the speaker of its messages.
+  modules: new Map([["sogrom-table-tools", { id: "sogrom-table-tools", title: "Sogrom's Table Tools", active: true }]]),
   i18n: {
     lang: "en",
     localize,

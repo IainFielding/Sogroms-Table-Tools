@@ -36,7 +36,7 @@ tankard to open the request window. After an update that adds features, you get 
 A patch release says nothing. Turn the cards off with **Welcome and What's New Cards**, under
 [Gameplay Enhancements](#gameplay-enhancements).
 
-<img src="images/gm-welcome.webp" alt="The welcome card: where to find things, with a Hero Cards link and a tankard button, what's new in 1.0.1, and buttons for Hero Cards, Dice Rolling, Roll Requests and Gameplay Enhancements" width="300">
+<img src="images/gm-welcome.webp" alt="The welcome card: where to find things, with a Hero Cards link and a tankard button, what's new in 1.1.0, and buttons for Hero Cards, Dice Rolling, Roll Requests and Gameplay Enhancements" width="300">
 
 The compendiums sit in a **Sogrom's Table Tools** folder in the Compendium sidebar. Players can view them.
 
@@ -60,8 +60,8 @@ can open them, and each setting applies to the whole world.
 
 | Setting | Default | What it does |
 |---|---|---|
-| **Natural 1s and 20s lock Hero Cards** | On | No card can be played on a roll whose d20 shows a natural 1 or 20. Turn it off to allow Advantage and Inspiration on them. Either way, Lucky can't be played on a natural 20, and nothing rerolls a natural 1. |
-| **Show played cards on screen** | On | A played card's art appears in the middle of the screen for everyone who can see the roll. Chat keeps a record either way. |
+| **Natural 1s and 20s Lock Hero Cards** | On | No card can be played on a roll whose d20 shows a natural 1 or 20. Turn it off to allow Advantage and Inspiration on them. Either way, Lucky can't be played on a natural 20, and nothing rerolls a natural 1. |
+| **Show Played Cards on Screen** | On | A played card's art appears in the middle of the screen for everyone who can see the roll. Chat keeps a record either way. |
 
 ### Dice Rolling
 
@@ -69,12 +69,19 @@ can open them, and each setting applies to the whole world.
 
 | Setting | Default | What it does |
 |---|---|---|
-| **Ring natural 1s and 20s** | On | A roll whose d20 shows a natural 20 is ringed in gold in chat, and a natural 1 in red: checks, saving throws and attacks, a save summarised inside the card of the spell that called for it, and a result on a request card. Turn it off for plain totals. |
-| **Natural 1s and 20s on checks** | On | A natural 20 on an ability check, skill check or tool check made against a DC always succeeds, and a natural 1 always fails, whatever the total. It counts on request cards, where a plain d20 is judged the same way: in a Standard Roll, a Skill Challenge, and for each roll a Team Challenge judges against its DC. It also counts on any check D&D 5e rolls against a DC, such as one asked for from a journal. Turn it off to judge every check by its total alone. |
-| **Natural 1s and 20s on all saves** | On | A natural 20 on a saving throw made against a DC always succeeds, and a natural 1 always fails, whatever the total: saves against spells and features, concentration saves, and saves on request cards. D&D 5e then treats the save that way throughout: a natural 20 under the DC is shown as saved and starts at the damage its spell or feature deals on a save, usually half, and a natural 1 over it can break concentration or be turned by a Legendary Resistance. With **Natural 1s and 20s on saves against damage** on as well, the natural 20 takes no damage and the natural 1 the maximum. Death saves keep D&D 5e's own rules. Turn it off to judge every save by its total alone. |
-| **Natural 1s and 20s on saves against damage** | On | When a spell or feature calls for a save and deals damage, a natural 20 on the save takes no damage, and a natural 1 takes the damage's maximum, every die at its highest (36 from 6d6), ignoring resistances and immunities. Each starts that way in the damage's **Apply** tray, where you can still change it. Turn it off for D&D 5e's own rules. |
+| **Ring Natural 1s and 20s** | On | A roll whose d20 shows a natural 20 is ringed in gold in chat, and a natural 1 in red: checks, saving throws and attacks, a save summarised inside the card of the spell that called for it, and a result on a request card. Turn it off for plain totals. |
+| **Natural 1s and 20s on Checks** | On | A natural 20 on an ability check, skill check or tool check made against a DC always succeeds, and a natural 1 always fails, whatever the total. It counts on request cards, where a plain d20 is judged the same way: in a Standard Roll, a Skill Challenge, and for each roll a Team Challenge judges against its DC. It also counts on any check D&D 5e rolls against a DC, such as one asked for from a journal. Turn it off to judge every check by its total alone. |
+| **Natural 1s and 20s on All Saves** | On | A natural 20 on a saving throw made against a DC always succeeds, and a natural 1 always fails, whatever the total: saves against spells and features, concentration saves, and saves on request cards. D&D 5e then treats the save that way throughout: a natural 20 under the DC is shown as saved and starts at the damage its spell or feature deals on a save, usually half, and a natural 1 over it can break concentration or be turned by a Legendary Resistance. With **Natural 1s and 20s on Saves against Damage** on as well, the natural 20 takes no damage and the natural 1 the maximum. Death saves keep D&D 5e's own rules. Turn it off to judge every save by its total alone. |
+| **Natural 1s and 20s on Saves against Damage** | On | When a spell or feature calls for a save and deals damage, a natural 20 on the save takes no damage, and a natural 1 takes the damage's maximum, every die at its highest (36 from 6d6), ignoring resistances and immunities. Each starts that way in the damage's **Apply** tray, where you can still change it. Turn it off for D&D 5e's own rules. |
 | **Natural 1s and 20s in a Roll-Off** | On | In a [Roll-Off](#roll-off) between two d20 rolls, a natural 20 wins outright, against any total but another natural 20, and a natural 1 loses to anything but another natural 1. Two natural 20s, or two natural 1s, are decided by their totals. Turn it off for the higher total to win every time. |
-| **Natural 1s and 20s on initiative** | On | A creature whose initiative roll shows a natural 20 goes first in the initiative order, above any higher total, and one whose roll shows a natural 1 goes last, below any lower total. Each keeps the initiative it rolled, shown in gold or red in the combat tracker, and several natural 20s, or several natural 1s, are ordered among themselves by it. A Hero Card or a bonus that changes the roll's d20 moves the creature to match, and an initiative you type in has no natural. Turn it off to order everyone by their totals alone. |
+| **Natural 1s and 20s on Initiative** | On | A creature whose initiative roll shows a natural 20 goes first in the initiative order, above any higher total, and one whose roll shows a natural 1 goes last, below any lower total. Each keeps the initiative it rolled, shown in gold or red in the combat tracker, and several natural 20s, or several natural 1s, are ordered among themselves by it. A Hero Card or a bonus that changes the roll's d20 moves the creature to match, and an initiative you type in has no natural. Turn it off to order everyone by their totals alone. |
+| **Heavy Weapon Disadvantage** | On | An attack with a Heavy weapon starts at disadvantage when its wielder can't handle it, by the rules set in D&D 5e's **Rules Version**. Under the 2024 rules, that's a melee weapon wielded with a Strength score under 13, or a ranged weapon with a Dexterity score under 13. Under the 2014 rules, it's any Heavy weapon wielded by a Small or Tiny creature. It counts for characters and NPCs alike. It's added to the attack as one more source of disadvantage, alongside those from the character's effects, and D&D 5e resolves them together: advantage from an effect cancels it out, an effect that says the attack can't have disadvantage stops it, and one that forces a mode wins. When that leaves the attack at disadvantage, the roll dialog opens with **Disadvantage** chosen, and the player can still change it there. While Midi-QOL is active, it's left to Midi-QOL, which applies the same rule and lets effects excuse a creature from it. Turn it off to leave Heavy as a label only, as D&D 5e does. |
+| **Loading Weapon Warning** | On | A Loading weapon fires only one piece of ammunition per action, bonus action or reaction. When a creature in the combat attacks a second time with the same Loading weapon in the same turn, whoever rolls is warned, but the attack is still rolled: the module can't tell whether it was made with an action, a bonus action or a reaction. Out of combat, nothing is checked. A creature with a feat named Crossbow Expert (identifier `crossbow-expert`) ignores Loading on hand, light and heavy crossbows. |
+| **Reload Weapon Shots** | On | A Reload weapon's shots are kept as its own **Limited Uses**, so Reload 6 is 6 uses, and each attack roll spends one, as an attack with ammunition spends a piece of it. An attack activity set to spend the weapon's uses already spends one each time it's used, so it's left to do that. When the weapon is empty, the attack isn't rolled. Instead, a dialog offers to reload it, which refills its uses, and the attack can then be rolled again. A Reload weapon with no Limited Uses is offered to be set up after its first attack, starting from the number in its description, such as "Reload 6", when there is one. That attack counts as its first shot. If you cancel, you aren't asked again for that weapon; set its Limited Uses on its sheet instead. Give the uses a recovery there if you'd like them to refill on a rest. |
+| **Lance Disadvantage** | On | An attack with the 2014 Lance, marked Special, starts at disadvantage against a target within 5 feet, measured from the nearest spaces the two tokens occupy. It needs one targeted token on the same scene as the attacker's. The 2024 Lance has no such rule, and isn't marked Special. Like Heavy, it's one more source of disadvantage, resolved with the character's own, and the player can still change the roll in its dialog. |
+| **Flanking** | Off | The Dungeon Master's Guide's optional flanking rule. A creature and an ally both beside an enemy, on opposite sides or opposite corners of its space, have advantage on melee attacks against it, weapon or spell. As the guide draws it, a line between the centres of the two creatures' spaces must pass through opposite sides or corners of the enemy's space; a creature larger than one space flanks if any of its spaces does. Allies are tokens with the attacker's disposition, friendly or hostile, and an ally that's incapacitated (paralysed, petrified, stunned and unconscious included) or dead doesn't count. It needs one targeted token on the same scene as the attacker's, and a square grid: gridless and hex scenes are left alone. Like the weapon rules, it's one more source of advantage, resolved with the character's own, and the player can still change the roll in its dialog. It's worked out once, as the attack is rolled, so it costs nothing while tokens move. While Midi-QOL's own flanking option is turned on, flanking is left to Midi-QOL. |
+
+The **Firearm** property stays a label only: the 2014 rules' firearm proficiency is given, like any other, on the character. **Special** does nothing except on the 2014 Lance, as its rules are in each weapon's description.
 
 ### Roll Requests
 
@@ -82,27 +89,28 @@ can open them, and each setting applies to the whole world.
 
 | Setting | Default | What it does |
 |---|---|---|
-| **DC by default** | Blank | The DC each roll starts with when you open the request window. Leave it blank for none; you can still set or change the DC for each request, or later from the card. |
-| **Show the DC to players by default** | Off | Whether **Show DC to Players** starts ticked in the request window. You can still change it for each request. |
-| **Team Challenge scoring by default** | Average of the rolls | How a Team Challenge is scored when you open the request window. You can still change it for each request. See [Team Challenge](#team-challenge). |
-| **Attach rolls to the request card** | On | The rolls made for a request show on its card rather than as messages of their own, as D&D 5e does for an item's saves. Click a result to see its dice. |
-| **Pop up roll requests for players** | Off | Opens a window for each player with a character in a request, with a Roll button for each of their characters. |
-| **Pop up roll requests for the GM** | Off | Opens a window for you when a request includes NPCs, or any actor no player owns. |
-| **Ask for death saves** | Off | Posts a death save request at the start of a dying character's turn in combat. See [Death saves](#death-saves). |
+| **Default DC** | Blank | The DC each roll starts with when you open the request window. Leave it blank for none; you can still set or change the DC for each request, or later from the card. |
+| **Show the DC to Players by Default** | Off | Whether **Show DC to Players** starts ticked in the request window. You can still change it for each request. |
+| **Default Team Challenge Scoring** | Average of the rolls | How a Team Challenge is scored when you open the request window. You can still change it for each request. See [Team Challenge](#team-challenge). |
+| **Attach Rolls to Request Cards** | On | The rolls made for a request show on its card rather than as messages of their own, as D&D 5e does for an item's saves. Click a result to see its dice. |
+| **Pop Up Roll Requests for Players** | Off | Opens a window for each player with a character in a request, with a Roll button for each of their characters. |
+| **Pop Up Roll Requests for the GM** | Off | Opens a window for you when a request includes NPCs, or any actor no player owns. |
+| **Automatic Death Save Requests** | Off | Posts a death save request at the start of a dying character's turn in combat. See [Death saves](#death-saves). |
 
 ### Gameplay Enhancements
 
-Optional changes to tokens and actor sheets. Each is off until you turn it on. The window also holds **Welcome and
+Optional changes to tokens, actor sheets and spellcasting. Each is off until you turn it on. The window also holds **Welcome and
 What's New Cards**, which starts on.
 
-<img src="images/gm-settings-world-scripts.webp" alt="The Gameplay Enhancements window, with its six settings: the five enhancements unticked, and Welcome and What's New Cards ticked" width="420">
+<img src="images/gm-settings-world-scripts.webp" alt="The Gameplay Enhancements window, with its seven settings: the six enhancements unticked, and Welcome and What's New Cards ticked" width="420">
 
 | Setting | Default | What it does |
 |---|---|---|
 | **Bloodied Token Tint** | Off | When D&D 5e marks a creature Bloodied, its token is tinted red and its token ring's background turns red. A token that's already Bloodied when you turn this on changes the next time it becomes Bloodied. |
 | **Fade Unprepared Spells** | Off | On actor sheets, spells of level 1 or higher that could be prepared but aren't are faded. Cantrips, always-prepared spells, and spells from items or at-will and innate sections stay as they are. |
-| **Chat Button Labels** | Off | On compact chat cards, each icon button shows its name beside its icon, so you don't have to hover over it to see what it does. |
+| **Chat Button Labels** | Off | On compact chat cards, each icon button shows its name beside its icon, so you don't have to hover over it to see what it does. Switched off while Carolingian UI is enabled, which labels them itself: see [Other modules](#other-modules). |
 | **One-Tab Activities** | Off | An activity's **Identity**, **Activation** and **Effect** tabs are laid out side by side in one wide window, without their hints. Handy when you're making a lot of content. |
+| **Spell Component Warnings** | Off | Warns whoever casts a spell when it needs a component they can't provide. The spell is still cast. **Verbal:** the caster, character or NPC, has D&D 5e's **Silenced** status, from the token or an effect. **Material:** a character casts a spell whose material components have no cost without a spellcasting focus equipped or a component pouch carried, so needs the materials themselves. A focus is any equipment, weapon or tool marked **Focus**, and counts only while equipped; which kind of focus suits the character's class isn't checked. A component pouch counts while it's carried, equipped or not. Spells with costly materials, spells cast through an item such as a staff, innate and at-will spells, and NPCs aren't checked for materials. **Somatic** components aren't checked, as D&D 5e doesn't track what a creature holds in its hands. |
 | **Item Rarity Colours** | Off | Tints each item row on actor sheets by its rarity: green for uncommon, blue for rare, purple for very rare, orange for legendary and gold for artifact. |
 | **Welcome and What's New Cards** | On | Whispers the GMs a welcome card the first time the module runs in a world, and a short note of what's new after an update that adds features. See [Setting up](#setting-up). |
 
@@ -131,7 +139,7 @@ buttons.
 1. **Kind of roll.** Pick one of the six kinds described below. The fields below change to suit it, and anything
    you've filled in carries over when you switch.
 2. **Rolls.** Choose the roll: a plain die (a d20 by default, or a d6, d8, d10, d12 or d100), any skill or tool check,
-   ability check, or saving throw. The DC starts blank each time you open the window, or as the **DC by default**
+   ability check, or saving throw. The DC starts blank each time you open the window, or as the **Default DC**
    setting if you've set one: set one, or leave it blank for none and set it later from the card. A Skill Challenge, and a Team Challenge not scored by its average, need
    one before you can send them.
 3. **Who rolls.** The actors of any tokens you have selected are ticked for you; otherwise the player characters
@@ -294,7 +302,7 @@ Rolls already made are scored again against the new DC.
 **Cards on requested rolls.** Requested rolls are ordinary D&D 5e rolls, so players can play Hero Cards on them,
 from the tankard button beside their result. The card updates as soon as a card changes a roll.
 
-**Attached rolls.** With **Attach rolls to the request card** on (the default), the rolls don't get chat messages of
+**Attached rolls.** With **Attach Rolls to Request Cards** on (the default), the rolls don't get chat messages of
 their own. Click a result to see its dice. Notes on any cards played show under the row.
 
 ### Who can roll, and rolling again
@@ -304,7 +312,7 @@ their own. Click a result to see its dice. Notes on any cards played show under 
   counts.
 - **To let someone roll again,** click their result on the card to open its dice, then click **Roll again** and
   confirm. Their roll is deleted and their **Roll** button comes back. A card played on that roll stays spent. With
-  **Attach rolls to the request card** off, you can also delete the roll's own chat message. Players can't delete a
+  **Attach Rolls to Request Cards** off, you can also delete the roll's own chat message. Players can't delete a
   roll made for a request, so they can't throw away a bad roll.
 
 <img src="images/gm-roll-again.webp" alt="Aria's failed roll of 4 opened on the request card, showing its dice and a Roll Again button" width="300">
@@ -323,10 +331,10 @@ their own. Click a result to see its dice. Notes on any cards played show under 
 
 Two settings, both off by default, open a window when a request is posted:
 
-- **Pop up roll requests for players** gives each player a window with a **Roll** button for each of their
+- **Pop Up Roll Requests for Players** gives each player a window with a **Roll** button for each of their
   characters in the request. A player who joins within 30 minutes of a request they still need to roll for gets its
   window then.
-- **Pop up roll requests for the GM** does the same for you, for NPCs and any other actor no player owns.
+- **Pop Up Roll Requests for the GM** does the same for you, for NPCs and any other actor no player owns.
 
 <img src="images/popup-gm.webp" alt="The GM's Roll Request window for a Wisdom check, DC 12, with a Roll button for the Goblin" width="380">
 
@@ -334,7 +342,7 @@ Each window closes once everything in it is rolled. The chat card works either w
 
 ### Death saves
 
-With **Ask for death saves** on, a **Death Save** request is posted at the start of a creature's turn in combat if it's
+With **Automatic Death Save Requests** on, a **Death Save** request is posted at the start of a creature's turn in combat if it's
 at 0 hit points and dying. It's an ordinary request, for that one creature, so it opens a pop-up under the two settings
 above: the player's window for their character, and yours only for a creature no player owns. You can always roll it
 from the chat card.
@@ -371,19 +379,65 @@ Sogrom's Table Tools works alongside modules that change how D&D 5e rolls and sh
 - **RSReforged.** Its quick rolls draw an activity's attack, damage and formula rolls inside the activity's card. The
   Hero Card button, notes on cards played, and natural 1 and 20 rings appear there, and a feature's die shown there,
   such as Bardic Inspiration, can be added to a roll from the card's right-click menu. Damage applied with
-  RSReforged's own Apply buttons follows **Natural 1s and 20s on saves against damage**. RSReforged swaps Shift on a
+  RSReforged's own Apply buttons follows **Natural 1s and 20s on Saves against Damage**. RSReforged swaps Shift on a
   Roll button: a plain click rolls straight away, and Shift-click opens the roll window.
 - **Midi-QOL: partly supported.** Using the Hero Cards feature from the sheet opens the card chooser, as it does
   without Midi. When Midi rolls the saves and applies a spell's damage itself, a natural 20 on the save takes no damage
   and a natural 1 takes the damage's maximum past resistances and immunities, following **Natural 1s and 20s on saves
   against damage**. A feature's die that Midi shows on the feature's card, such as Bardic Inspiration, can be added to
   a roll from the card's right-click menu. Natural 1s and 20s on the saves Midi lists on its card are ringed. Midi judges
-  the saves it rolls itself by their totals, so **Natural 1s and 20s on all saves** doesn't change who it counts as
+  the saves it rolls itself by their totals, so **Natural 1s and 20s on All Saves** doesn't change who it counts as
   saved. For the same rule there, turn on Midi's own **Critical/Fumble always succeed/fail for saving throws**.
 
   What isn't supported: a card played after Midi has resolved a roll changes the roll in chat, but not the hits,
   saves or damage Midi has already worked out and applied. If you want cards to decide outcomes, set Midi's hit
   checking and damage application to manual, so the card can be played before the result is applied.
+- **Carolingian UI.** The request card, its pop-up, the card chooser and the request window keep their own look under
+  Carolingian UI's chat styles, fonts and colour themes, in its dark and light themes alike. Carolingian UI's hint
+  tooltips work in the request window: each hint is behind the **?** beside its setting. On its compact chat cards,
+  where an attack and its damage are rows inside the weapon's card, the Hero Card button is beside each row's title,
+  notes on cards played are under the row, and natural 1s and 20s are ringed. Natural 1s and 20s on initiative are
+  coloured in its combat tracker too.
+
+  Carolingian UI writes the labels on a chat card's buttons itself, so **Chat Button Labels** is switched off while it
+  is enabled, and greyed out in **Gameplay Enhancements**. Use **Labeled card buttons** in Carolingian UI's chat
+  message settings instead.
+
+  Its **Retroactive advantage buttons**, the arrows either side of a roll's total, change a roll after it was made,
+  as a Hero Card does. They work alongside the cards: a request card counts the changed roll, and a card played
+  afterwards works on the dice the arrows kept. They aren't Hero Cards, though. They cost nothing, they aren't held
+  back by **Lock natural 1s and 20s**, and the roll's own player can click them. If you want Hero Cards to be the only
+  way to change a roll, turn them off in Carolingian UI's chat message settings.
+
+  **Custom CSS.** Keeping that look means that, while Carolingian UI is enabled, an ordinary rule in its **Custom CSS**
+  field, or in any other custom CSS module, has no effect on the request card, the card windows or the played card
+  shown on screen. Without Carolingian UI, custom CSS reaches them as it always has. There are two ways to restyle
+  them with it enabled:
+
+  - **Change the theme's colours and fonts.** They are CSS variables, which still take a plain rule. This turns the
+    teal accents purple and the headings into Georgia:
+
+    ```css
+    .chat-message .stt-request,
+    .stt-card-dialog,
+    .stt-played-card {
+      --cc-open: #a070e0;
+      --cc-font-heading: Georgia, serif;
+    }
+    ```
+
+    The variables are `--cc-open` (teal accents), `--cc-settled` and `--cc-settled-bright` (brass), `--cc-bg`,
+    `--cc-panel-2`, `--cc-line`, `--cc-line-2`, `--cc-text`, `--cc-muted`, `--cc-bright`, `--cc-fail`,
+    `--cc-font-heading` and `--cc-font-body`. The full list is at the top of the card windows' styles, in
+    `styles/hero-cards.css`.
+  - **Change anything else.** Mark the declaration `!important`, and start the selector as below, with `:not(#\#)`
+    four times, so it outranks the rule that protects the theme:
+
+    ```css
+    body.crlngn-ui:not(#\#):not(#\#):not(#\#):not(#\#) .stt-request h3 {
+      font-size: 18px !important;
+    }
+    ```
 
 ## Macros
 

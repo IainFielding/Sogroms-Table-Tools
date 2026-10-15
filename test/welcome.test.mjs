@@ -57,7 +57,6 @@ describe("postWelcomeIfDue", () => {
     settingValues.set("welcomeVersion", "");
     game.user = { isActiveGM: true, isGM: true };
     game.settings.set = async (_scope, key, value) => settingValues.set(key, value);
-    game.modules = { get: () => ({ title: "Sogrom's Table Tools" }) };
     foundry.applications.handlebars = { renderTemplate: async (_path, data) => {
       rendered.push(data);
       return "<div></div>";
