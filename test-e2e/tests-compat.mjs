@@ -8,7 +8,9 @@
  */
 
 import { MODULE_ID } from "./config.mjs";
-import { assert, assertEqual, forceDice, postRequest, test, waitFor, waitForCard, waitForRoll } from "./lib/harness.mjs";
+import {
+  COMPAT, assert, assertEqual, forceDice, postRequest, test, waitFor, waitForCard, waitForRoll
+} from "./lib/harness.mjs";
 
 const d20 = n => [n, 20];
 
@@ -31,19 +33,71 @@ async function configureMidi(gm) {
  * Use Aria's Dagger attack as the player, as a click on the sheet would, and return the attack roll's message. If the
  * use only posts the item's card, as plain dnd5e does, its attack is then rolled as the card's Attack button would.
  * @param {import("./lib/session.mjs").Session} player
+ * @param {string} [name]  Another of Aria's weapons to attack with.
+ * @param {object} [options]
+ * @param {boolean} [options.rollFromCard=true]  Roll the attack from the item's card if the use doesn't roll it.
  * @returns {Promise<string|null>}
  */
-async function useDaggerAttack(player) {
-  return player.eval(async () => {
+async function useDaggerAttack(player, name = "Dagger", { rollFromCard = true } = {}) {
+  return player.eval(async ({ name, rollFromCard }) => {
     const before = new Set(game.messages.keys());
-    const activity = game.actors.getName("Aria").items.getName("Dagger").system.activities.find(a => a.type === "attack");
+    const activity = game.actors.getName("Aria").items.getName(name).system.activities.find(a => a.type === "attack");
     const fresh = type => game.messages.contents.find(m => !before.has(m.id) && (m.type === type));
     await activity.use({}, { configure: false }, {});
     for ( let i = 0; (i < 20) && !fresh("attack"); i++ ) await new Promise(r => setTimeout(r, 100));
-    if ( !fresh("attack") ) await activity.rollAttack({}, { configure: false });
+    if ( !fresh("attack") && rollFromCard ) await activity.rollAttack({}, { configure: false });
     await new Promise(r => setTimeout(r, 1000));
     return fresh("attack")?.id ?? null;
-  });
+  }, { name, rollFromCard });
+}
+
+/**
+ * Use one of Aria's weapons as the player, as a click on the sheet would, and return whether the attack roll had
+ * disadvantage. The roll is looked for on any card the use posts, since Midi-QOL rolls it onto its own card rather than
+ * a message of the attack type. Only if no module rolled it is it rolled as the card's Attack button would.
+ * @param {import("./lib/session.mjs").Session} player
+ * @param {string} name
+ * @returns {Promise<boolean|null>}  Null if no attack was rolled.
+ */
+function attackDisadvantage(player, name) {
+  return player.eval(async name => {
+    for ( let i = 0; (i < 50) && !game.actors.getName("Aria").items.getName(name); i++ ) {
+      await new Promise(r => setTimeout(r, 100));
+    }
+    const before = new Set(game.messages.keys());
+    const activity = game.actors.getName("Aria").items.getName(name).system.activities.find(a => a.type === "attack");
+    const rolled = () => game.messages.contents.filter(m => !before.has(m.id)).flatMap(m => m.rolls)
+      .find(r => r instanceof CONFIG.Dice.D20Roll);
+    await activity.use({}, { configure: false }, {});
+    const wait = game.modules.get("midi-qol")?.active ? 80 : 20;
+    for ( let i = 0; (i < wait) && !rolled(); i++ ) await new Promise(r => setTimeout(r, 100));
+    if ( !rolled() ) await activity.rollAttack({}, { configure: false });
+    return rolled()?.hasDisadvantage ?? null;
+  }, name);
+}
+
+/**
+ * Give Aria a weapon from dnd5e's SRD items, changed as given, as the GM.
+ * @param {import("./lib/session.mjs").Session} gm
+ * @param {string} name
+ * @param {object} [changes]
+ * @returns {Promise<string>}  The new item's ID.
+ */
+function giveWeapon(gm, name, changes = {}) {
+  return gm.eval(async ({ name, changes }) => {
+    const source = (await game.packs.get("dnd5e.items").getDocuments({ name }))[0];
+    const data = foundry.utils.mergeObject(game.items.fromCompendium(source), changes);
+    return (await game.actors.getName("Aria").createEmbeddedDocuments("Item", [data]))[0].id;
+  }, { name, changes });
+}
+
+/**
+ * Take an item back from Aria, as the GM.
+ * @param {import("./lib/session.mjs").Session} gm
+ * @param {string} id
+ */
+function takeItem(gm, id) {
+  return gm.eval(id => game.actors.getName("Aria").items.get(id)?.delete(), id);
 }
 
 /**
@@ -133,6 +187,68 @@ test("compat: Advantage played on an attack used from the sheet changes the roll
   await player.page.waitForTimeout(800);
   const shown = await shownTotals(player, id);
   assert(shown.some(t => t.includes(String(after.total))), `The new total ${after.total} isn't shown. Shown: ${shown.join(" | ")}`);
+});
+
+test("compat: a Heavy weapon used from the sheet attacks at disadvantage", async ({ gm, player }) => {
+  const id = await giveWeapon(gm, "Greatsword");
+  try {
+    await forceDice(player, [d20(8), d20(12), [3, 6], [3, 6]]);
+    const disadvantage = await attackDisadvantage(player, "Greatsword");
+    assert(disadvantage !== null, "No attack was rolled.");
+    assert(disadvantage, "The Greatsword's attack, with Strength 10, wasn't made at disadvantage.");
+  } finally {
+    await takeItem(gm, id);
+  }
+});
+
+// Midi-QOL applies the Heavy rule itself, and lets an effect excuse a creature from it, which only holds if this module
+// leaves Heavy to Midi-QOL.
+if ( COMPAT === "midi" ) {
+  test("compat: Heavy is left to Midi-QOL, whose effects can excuse a creature from it", async ({ gm, player }) => {
+    const id = await giveWeapon(gm, "Greatsword");
+    const effect = await gm.eval(async () => (await game.actors.getName("Aria").createEmbeddedDocuments("ActiveEffect", [{
+      name: "Mighty Grip", type: "base",
+      system: { changes: [{ key: "flags.midi-qol.fail.disadvantage.heavy", type: "override", value: "1", phase: "initial" }] }
+    }]))[0].id);
+    try {
+      // Without the effect, Midi-QOL gives the attack disadvantage, so the effect is shown to be what stops it.
+      await forceDice(player, [d20(8), d20(12), [3, 6], [3, 6]]);
+      await gm.eval(id => game.actors.getName("Aria").effects.get(id).update({ disabled: true }), effect);
+      assertEqual(await attackDisadvantage(player, "Greatsword"), true, "disadvantage without Midi-QOL's flag");
+      await gm.eval(id => game.actors.getName("Aria").effects.get(id).update({ disabled: false }), effect);
+      await waitFor(player, id => !game.actors.getName("Aria").effects.get(id)?.disabled, effect, "the flag to apply");
+      await forceDice(player, [d20(8), d20(12), [3, 6], [3, 6]]);
+      assertEqual(await attackDisadvantage(player, "Greatsword"), false, "disadvantage with Midi-QOL's flag");
+    } finally {
+      await gm.eval(id => game.actors.getName("Aria").effects.get(id)?.delete(), effect);
+      await takeItem(gm, id);
+    }
+  });
+}
+
+test("compat: a Reload weapon used from the sheet spends a shot, and isn't fired once empty", async ({ gm, player }) => {
+  const id = await giveWeapon(gm, "Dagger", { name: "Pistol", system: { properties: ["rel", "fir"], uses: { max: "1", spent: 0 } } });
+  const spent = () => gm.eval(id => game.actors.getName("Aria").items.get(id).system.uses.spent, id);
+  try {
+    await forceDice(player, [d20(8), [2, 4], [2, 4]]);
+    assert(await useDaggerAttack(player, "Pistol"), "No attack roll message was created.");
+    await waitFor(gm, id => game.actors.getName("Aria").items.get(id).system.uses.spent === 1, id, "a shot to be spent")
+      .catch(() => {});
+    assertEqual(await spent(), 1, "shots spent after one attack");
+
+    assertEqual(await useDaggerAttack(player, "Pistol", { rollFromCard: false }), null, "an attack with the Pistol empty");
+    const dialog = player.page.locator(".application.dialog", { hasText: "Pistol is out of shots" }).first();
+    await dialog.waitFor({ timeout: 10_000 });
+    await dialog.locator('button[data-action="no"]').click();
+    assertEqual(await spent(), 1, "shots spent after the empty attack");
+  } finally {
+    await player.eval(async () => {
+      for ( const app of foundry.applications.instances.values() ) {
+        if ( app.rendered && app.element?.textContent.includes("Pistol is out of shots") ) await app.close();
+      }
+    });
+    await takeItem(gm, id);
+  }
 });
 
 test("compat: a natural 20 check is ringed in gold", async ({ player }) => {

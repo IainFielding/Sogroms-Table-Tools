@@ -50,6 +50,8 @@ Give important rolls the spotlight they deserve. Critical successes and failures
 - Natural 1s and 20s stand out with distinctive red and gold highlights.
 - Critical save outcomes can deal maximum damage or avoid damage entirely.
 - A natural 20 on a check or a saving throw made against a DC always succeeds, and a natural 1 always fails.
+- Weapon properties have their rules: Heavy and the 2014 Lance start attacks at disadvantage, Loading warns of a second shot in a turn, and Reload counts a firearm's shots.
+- Optionally, warn when a spell is cast without a spellcasting focus or component pouch.
 - Add Bardic Inspiration, Cutting Words, and other feature dice directly from chat.
 
 

@@ -48,6 +48,15 @@ export const WHATS_NEW = [
       "STT.Welcome.New.NaturalRollOff",
       "STT.Welcome.New.NaturalInitiative"
     ]
+  },
+  {
+    version: "1.1.0",
+    lines: [
+      "STT.Welcome.New.HeavyWeapons",
+      "STT.Welcome.New.LoadingWeapons",
+      "STT.Welcome.New.ReloadWeapons",
+      "STT.Welcome.New.SpellFocus"
+    ]
   }
 ];
 

@@ -134,7 +134,7 @@ class DiceRollingSettings extends SettingsMenu {
 
   /** @override */
   static SETTINGS = ["markNaturals", "naturalChecks", "naturalSaveOutcomes", "naturalSaves", "naturalRollOff",
-    "naturalInitiative"];
+    "naturalInitiative", "heavyWeapons", "loadingWeapons", "reloadWeapons", "lanceDisadvantage"];
 }
 
 class RollRequestSettings extends SettingsMenu {
@@ -157,7 +157,7 @@ class WorldScriptSettings extends SettingsMenu {
 
   /** @override */
   static SETTINGS = ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities",
-    "welcomeCards"];
+    "spellFocusWarning", "welcomeCards"];
 }
 
 /* -------------------------------------------- */

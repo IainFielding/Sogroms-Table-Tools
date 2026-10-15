@@ -4,6 +4,26 @@ All notable changes to Sogrom's Table Tools.
 
 ## 1.1.0
 
+### New
+
+- **Heavy weapons have their rule.** An attack with a Heavy weapon starts at disadvantage when its wielder can't
+  handle it, by the rules D&D 5e is set to use: under the 2024 rules, a melee weapon with less than 13 Strength or a
+  ranged weapon with less than 13 Dexterity; under the 2014 rules, any Heavy weapon in a Small or Tiny creature's
+  hands. D&D 5e marks weapons Heavy but applies nothing for it. It's one more source of disadvantage, resolved with
+  those from the character's effects, so advantage cancels it and an effect that prevents disadvantage stops it. The
+  roll dialog still lets the player change it, and **Heavy Weapon Disadvantage**, under Dice Rolling, turns it off.
+- **Loading weapons warn of a second shot.** A second attack with the same Loading weapon in the same combat turn
+  shows a warning, and is still rolled. Crossbow Expert ignores Loading on crossbows. **Loading Weapon Warning**,
+  under Dice Rolling, turns it off.
+- **Reload weapons count their shots.** A Reload weapon's shots are kept as its Limited Uses, and each attack roll
+  spends one. An empty weapon's attack isn't rolled; a dialog offers to reload it instead. A Reload weapon without
+  Limited Uses is offered to be set up after its first attack, from the number in its description when there is
+  one. **Reload Weapon Shots**, under Dice Rolling, turns it off.
+- **The 2014 Lance has its rule.** Its attacks start at disadvantage against a target within 5 feet. **Lance
+  Disadvantage**, under Dice Rolling, turns it off.
+- **Spellcasting Focus Warning**, under Gameplay Enhancements and off until you turn it on, warns when a character
+  casts a spell whose materials have no cost without a spellcasting focus equipped or a component pouch carried.
+
 ### Changes
 
 - **Inspiration cards can no longer be played on initiative.** The 1d6, 1d8 and 1d10 Inspiration cards are offered on
@@ -20,6 +40,9 @@ All notable changes to Sogrom's Table Tools.
 - **Setting names in the GM guide match Foundry's.** Five settings were listed under older names.
 
 ### Other modules
+
+- **Midi-QOL applies the Heavy rule itself**, and lets effects excuse a creature from it, so **Heavy Weapon
+  Disadvantage** leaves Heavy to Midi-QOL while it's active.
 
 - **Carolingian UI is supported.** The request card, its pop-up, the card chooser and the request window keep their own
   look under Carolingian UI's chat styles, fonts and colour themes; before, the request card in chat lost its fonts and

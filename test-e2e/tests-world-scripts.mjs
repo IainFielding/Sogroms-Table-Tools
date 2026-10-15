@@ -11,7 +11,8 @@ const MENUS = {
   diceRolling: {
     id: "stt-settings-dice-rolling",
     settings: [
-      "markNaturals", "naturalChecks", "naturalSaveOutcomes", "naturalSaves", "naturalRollOff", "naturalInitiative"
+      "markNaturals", "naturalChecks", "naturalSaveOutcomes", "naturalSaves", "naturalRollOff", "naturalInitiative",
+      "heavyWeapons", "loadingWeapons", "reloadWeapons", "lanceDisadvantage"
     ]
   },
   rollRequests: {
@@ -20,7 +21,8 @@ const MENUS = {
   },
   worldScripts: {
     id: "stt-settings-world-scripts",
-    settings: ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities", "welcomeCards"]
+    settings: ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities", "spellFocusWarning",
+      "welcomeCards"]
   }
 };
 
@@ -126,7 +128,7 @@ test("settings menus: four buttons for the GM, each holding its own settings and
 
 test("settings menus: ticking a box and saving changes that setting, and only that one", async ({ gm }) => {
   const before = await gm.eval(moduleId => Object.fromEntries(
-    ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities"]
+    ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities", "spellFocusWarning"]
       .map(key => [key, game.settings.get(moduleId, key)])
   ), MODULE_ID);
   assert(Object.values(before).every(v => v === false), "A Gameplay Enhancement started on.");
@@ -140,7 +142,7 @@ test("settings menus: ticking a box and saving changes that setting, and only th
   await app.waitFor({ state: "detached", timeout: 5000 });
 
   const after = await gm.eval(moduleId => Object.fromEntries(
-    ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities"]
+    ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities", "spellFocusWarning"]
       .map(key => [key, game.settings.get(moduleId, key)])
   ), MODULE_ID);
   assertEqual(after, { ...before, rarityColours: true }, "Gameplay Enhancements after saving");
@@ -220,11 +222,12 @@ test("settings menus: the Default DC starts blank, saves a number, and clears ag
 
 test("world scripts: every one is off by default", async ({ gm }) => {
   const defaults = await gm.eval(moduleId => Object.fromEntries(
-    ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities"]
+    ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities", "spellFocusWarning"]
       .map(key => [key, game.settings.settings.get(`${moduleId}.${key}`).default])
   ), MODULE_ID);
   assertEqual(defaults, {
-    bloodiedTint: false, fadeUnprepared: false, rarityColours: false, chatButtonLabels: false, oneTabActivities: false
+    bloodiedTint: false, fadeUnprepared: false, rarityColours: false, chatButtonLabels: false, oneTabActivities: false,
+    spellFocusWarning: false
   }, "defaults");
 });
 
