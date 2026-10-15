@@ -507,7 +507,7 @@ function onPreRollD20Test(config) {
  */
 function onPostD20TestRollConfiguration(rolls, config) {
   const actor = getSubjectActor(config.subject);
-  if ( rolls.length && actor?.getFlag(MODULE_ID, "advantage") ) actor.unsetFlag(MODULE_ID, "advantage");
+  if ( rolls.length && actor?.getFlag(MODULE_ID, "advantage") ) actor.unsetFlag(MODULE_ID, "advantage").catch(reportError);
 }
 
 /* -------------------------------------------- */

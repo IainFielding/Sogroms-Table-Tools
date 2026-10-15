@@ -196,7 +196,7 @@ describe("Results from tagged roll messages", () => {
     const message = requestMessage({ mode: "standard", actors: ["A"], parts: [{ type: "skill", key: "ath", dc: 12 }] });
     const roll = Object.assign(rollMessage({ actor: "A", total: 15, natural: 13 }), { _dice3danimating: true });
     game.messages = [roll];
-    game.modules = new Map([["dice-so-nice", { active: true }]]);
+    game.modules.set("dice-so-nice", { active: true });
     try {
       expect(getResults(message).get("A")[0]).toMatchObject({ rolling: true, visible: false, success: null });
       // With Dice So Nice set to show messages straight away, there is nothing to hold back.
@@ -206,7 +206,7 @@ describe("Results from tagged roll messages", () => {
       delete roll._dice3danimating;
       expect(getResults(message).get("A")[0]).toMatchObject({ rolling: false, visible: true, success: true });
     } finally {
-      delete game.modules;
+      game.modules.delete("dice-so-nice");
       settingValues.delete("immediatelyDisplayChatMessages");
     }
   });

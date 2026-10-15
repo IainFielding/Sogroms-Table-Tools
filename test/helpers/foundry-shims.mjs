@@ -102,6 +102,8 @@ let messages = new MessageLog();
 globalThis.game = {
   user: { isGM: true },
   settings: { get: (_scope, key) => settingValues.get(key) },
+  // The module itself, which names the speaker of its messages.
+  modules: new Map([["sogrom-table-tools", { id: "sogrom-table-tools", title: "Sogrom's Table Tools", active: true }]]),
   i18n: {
     lang: "en",
     localize,

@@ -46,29 +46,24 @@ export function renderActorSheets() {
 function onRenderActorSheet(app, html) {
   if ( !game.settings.get(MODULE_ID, "fadeUnprepared") ) return;
 
-  // Query both legacy (.items-list) and V2 (.item-list) sheet selectors
-  // so this works regardless of which dnd5e sheet version is active.
+  // dnd5e's sheets list items in .item-list, and some of its parts still in .items-list.
   const items = html.querySelectorAll(".items-list .item, .item-list .item");
   for ( const itemElement of items ) {
-    // Use the dataset property for clean access to data-item-id
     const id = itemElement.dataset.itemId;
     if ( !id ) continue;
     const item = app.document.items.get(id);
     if ( !item || item.type !== "spell" ) continue;
 
-    // Skip spells that appear in the "Additional Spells" section:
-    // 1) Item-granted spells (e.g. from a Staff of Power) carry a cachedFor flag
+    // Spells granted by an item, such as a Staff of Power, can't be prepared.
     if ( item.getFlag("dnd5e", "cachedFor") ) continue;
-    // 2) Spells whose sheet section uses a non-preparable method (at-will, innate, etc.)
-    //    V2 sheet: ancestor element has data-method; Legacy: header sibling has it
+    // Nor can those listed under a method that isn't prepared, such as at will or innate. The method is on an ancestor
+    // of the row, or on the header just before its list.
     const sectionEl = itemElement.closest("[data-method]")
       ?? itemElement.closest("ol")?.previousElementSibling;
     const sectionMethod = sectionEl?.dataset?.method;
     if ( sectionMethod && (sectionMethod !== "spell") && (sectionMethod !== "pact") ) continue;
 
-    // prepared === 0 means unprepared (1 = prepared, 2 = always prepared)
-    // method === "spell" or "pact" — both are preparable spellcasting methods
-    // level > 0 excludes cantrips, which don't require preparation
+    // Prepared is 0 for unprepared, 1 for prepared and 2 for always prepared. Cantrips are never prepared.
     const method = item.system?.method;
     if ( (item.system?.prepared === 0) && ((method === "spell") || (method === "pact")) && (item.system.level > 0) ) {
       itemElement.classList.add("preparation-unprepared");

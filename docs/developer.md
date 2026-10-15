@@ -416,7 +416,7 @@ makes the change.
 | `action` | Sent by | To | Payload | Effect |
 |---|---|---|---|---|
 | `applyBonus` | The player spending the die | The active GM only | `{ source, target, sign }`: the bonus and target message IDs, and `1` or `-1` | The GM's client checks the request again as the sender, whose ID Foundry's server supplies, then applies it. With no GM online, nothing is sent and the player is warned. |
-| `bonusNotApplied` | The active GM | The sender only | `{ reason: "invalid" \| "error" }` | Warns the player that the GM refused it or couldn't apply it. The die isn't spent. |
+| `bonusNotApplied` | The active GM | The sender only | `{ reason: "invalid" \| "error" }` | Warns the player that the GM refused it or couldn't apply it. The die isn't spent. Ignored unless a GM sent it. |
 
 ## How the Hero Cards are found
 

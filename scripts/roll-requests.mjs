@@ -438,7 +438,7 @@ export async function postRequest(request, flags={}) {
   request.parts = request.parts.slice(0, getPartCount(request));
   if ( isOpenResult(request) ) flags = { revealed: true, ...flags };
   return ChatMessage.create({
-    speaker: { alias: "Sogrom's Table Tools" },
+    speaker: { alias: game.modules.get(MODULE_ID)?.title ?? MODULE_ID },
     content: `<p>${foundry.utils.escapeHTML(getRequestTitle(request))}</p>`,
     flags: { [MODULE_ID]: { ...flags, request } }
   });
