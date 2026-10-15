@@ -36,7 +36,7 @@ tankard to open the request window. After an update that adds features, you get 
 A patch release says nothing. Turn the cards off with **Welcome and What's New Cards**, under
 [Gameplay Enhancements](#gameplay-enhancements).
 
-<img src="images/gm-welcome.webp" alt="The welcome card: where to find things, with a Hero Cards link and a tankard button, what's new in 1.0.1, and buttons for Hero Cards, Dice Rolling, Roll Requests and Gameplay Enhancements" width="300">
+<img src="images/gm-welcome.webp" alt="The welcome card: where to find things, with a Hero Cards link and a tankard button, what's new in 1.1.0, and buttons for Hero Cards, Dice Rolling, Roll Requests and Gameplay Enhancements" width="300">
 
 The compendiums sit in a **Sogrom's Table Tools** folder in the Compendium sidebar. Players can view them.
 
