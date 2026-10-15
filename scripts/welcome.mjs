@@ -55,7 +55,7 @@ export const WHATS_NEW = [
       "STT.Welcome.New.HeavyWeapons",
       "STT.Welcome.New.LoadingWeapons",
       "STT.Welcome.New.ReloadWeapons",
-      "STT.Welcome.New.SpellFocus"
+      "STT.Welcome.New.SpellComponents"
     ]
   }
 ];

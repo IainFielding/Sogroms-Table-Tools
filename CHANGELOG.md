@@ -21,8 +21,9 @@ All notable changes to Sogrom's Table Tools.
   one. **Reload Weapon Shots**, under Dice Rolling, turns it off.
 - **The 2014 Lance has its rule.** Its attacks start at disadvantage against a target within 5 feet. **Lance
   Disadvantage**, under Dice Rolling, turns it off.
-- **Spellcasting Focus Warning**, under Gameplay Enhancements and off until you turn it on, warns when a character
-  casts a spell whose materials have no cost without a spellcasting focus equipped or a component pouch carried.
+- **Spell Component Warnings**, under Gameplay Enhancements and off until you turn it on, warns when a spell is cast
+  by a creature with the Silenced status and has a verbal component, or when a character casts a spell whose
+  materials have no cost without a spellcasting focus equipped or a component pouch carried.
 
 ### Changes
 

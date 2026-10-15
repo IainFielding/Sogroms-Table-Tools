@@ -45,7 +45,7 @@
     "scripts/natural-initiative.mjs",
     "scripts/weapon-properties.mjs",
     "scripts/reload-weapons.mjs",
-    "scripts/spell-focus.mjs",
+    "scripts/spell-components.mjs",
     "scripts/natural-outcomes.mjs",
     "scripts/bloodied-tint.mjs",
     "scripts/fade-unprepared.mjs",

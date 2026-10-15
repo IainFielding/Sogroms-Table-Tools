@@ -32,9 +32,9 @@
         "Name": "Bloodied Token Tint",
         "Hint": "Automatically highlights Bloodied creatures with a red tint and matching token ring colours, making them easier to spot during play."
       },
-      "SpellFocusWarning": {
-        "Name": "Spellcasting Focus Warning",
-        "Hint": "Warn when a character casts a spell whose material components have no cost without a spellcasting focus equipped or a component pouch carried, since they then need the materials themselves. The spell is still cast. Any equipped item marked Focus counts, whichever class it suits. Spells cast through an item or an innate feature, and NPCs, aren't checked."
+      "SpellComponentWarnings": {
+        "Name": "Spell Component Warnings",
+        "Hint": "Warn when a spell is cast without a component it needs. The spell is still cast. Verbal: the caster has the Silenced status. Material: a character casts a spell whose materials have no cost without a spellcasting focus equipped or a component pouch carried, so needs the materials themselves; any equipped item marked Focus counts, whichever class it suits, and spells cast through an item or an innate feature, and NPCs, aren't checked. Somatic components aren't checked, as D&D 5e doesn't track what a creature holds."
       },
       "FadeUnprepared": {
         "Name": "Fade Unprepared Spells",
@@ -159,7 +159,7 @@
         "HeavyWeapons": "Attacks with a Heavy weapon start at disadvantage when the wielder can't handle it, by your world's 2014 or 2024 rules. Turn it off with Heavy Weapon Disadvantage, under Dice Rolling.",
         "LoadingWeapons": "A second attack in a turn with the same Loading weapon shows a warning. Turn it off with Loading Weapon Warning, under Dice Rolling.",
         "ReloadWeapons": "Reload weapons count their shots with their Limited Uses, and offer to reload when empty. Turn it off with Reload Weapon Shots, under Dice Rolling.",
-        "SpellFocus": "Turn on Spellcasting Focus Warning, under Gameplay Enhancements, to warn when a spell is cast without a spellcasting focus or component pouch."
+        "SpellComponents": "Turn on Spell Component Warnings, under Gameplay Enhancements, to warn when a spell is cast while Silenced, or without a spellcasting focus or component pouch."
       },
       "SettingsTitle": "Worth a look before your players start",
       "Guide": "Read the GM guide"
@@ -205,8 +205,9 @@
         "Advantage": "rolled with advantage ({first} and {second}): {before} → {after}"
       }
     },
-    "SpellFocus": {
-      "Warning": "{name} has no spellcasting focus equipped and no component pouch, so needs {spell}'s material components to cast it."
+    "SpellComponents": {
+      "Verbal": "{name} is Silenced, so can't speak {spell}'s verbal component.",
+      "Material": "{name} has no spellcasting focus equipped and no component pouch, so needs {spell}'s material components to cast it."
     },
     "Weapons": {
       "LoadingWarning": "{name} has the Loading property and has already fired this turn. It fires only one piece of ammunition per action, bonus action or reaction.",

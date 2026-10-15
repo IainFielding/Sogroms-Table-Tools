@@ -144,9 +144,9 @@ async function expectUses(gm, name, expected, what) {
 /*  Heavy                                       */
 /* -------------------------------------------- */
 
-test("weapon properties: each rule has its setting, on by default, and the focus warning off", async ({ gm }) => {
+test("weapon properties: each rule has its setting, on by default, and spell component warnings off", async ({ gm }) => {
   const defaults = await gm.eval(moduleId => Object.fromEntries(
-    ["heavyWeapons", "loadingWeapons", "reloadWeapons", "lanceDisadvantage", "spellFocusWarning"].map(key => {
+    ["heavyWeapons", "loadingWeapons", "reloadWeapons", "lanceDisadvantage", "spellComponentWarnings"].map(key => {
       const s = game.settings.settings.get(`${moduleId}.${key}`);
       return [key, { config: s?.config, scope: s?.scope, default: s?.default }];
     })
@@ -154,7 +154,7 @@ test("weapon properties: each rule has its setting, on by default, and the focus
   const on = { config: false, scope: "world", default: true };
   assertEqual(defaults, {
     heavyWeapons: on, loadingWeapons: on, reloadWeapons: on, lanceDisadvantage: on,
-    spellFocusWarning: { ...on, default: false }
+    spellComponentWarnings: { ...on, default: false }
   }, "the settings");
 });
 
@@ -447,7 +447,7 @@ if ( process.env.STT_CANVAS ) {
 }
 
 /* -------------------------------------------- */
-/*  Spellcasting Focus                          */
+/*  Spell Components                            */
 /* -------------------------------------------- */
 
 /**
@@ -456,7 +456,11 @@ if ( process.env.STT_CANVAS ) {
  * @param {string} name
  */
 async function cast(session, name) {
-  await session.eval(name => {
+  await session.eval(async name => {
+    // A spell the GM has just given may not have reached this user yet.
+    for ( let i = 0; (i < 50) && !game.actors.getName("Aria").items.getName(name); i++ ) {
+      await new Promise(r => setTimeout(r, 100));
+    }
     const activity = game.actors.getName("Aria").items.getName(name).system.activities.contents[0];
     globalThis.__sttCast = activity.use({ consume: false }, { configure: false }, { create: true })
       .then(() => globalThis.__sttCast = "done", () => globalThis.__sttCast = "done");
@@ -476,7 +480,7 @@ async function cast(session, name) {
   await session.page.waitForTimeout(300);
 }
 
-test("spellcasting focus: a spell cast without a focus or pouch is warned of, only with the setting on", async ({ gm, player }) => {
+test("spell components: a spell cast without a focus or pouch is warned of, only with the setting on", async ({ gm, player }) => {
   const ids = await giveItems(gm, [{ name: "Mage Armor", pack: "dnd5e.spells", changes: { system: { method: "spell", prepared: 1 } } }]);
   const warning = "needs Mage Armor's material components";
   try {
@@ -484,8 +488,8 @@ test("spellcasting focus: a spell cast without a focus or pouch is warned of, on
     await cast(player, "Mage Armor");
     assertEqual(await warningsSaying(player, warning), 0, "warnings with the setting off");
 
-    await setSetting(gm, "spellFocusWarning", true);
-    await waitFor(player, moduleId => game.settings.get(moduleId, "spellFocusWarning"), MODULE_ID, "the setting to turn on");
+    await setSetting(gm, "spellComponentWarnings", true);
+    await waitFor(player, moduleId => game.settings.get(moduleId, "spellComponentWarnings"), MODULE_ID, "the setting to turn on");
     await cast(player, "Mage Armor");
     assertEqual(await warningsSaying(player, warning), 1, "warnings with nothing to stand in for the materials");
 
@@ -506,7 +510,40 @@ test("spellcasting focus: a spell cast without a focus or pouch is warned of, on
       && !game.actors.getName("Aria").items.getName("Crystal"), null, "the Component Pouch");
     await cast(player, "Mage Armor");
     assertEqual(await warningsSaying(player, warning), 2, "warnings with a component pouch carried");
+    assertEqual(await warningsSaying(player, "is Silenced"), 0, "verbal warnings for a caster who isn't Silenced");
   } finally {
+    await takeItems(gm, ids);
+  }
+});
+
+test("spell components: a spell cast while Silenced is warned of, only with the setting on", async ({ gm, player }) => {
+  const ids = await giveItems(gm, [
+    { name: "Mage Armor", pack: "dnd5e.spells", changes: { system: { method: "spell", prepared: 1 } } },
+    { name: "Component Pouch" }
+  ]);
+  const warning = "Aria is Silenced, so can't speak Mage Armor's verbal component";
+  const silence = active => gm.eval(active => game.actors.getName("Aria").toggleStatusEffect("silenced", { active }), active);
+  const silenced = active => waitFor(player, active => game.actors.getName("Aria").statuses.has("silenced") === active,
+    active, active ? "Aria to be Silenced" : "Aria to speak again");
+  try {
+    await silence(true);
+    await silenced(true);
+    await watchWarnings(player);
+    await cast(player, "Mage Armor");
+    assertEqual(await warningsSaying(player, warning), 0, "warnings with the setting off");
+
+    await setSetting(gm, "spellComponentWarnings", true);
+    await waitFor(player, moduleId => game.settings.get(moduleId, "spellComponentWarnings"), MODULE_ID, "the setting to turn on");
+    await cast(player, "Mage Armor");
+    assertEqual(await warningsSaying(player, warning), 1, "warnings while Silenced");
+    assertEqual(await warningsSaying(player, "material components"), 0, "material warnings with a pouch carried");
+
+    await silence(false);
+    await silenced(false);
+    await cast(player, "Mage Armor");
+    assertEqual(await warningsSaying(player, warning), 1, "warnings once no longer Silenced");
+  } finally {
+    await silence(false);
     await takeItems(gm, ids);
   }
 });
