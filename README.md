@@ -15,7 +15,7 @@ Give your players more chances to be heroes without adding more for the GM to ma
 
 ### Hero Cards
 
-Hero Cards are twelve illustrated, once per longrest boons that let players turn defeat into victory, survive impossible odds, and pull off memorable last-minute saves. When a card can help, it's offered automatically, played directly from chat, and shown to the whole table.
+Hero Cards are twelve illustrated, once-per-long-rest boons that let players turn defeat into victory, survive impossible odds, and pull off memorable last-minute saves. When a card can help, it's offered automatically, played directly from chat, and shown to the whole table.
 
 - Play cards on existing rolls straight from chat.
 - See only the cards that can affect the current roll.
@@ -49,7 +49,7 @@ Give important rolls the spotlight they deserve. Critical successes and failures
 
 - Natural 1s and 20s stand out with distinctive red and gold highlights.
 - Critical save outcomes can deal maximum damage or avoid damage entirely.
-- A natural 20 on a check or a saving throw always succeeds, and a natural 1 always fails.
+- A natural 20 on a check or a saving throw made against a DC always succeeds, and a natural 1 always fails.
 - Add Bardic Inspiration, Cutting Words, and other feature dice directly from chat.
 
 
@@ -60,11 +60,13 @@ Give important rolls the spotlight they deserve. Critical successes and failures
 
 ### Gameplay Enhancements
 
-A collection of optional enhancements that that improve readability, reduce friction, and make everyday play smoother for both players and GMs. Enable only the features you want and tailor the experience to your table.
+A collection of optional enhancements that improve readability, reduce friction, and make everyday play smoother for both players and GMs. Enable only the features you want and tailor the experience to your table.
 
 - Bloodied creatures are easier to spot at a glance.
 - Unprepared spells are visually distinguished in spell lists.
 - Item rarities are colour-coded throughout the sheet.
+- The small icon buttons on compact chat cards can be labelled.
+- An activity's tabs can be laid side by side for faster editing.
 
 <img src="docs/images/world-scripts-rarity.webp" alt="An inventory with Item Rarity Colours on, each item tinted by its rarity" width="420">
 
@@ -101,7 +103,7 @@ Sogrom's Table Tools is completely free. If it's added a little extra heroism to
 
 ## Credits
 
-Inspired by D&D campaigns DM'd by [Captain RoBear](https://www.youtube.com/channel/UCktEYryPmattKzrpo0_kGzA). Sogrom's Table Tools is not affiliated with, or endorsed by Captain RoBear in any capacty.
+Inspired by D&D campaigns DM'd by [Captain RoBear](https://www.youtube.com/channel/UCktEYryPmattKzrpo0_kGzA). Sogrom's Table Tools is not affiliated with, or endorsed by Captain RoBear in any capacity.
 
 The card art is made from images licensed from [Adobe Stock](https://stock.adobe.com) and [Pexels](https://www.pexels.com),
 which remain the property of their creators. No AI-generated imagery is used. [docs/art-sources.md](docs/art-sources.md)

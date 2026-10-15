@@ -1,4 +1,4 @@
-# Continuous integration: manifest validation and lint.
+# Continuous integration: manifest validation, lint, a compendium pack build and the unit tests.
 #
 # Runs on every push and pull request. This is separate from the release workflow
 # (main.yml), which only fires when a GitHub release is published.

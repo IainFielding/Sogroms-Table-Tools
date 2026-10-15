@@ -9,6 +9,13 @@ All notable changes to Sogrom's Table Tools.
 - **Inspiration cards can no longer be played on initiative.** The 1d6, 1d8 and 1d10 Inspiration cards are offered on
   attacks, damage, ability checks and saving throws only.
 
+### Fixes
+
+- **Character sheets draw faster with Item Rarity Colours on.** Each item's rarity is read from the item itself,
+  rather than by building the whole character's roll data again for every row.
+- **Only a GM can tell a player their bonus die wasn't applied.** Another player's client could send the same warning.
+- **Setting names in the GM guide match Foundry's.** Five settings were listed under older names.
+
 ### Other modules
 
 - **Carolingian UI is supported.** The request card, its pop-up, the card chooser and the request window keep their own

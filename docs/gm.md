@@ -61,7 +61,7 @@ can open them, and each setting applies to the whole world.
 | Setting | Default | What it does |
 |---|---|---|
 | **Natural 1s and 20s lock Hero Cards** | On | No card can be played on a roll whose d20 shows a natural 1 or 20. Turn it off to allow Advantage and Inspiration on them. Either way, Lucky can't be played on a natural 20, and nothing rerolls a natural 1. |
-| **Show played cards on screen** | On | A played card's art appears in the middle of the screen for everyone who can see the roll. Chat keeps a record either way. |
+| **Show Played Cards on Screen** | On | A played card's art appears in the middle of the screen for everyone who can see the roll. Chat keeps a record either way. |
 
 ### Dice Rolling
 
@@ -85,10 +85,10 @@ can open them, and each setting applies to the whole world.
 | **DC by default** | Blank | The DC each roll starts with when you open the request window. Leave it blank for none; you can still set or change the DC for each request, or later from the card. |
 | **Show the DC to players by default** | Off | Whether **Show DC to Players** starts ticked in the request window. You can still change it for each request. |
 | **Team Challenge scoring by default** | Average of the rolls | How a Team Challenge is scored when you open the request window. You can still change it for each request. See [Team Challenge](#team-challenge). |
-| **Attach rolls to the request card** | On | The rolls made for a request show on its card rather than as messages of their own, as D&D 5e does for an item's saves. Click a result to see its dice. |
-| **Pop up roll requests for players** | Off | Opens a window for each player with a character in a request, with a Roll button for each of their characters. |
-| **Pop up roll requests for the GM** | Off | Opens a window for you when a request includes NPCs, or any actor no player owns. |
-| **Ask for death saves** | Off | Posts a death save request at the start of a dying character's turn in combat. See [Death saves](#death-saves). |
+| **Attach Rolls to Request Cards** | On | The rolls made for a request show on its card rather than as messages of their own, as D&D 5e does for an item's saves. Click a result to see its dice. |
+| **Pop Up Roll Requests for Players** | Off | Opens a window for each player with a character in a request, with a Roll button for each of their characters. |
+| **Pop Up Roll Requests for the GM** | Off | Opens a window for you when a request includes NPCs, or any actor no player owns. |
+| **Automatic Death Save Requests** | Off | Posts a death save request at the start of a dying character's turn in combat. See [Death saves](#death-saves). |
 
 ### Gameplay Enhancements
 
@@ -294,7 +294,7 @@ Rolls already made are scored again against the new DC.
 **Cards on requested rolls.** Requested rolls are ordinary D&D 5e rolls, so players can play Hero Cards on them,
 from the tankard button beside their result. The card updates as soon as a card changes a roll.
 
-**Attached rolls.** With **Attach rolls to the request card** on (the default), the rolls don't get chat messages of
+**Attached rolls.** With **Attach Rolls to Request Cards** on (the default), the rolls don't get chat messages of
 their own. Click a result to see its dice. Notes on any cards played show under the row.
 
 ### Who can roll, and rolling again
@@ -304,7 +304,7 @@ their own. Click a result to see its dice. Notes on any cards played show under 
   counts.
 - **To let someone roll again,** click their result on the card to open its dice, then click **Roll again** and
   confirm. Their roll is deleted and their **Roll** button comes back. A card played on that roll stays spent. With
-  **Attach rolls to the request card** off, you can also delete the roll's own chat message. Players can't delete a
+  **Attach Rolls to Request Cards** off, you can also delete the roll's own chat message. Players can't delete a
   roll made for a request, so they can't throw away a bad roll.
 
 <img src="images/gm-roll-again.webp" alt="Aria's failed roll of 4 opened on the request card, showing its dice and a Roll Again button" width="300">
@@ -323,10 +323,10 @@ their own. Click a result to see its dice. Notes on any cards played show under 
 
 Two settings, both off by default, open a window when a request is posted:
 
-- **Pop up roll requests for players** gives each player a window with a **Roll** button for each of their
+- **Pop Up Roll Requests for Players** gives each player a window with a **Roll** button for each of their
   characters in the request. A player who joins within 30 minutes of a request they still need to roll for gets its
   window then.
-- **Pop up roll requests for the GM** does the same for you, for NPCs and any other actor no player owns.
+- **Pop Up Roll Requests for the GM** does the same for you, for NPCs and any other actor no player owns.
 
 <img src="images/popup-gm.webp" alt="The GM's Roll Request window for a Wisdom check, DC 12, with a Roll button for the Goblin" width="380">
 
@@ -334,7 +334,7 @@ Each window closes once everything in it is rolled. The chat card works either w
 
 ### Death saves
 
-With **Ask for death saves** on, a **Death Save** request is posted at the start of a creature's turn in combat if it's
+With **Automatic Death Save Requests** on, a **Death Save** request is posted at the start of a creature's turn in combat if it's
 at 0 hit points and dying. It's an ordinary request, for that one creature, so it opens a pop-up under the two settings
 above: the player's window for their character, and yours only for a creature no player owns. You can always roll it
 from the chat card.

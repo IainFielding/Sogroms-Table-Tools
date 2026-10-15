@@ -14,8 +14,8 @@ The harness is not shipped: the release archive in `.github/workflows/main.yml` 
 
 1. Copy `config.example.mjs` to `config.mjs` and set the paths. `FOUNDRY_ROOT` is Foundry's Node build, the
    folder holding `main.mjs`.
-2. Link the repo into Foundry's modules folder, so the tests run the working copy. From an administrator
-   prompt, or with Developer Mode on:
+2. Link the repo into Foundry's modules folder, so the tests run the working copy. A directory junction needs
+   no administrator rights. From a Command Prompt:
 
    ```
    mklink /J "%LOCALAPPDATA%\FoundryVTT\Data\modules\sogrom-table-tools" "H:\Code\FoundryModules\Sogroms-Table-Tools"

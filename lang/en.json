@@ -30,7 +30,7 @@
       },
       "BloodiedTint": {
         "Name": "Bloodied Token Tint",
-        "Hint": "Automaticaly Highlights Bloodied creatures with a red tint and matching token ring colours, making them easier to spot during play."
+        "Hint": "Automatically highlights Bloodied creatures with a red tint and matching token ring colours, making them easier to spot during play."
       },
       "FadeUnprepared": {
         "Name": "Fade Unprepared Spells",
@@ -38,7 +38,7 @@
       },
       "ChatButtonLabels": {
         "Name": "Chat Button Labels",
-        "Hint": "Fixes the small attack and damage buttons from dnd 6.0 update, adds words making them much easier to see and use.",
+        "Hint": "Writes a label beside the small icon buttons D&D 5e 6.0 puts on compact chat cards, such as Attack and Damage, making them much easier to see and use.",
         "Superseded": "Switched off while Carolingian UI is enabled: it labels these buttons itself. See Labeled card buttons in its chat message settings."
       },
       "OneTabActivities": {
@@ -59,7 +59,7 @@
       },
       "NaturalSaves": {
         "Name": "Natural 1s and 20s on saves against damage",
-        "Hint": "Natural 20 on a saving throw against a spell's or feature's damage means no damage is taken. A natural 1 deals the maximum possible damage instead, treating every damage die as though it rolled its highest value (for example, 36 from 6d6), and ignoring any resistances or immunities. The Apply tray is automatically populated with these results, but the GM remains free to adjust them before applying damage."
+        "Hint": "A natural 20 on a saving throw against a spell's or feature's damage means no damage is taken. A natural 1 deals the maximum possible damage instead, treating every damage die as though it rolled its highest value (for example, 36 from 6d6), and ignoring any resistances or immunities. The Apply tray is automatically populated with these results, but the GM remains free to adjust them before applying damage."
       },
       "NaturalSaveOutcomes": {
         "Name": "Natural 1s and 20s on all saves",
@@ -155,7 +155,7 @@
     "Cards": {
       "NoneLeft": "You have used all of your Hero Cards. They will refresh after your next long rest.",
       "ChooseFromSheet": "Choose a Hero Card to play. Once used, it remains unavailable until your next long rest.",
-      "ChooseOnRoll": "Choose a Hero Card to enhance this roll. The card will be spent until your next long rest",
+      "ChooseOnRoll": "Choose a Hero Card to enhance this roll. The card will be spent until your next long rest.",
       "NextRollAdvantage": "{name}'s next attack roll, ability check, or saving throw will be made with advantage.",
       "ButtonTooltip": "Use a Hero Card on this roll",
       "Button": "Hero Card",
