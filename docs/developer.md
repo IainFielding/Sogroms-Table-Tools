@@ -314,6 +314,12 @@ them out from its roll messages each time it draws.
 |---|---|---|---|
 | `divineSetup` | `string` | `hero-cards.mjs`, on the player's client | The UUID of the actor who played the Divine Intervention card from their sheet. The note is whispered to the GMs, whose Foundry adds a button that opens the request window set to Divine Intervention for that actor. A player could write the flag on a message of their own, but all it can do is preset the GM's window. |
 
+### On a welcome card
+
+| Flag | Type | Written by | Meaning |
+|---|---|---|---|
+| `welcome` | `"welcome" \| "whatsNew"` | `welcome.mjs` | Which card the message is. Nothing in the module reads it; it marks the card for macros and the tests. |
+
 ### On a roll made for a request
 
 | Flag | Type | Meaning |
@@ -444,7 +450,7 @@ Sogrom's Table Tools fires no hooks of its own. It listens to these:
 
 | Hook | Script | Why |
 |---|---|---|
-| `init` | Every script with a setting, and `settings-menus.mjs` | Register settings and their menus, and set the API. `natural-initiative.mjs` also wraps `Combat#_sortCombatants` and `Combatant#getInitiativeRoll` here, as Foundry sorts each combat's turns before `setup`. |
+| `init` | Every script with a setting, and `settings-menus.mjs` | Register settings and their menus, and set the API. `natural-initiative.mjs` also wraps `Combat#_sortCombatants` and `Combatant#getInitiativeRoll` here, as Foundry sorts each combat's turns before `setup`. `welcome.mjs` adds one click listener to the document for the welcome card's buttons, since the chat log draws earlier sessions' cards before `ready`. |
 | `setup` | `hero-cards.mjs`, `natural-saves.mjs`, `natural-outcomes.mjs` | Wrap `Item#use`, the damage tray's target options (see below), and `D20Roll#isSuccess` and `D20Roll#isFailure`, so dnd5e judges a roll that carries its DC by its natural 1 or 20 where a setting says so. |
 | `ready` | `bonus-rolls.mjs`, `roll-request-popup.mjs`, `natural-saves.mjs`, `welcome.mjs`, `chat-button-labels.mjs`, `one-tab-activities.mjs` | Start listening on the socket, open pop-ups for recent requests, watch RSReforged's Apply buttons, post a welcome or what's new card that is due, and apply the two layout settings. |
 | `dnd5e.renderChatMessage` | `hero-cards.mjs`, `roll-requests.mjs`, `bonus-rolls.mjs`, `class-features.mjs` | Add card buttons, natural 1/20 rings, notes, request cards, and the Indomitable button. |

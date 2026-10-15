@@ -90,25 +90,23 @@ the end of both consoles.
   It also covers spent uses, death saves, the card window's art, Advantage on the next roll, the "no cards
   left" warning and shift-click. Played cards are shown only to those who can see the roll, and a note's art
   and name are never run as HTML.
-
 - `tests-natural-saves.mjs`: natural 1s and 20s on saves against a spell's damage. A natural 20 takes none, and a
   natural 1 takes the damage's maximum past resistance or immunity, whether it comes before the damage or after it,
   with nothing more rolled. With the setting off, damage is left to dnd5e. The canvas is
   off in the harness, so the damage tray is asked about each token rather than listing them itself.
-
 - `tests-natural-initiative.mjs`: natural 1s and 20s on initiative. A natural 20 goes first in the initiative order
   and a natural 1 last, for the GM and the player, whatever the totals around them. An initiative typed over one has
   no natural, and with the setting off totals alone decide the order.
-
 - `tests-natural-outcomes.mjs`: natural 1s and 20s that decide a roll. On a request card, and on a check or save dnd5e
   rolls against a DC itself, a natural 20 passes and a natural 1 fails whatever the DC. In a Roll-Off a natural 20 beats
   a higher total and a natural 1 loses to a lower one. With each setting off, totals alone decide.
-
 - `tests-death-saves.mjs`: death save requests at the start of a dying creature's turn: who is asked, the pop-ups,
   once a round, stable creatures, and removing a request when the creature is healed.
 - `tests-world-scripts.mjs`: the four settings menus, each holding its own settings, the GM's welcome card, and the five Gameplay
   Enhancements, each checked off and then on: the Bloodied tint, faded unprepared spells, rarity tints on item rows,
   labels on compact chat card buttons, and the one-tab activity layout.
+- `tests-compat.mjs`: the checks meant to pass with RSReforged, Midi-QOL or Carolingian UI enabled (see
+  [Compatibility runs](#compatibility-runs)). Without `STT_COMPAT` they run in the plain world as a baseline.
 
 The rules themselves also have unit tests in `../test`, which `npm test` runs without Foundry.
 

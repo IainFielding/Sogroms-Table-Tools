@@ -76,9 +76,9 @@ A few things to keep in mind:
 |---|---|
 | **Inspiration** (1d6, 1d8 or 1d10) | Add the card's die to the roll. Can't be played on initiative. |
 | **Lucky** | Reroll the relevant dice and use the new result. |
-| **Advantage** | Roll an additional d20 and keep the higher result. |
+| **Advantage** | Roll an additional d20 and keep the higher result. On a roll made with disadvantage, it cancels the disadvantage instead, leaving a straight roll. |
 | **Indomitable** | Reroll a failed saving throw and keep the new result. |
-| **Relentless** | Reroll initiative and keep the higher result. |
+| **Relentless** | Reroll initiative and keep the higher result. Only in the first round of combat. |
 | **Charger** | You can double your movement this turn. |
 | **Reaction Surge** | You can take a second reaction this round. |
 | **Extra Strike** | You make an extra strike. |

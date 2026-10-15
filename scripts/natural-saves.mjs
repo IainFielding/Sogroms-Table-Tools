@@ -262,8 +262,8 @@ export function getMaximumDamage(message) {
 
 /**
  * The resistances and immunities that would lessen this damage, as the damage tray names them: a damage type, or "ALL".
- * dnd5e names only the first it finds for each damage, so one to fire under one to all damage only shows once "ALL" is
- * ignored.
+ * dnd5e names only the first it finds for each damage, so a resistance to fire hidden behind a resistance to all damage
+ * only shows once "ALL" is ignored. It is asked again, ignoring what it named, until it names nothing new.
  * @param {Actor5e} actor
  * @param {DamageDescription[]} damages
  * @returns {{ resistance: Set<string>, immunity: Set<string> }}
