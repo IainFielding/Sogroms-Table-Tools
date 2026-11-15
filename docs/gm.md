@@ -25,7 +25,7 @@ can do everything a player can.
 1. **Install.** In Foundry's setup screen, go to **Add-on Modules → Install Module**. Search for "Sogrom's Table Tools" or paste
    the manifest URL:
    `https://github.com/IainFielding/Sogroms-Table-Tools/releases/latest/download/module.json`
-2. **Enable** Sogrom's Table Tools in your world's **Manage Modules**. It needs Foundry VTT v14 and D&D 5e 6.x (tested on 6.0.6).
+2. **Enable** Sogrom's Table Tools in your world's **Manage Modules**. It needs Foundry VTT v14 and D&D 5e 6.1 or later (tested on 6.1.0).
 3. **Give out the cards.** Drag the **Hero Cards** feature from the **Items (Sogrom's Table Tools)** compendium onto each
    character who should have them. Each card is an activity on that feature with one use, recovered on a long rest.
    To give a card back early, reset its uses on the character sheet.
@@ -102,13 +102,12 @@ The **Firearm** property stays a label only: the 2014 rules' firearm proficiency
 Optional changes to tokens, actor sheets and spellcasting. Each is off until you turn it on. The window also holds **Welcome and
 What's New Cards**, which starts on.
 
-<img src="images/gm-settings-world-scripts.webp" alt="The Gameplay Enhancements window, with its seven settings: the six enhancements unticked, and Welcome and What's New Cards ticked" width="420">
+<img src="images/gm-settings-world-scripts.webp" alt="The Gameplay Enhancements window, with its six settings: the five enhancements unticked, and Welcome and What's New Cards ticked" width="420">
 
 | Setting | Default | What it does |
 |---|---|---|
 | **Bloodied Token Tint** | Off | When D&D 5e marks a creature Bloodied, its token is tinted red and its token ring's background turns red. A token that's already Bloodied when you turn this on changes the next time it becomes Bloodied. |
 | **Fade Unprepared Spells** | Off | On actor sheets, spells of level 1 or higher that could be prepared but aren't are faded. Cantrips, always-prepared spells, and spells from items or at-will and innate sections stay as they are. |
-| **Chat Button Labels** | Off | On compact chat cards, each icon button shows its name beside its icon, so you don't have to hover over it to see what it does. Switched off while Carolingian UI is enabled, which labels them itself: see [Other modules](#other-modules). |
 | **One-Tab Activities** | Off | An activity's **Identity**, **Activation** and **Effect** tabs are laid out side by side in one wide window, without their hints. Handy when you're making a lot of content. |
 | **Spell Component Warnings** | Off | Warns whoever casts a spell when it needs a component they can't provide. The spell is still cast. **Verbal:** the caster, character or NPC, has D&D 5e's **Silenced** status, from the token or an effect. **Material:** a character casts a spell whose material components have no cost without a spellcasting focus equipped or a component pouch carried, so needs the materials themselves. A focus is any equipment, weapon or tool marked **Focus**, and counts only while equipped; which kind of focus suits the character's class isn't checked. A component pouch counts while it's carried, equipped or not. Spells with costly materials, spells cast through an item such as a staff, innate and at-will spells, and NPCs aren't checked for materials. **Somatic** components aren't checked, as D&D 5e doesn't track what a creature holds in its hands. |
 | **Item Rarity Colours** | Off | Tints each item row on actor sheets by its rarity: green for uncommon, blue for rare, purple for very rare, orange for legendary and gold for artifact. |
@@ -118,8 +117,6 @@ What's New Cards**, which starts on.
 <td><img src="images/world-scripts-rarity.webp" alt="Aria's inventory with Item Rarity Colours on: a cream Potion of Healing, a green Cloak of Elvenkind, a blue Flame Tongue, a purple Staff of Power, an orange Holy Avenger and a gold Orb of Dragonkind" width="400"></td>
 <td><img src="images/world-scripts-fade.webp" alt="Aria's spells with Fade Unprepared Spells on: Sleep and Misty Step are faded, Magic Missile, Shield and Hold Person are not" width="400"></td>
 </tr></table>
-
-<img src="images/world-scripts-chat-labels.webp" alt="A Dagger card in chat with Chat Button Labels on: its buttons read Attack and Damage" width="300">
 
 <img src="images/world-scripts-one-tab.webp" alt="A Dagger's Attack activity with One-Tab Activities on: its Identity, Activation and Effect tabs side by side" width="640">
 
@@ -398,10 +395,6 @@ Sogrom's Table Tools works alongside modules that change how D&D 5e rolls and sh
   where an attack and its damage are rows inside the weapon's card, the Hero Card button is beside each row's title,
   notes on cards played are under the row, and natural 1s and 20s are ringed. Natural 1s and 20s on initiative are
   coloured in its combat tracker too.
-
-  Carolingian UI writes the labels on a chat card's buttons itself, so **Chat Button Labels** is switched off while it
-  is enabled, and greyed out in **Gameplay Enhancements**. Use **Labeled card buttons** in Carolingian UI's chat
-  message settings instead.
 
   Its **Retroactive advantage buttons**, the arrows either side of a roll's total, change a roll after it was made,
   as a Hero Card does. They work alongside the cards: a request card counts the changed roll, and a card played

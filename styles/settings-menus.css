@@ -3,6 +3,14 @@
  * the name takes the rest of the row, and a name that still wraps keeps its lines together, as in Foundry's own Configure
  * Settings window. A dropdown is as wide as its longest choice, beside a name that wraps to make room for it.
  */
+/* A long menu, such as Dice Rolling, scrolls its settings rather than growing past the screen, so Save stays in view. */
+.stt-settings-menu .stt-settings-list {
+  max-height: min(36rem, calc(100vh - 12rem));
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  padding-inline-end: 0.5rem;
+}
+
 .stt-settings-menu .form-group > label {
   line-height: 1.25;
   align-self: center;

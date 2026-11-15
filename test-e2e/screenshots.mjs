@@ -636,7 +636,7 @@ shot("a death save request", async (ctx) => {
 
 shot("the Gameplay Enhancements", async (ctx) => {
   const { gm, player } = ctx;
-  for ( const key of ["fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities"] ) {
+  for ( const key of ["fadeUnprepared", "rarityColours", "oneTabActivities"] ) {
     await setSetting(ctx, key, true);
   }
   const spell = (name, level, prepared) => ({ name, type: "spell", system: { level, method: "spell", prepared } });
@@ -673,18 +673,6 @@ shot("the Gameplay Enhancements", async (ctx) => {
       await capture(player, name, sheet);
     }
     await player.eval(() => game.actors.getName("Aria").sheet.close());
-
-    const id = await player.eval(async () => {
-      const before = new Set(game.messages.keys());
-      const attack = game.actors.getName("Aria").items.getName("Dagger").system.activities.find(a => a.type === "attack");
-      await attack.use({ consume: false }, { configure: false }, { create: true });
-      await new Promise(r => setTimeout(r, 500));
-      return game.messages.contents.find(m => !before.has(m.id))?.id ?? null;
-    });
-    if ( !id ) throw new Error("The Dagger's attack posted no chat card.");
-    await message(player, id).waitFor({ timeout: 10_000 });
-    await message(player, id).scrollIntoViewIfNeeded();
-    await capture(player, "world-scripts-chat-labels", message(player, id));
 
     await gm.eval(() => {
       const attack = game.actors.getName("Aria").items.getName("Dagger").system.activities.find(a => a.type === "attack");

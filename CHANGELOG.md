@@ -2,6 +2,19 @@
 
 All notable changes to Sogrom's Table Tools.
 
+## 1.2.0
+
+### Changed
+
+- **Needs D&D 5e 6.1.** The module now requires the D&D 5e system 6.1.0 or later, and is tested on 6.1.0.
+- **The settings menus scroll.** A long menu, such as Dice Rolling, scrolls its settings instead of growing past the
+  bottom of the screen, so **Save** stays in view.
+
+### Removed
+
+- **Chat Button Labels.** D&D 5e 6.1 writes the labels beside the buttons on compact chat cards itself, so the setting
+  is gone from Gameplay Enhancements.
+
 ## 1.1.0
 
 ### New

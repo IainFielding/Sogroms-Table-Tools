@@ -40,11 +40,6 @@
         "Name": "Fade Unprepared Spells",
         "Hint": "Dim unprepared spells on character sheets to help players quickly identify available options."
       },
-      "ChatButtonLabels": {
-        "Name": "Chat Button Labels",
-        "Hint": "Writes a label beside the small icon buttons D&D 5e 6.0 puts on compact chat cards, such as Attack and Damage, making them much easier to see and use.",
-        "Superseded": "Switched off while Carolingian UI is enabled: it labels these buttons itself. See Labeled card buttons in its chat message settings."
-      },
       "OneTabActivities": {
         "Name": "One-Tab Activities",
         "Hint": "Combine activity details into a single expanded view for faster editing and content creation."

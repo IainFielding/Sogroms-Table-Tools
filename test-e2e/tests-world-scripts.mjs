@@ -1,6 +1,6 @@
 /**
  * End-to-end tests for the settings menus and the Gameplay Enhancements: Bloodied Token Tint, Fade Unprepared Spells,
- * Item Rarity Colours, Chat Button Labels and One-Tab Activities.
+ * Item Rarity Colours and One-Tab Activities.
  */
 
 import { MODULE_ID } from "./config.mjs";
@@ -21,7 +21,7 @@ const MENUS = {
   },
   worldScripts: {
     id: "stt-settings-world-scripts",
-    settings: ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities", "spellComponentWarnings",
+    settings: ["bloodiedTint", "fadeUnprepared", "rarityColours", "oneTabActivities", "spellComponentWarnings",
       "welcomeCards"]
   }
 };
@@ -126,9 +126,33 @@ test("settings menus: four buttons for the GM, each holding its own settings and
   }
 });
 
+test("settings menus: a long menu scrolls its settings, with Save still on screen", async ({ gm }) => {
+  await gm.eval(moduleId => new (game.settings.menus.get(`${moduleId}.diceRolling`).type)().render({ force: true }),
+    MODULE_ID);
+  const app = gm.page.locator(`#${MENUS.diceRolling.id}`);
+  await app.waitFor({ timeout: 10_000 });
+  try {
+    const layout = await app.evaluate(el => {
+      const list = el.querySelector(".stt-settings-list");
+      const save = el.querySelector('button[type="submit"]').getBoundingClientRect();
+      return {
+        overflow: getComputedStyle(list).overflowY,
+        scrolls: list.scrollHeight > list.clientHeight,
+        saveShown: (save.top >= 0) && (save.bottom <= window.innerHeight)
+      };
+    });
+    assertEqual(layout.overflow, "auto", "the settings list's overflow");
+    assert(layout.scrolls, "Dice Rolling's settings fit without scrolling, so the scroll bar went untested.");
+    assert(layout.saveShown, "The Save button is off the screen.");
+  } finally {
+    await app.locator('[data-action="close"]').click();
+    await app.waitFor({ state: "detached", timeout: 5000 });
+  }
+});
+
 test("settings menus: ticking a box and saving changes that setting, and only that one", async ({ gm }) => {
   const before = await gm.eval(moduleId => Object.fromEntries(
-    ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities", "spellComponentWarnings"]
+    ["bloodiedTint", "fadeUnprepared", "rarityColours", "oneTabActivities", "spellComponentWarnings"]
       .map(key => [key, game.settings.get(moduleId, key)])
   ), MODULE_ID);
   assert(Object.values(before).every(v => v === false), "A Gameplay Enhancement started on.");
@@ -142,7 +166,7 @@ test("settings menus: ticking a box and saving changes that setting, and only th
   await app.waitFor({ state: "detached", timeout: 5000 });
 
   const after = await gm.eval(moduleId => Object.fromEntries(
-    ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities", "spellComponentWarnings"]
+    ["bloodiedTint", "fadeUnprepared", "rarityColours", "oneTabActivities", "spellComponentWarnings"]
       .map(key => [key, game.settings.get(moduleId, key)])
   ), MODULE_ID);
   assertEqual(after, { ...before, rarityColours: true }, "Gameplay Enhancements after saving");
@@ -222,11 +246,11 @@ test("settings menus: the Default DC starts blank, saves a number, and clears ag
 
 test("world scripts: every one is off by default", async ({ gm }) => {
   const defaults = await gm.eval(moduleId => Object.fromEntries(
-    ["bloodiedTint", "fadeUnprepared", "rarityColours", "chatButtonLabels", "oneTabActivities", "spellComponentWarnings"]
+    ["bloodiedTint", "fadeUnprepared", "rarityColours", "oneTabActivities", "spellComponentWarnings"]
       .map(key => [key, game.settings.settings.get(`${moduleId}.${key}`).default])
   ), MODULE_ID);
   assertEqual(defaults, {
-    bloodiedTint: false, fadeUnprepared: false, rarityColours: false, chatButtonLabels: false, oneTabActivities: false,
+    bloodiedTint: false, fadeUnprepared: false, rarityColours: false, oneTabActivities: false,
     spellComponentWarnings: false
   }, "defaults");
 });
@@ -306,33 +330,6 @@ test("item rarity colours: each item's row is tinted by its rarity, only with th
     await removeItems(gm, ids);
   }
 });
-
-test("chat button labels: a compact card's icon buttons show their names, only with the setting on", async ({ gm, player }) => {
-  // The Dagger's attack, used from chat, posts a compact card with Attack and Damage buttons.
-  const id = await player.eval(async () => {
-    const before = new Set(game.messages.keys());
-    const attack = game.actors.getName("Aria").items.getName("Dagger").system.activities.find(a => a.type === "attack");
-    await attack.use({ consume: false }, { configure: false }, { create: true });
-    await new Promise(r => setTimeout(r, 500));
-    return game.messages.contents.find(m => !before.has(m.id))?.id ?? null;
-  });
-  assert(id, "The Dagger's attack posted no chat card.");
-  const labels = () => player.eval(id => [...document.querySelectorAll(
-    `#chat [data-message-id="${id}"].compact .icon-row li > button.icon`
-  )].map(b => ({ label: b.getAttribute("aria-label"), before: getComputedStyle(b, "::before").content })), id);
-
-  await waitFor(player, id => !!document.querySelector(`#chat [data-message-id="${id}"].compact .icon-row button.icon`),
-    id, "the card's icon buttons");
-  const off = await labels();
-  assert(off.length, "The card has no icon buttons.");
-  assert(off.every(b => (b.before === "none") || (b.before === "normal")), `Labels are shown with the setting off: ${JSON.stringify(off)}`);
-  assertEqual(await player.eval(() => document.body.classList.contains("stt-chat-button-labels")), false, "body class off");
-
-  await setSetting(gm, player, "chatButtonLabels", true);
-  await waitFor(player, () => document.body.classList.contains("stt-chat-button-labels"), null, "the labels to turn on");
-  const on = await labels();
-  for ( const button of on ) assertEqual(button.before, `"${button.label}"`, `the ${button.label} button's label`);
-}, { skip: { crlngn: "Carolingian UI labels the buttons itself, so the setting stays off; see the compatibility tests." } });
 
 test("one-tab activities: an activity's three tabs are shown side by side, only with the setting on", async ({ gm, player }) => {
   const open = () => player.eval(async () => {
