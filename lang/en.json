@@ -40,11 +40,6 @@
         "Name": "Fade Unprepared Spells",
         "Hint": "Dim unprepared spells on character sheets to help players quickly identify available options."
       },
-      "ChatButtonLabels": {
-        "Name": "Chat Button Labels",
-        "Hint": "Writes a label beside the small icon buttons D&D 5e 6.0 puts on compact chat cards, such as Attack and Damage, making them much easier to see and use.",
-        "Superseded": "Switched off while Carolingian UI is enabled: it labels these buttons itself. See Labeled card buttons in its chat message settings."
-      },
       "OneTabActivities": {
         "Name": "One-Tab Activities",
         "Hint": "Combine activity details into a single expanded view for faster editing and content creation."
@@ -55,7 +50,11 @@
       },
       "LockNaturals": {
         "Name": "Natural 1s and 20s Lock Hero Cards",
-        "Hint": "Prevent Hero Cards from being played on natural 1s and natural 20s. Disable this setting to allow Advantage and Inspiration to affect those rolls. Natural 1s are always final, and can't be rerolled by Lucky, Indomitable, or Relentless."
+        "Hint": "Prevent Hero Cards from being played on natural 1s and natural 20s. Disable this setting to allow Advantage and Inspiration to affect those rolls. Lucky, Indomitable and Relentless never reroll a natural 1; Heroic Inspiration can, while this is off."
+      },
+      "HeroicInspiration": {
+        "Name": "Heroic Inspiration as a Hero Card",
+        "Hint": "A character with Heroic Inspiration can spend it on a roll in chat from the Hero Card button, as a card of its own. Under the 2024 rules it rerolls the d20, natural 1s included, and the new roll must be used; under the 2014 rules it gives advantage."
       },
       "MarkNaturals": {
         "Name": "Ring Natural 1s and 20s",
@@ -164,7 +163,8 @@
         "LoadingWeapons": "A second attack in a turn with the same Loading weapon shows a warning. Turn it off with Loading Weapon Warning, under Dice Rolling.",
         "ReloadWeapons": "Reload weapons count their shots with their Limited Uses, and offer to reload when empty. Turn it off with Reload Weapon Shots, under Dice Rolling.",
         "Flanking": "Turn on Flanking, under Dice Rolling, for the Dungeon Master's Guide's optional rule: advantage on melee attacks against an enemy you and an ally stand on opposite sides of.",
-        "SpellComponents": "Turn on Spell Component Warnings, under Gameplay Enhancements, to warn when a spell is cast while Silenced, or without a spellcasting focus or component pouch."
+        "SpellComponents": "Turn on Spell Component Warnings, under Gameplay Enhancements, to warn when a spell is cast while Silenced, or without a spellcasting focus or component pouch.",
+        "HeroicInspiration": "A character with Heroic Inspiration can spend it as a card from the Hero Card button on their roll: a reroll under the 2024 rules, advantage under the 2014 rules. Turn it off under Hero Cards."
       },
       "SettingsTitle": "Worth a look before your players start",
       "Guide": "Read the GM guide"
@@ -191,6 +191,9 @@
       "DialogTitle": "Use a Hero Card",
       "LegacyLabel": "Hero Cards:",
       "Plays": "{name} plays",
+      "Heroic": {
+        "Label": "Heroic Inspiration"
+      },
       "DivineSetup": {
         "Played": "{name} played Divine Intervention. Set up their roll when you're ready.",
         "Button": "Set Up Divine Intervention"

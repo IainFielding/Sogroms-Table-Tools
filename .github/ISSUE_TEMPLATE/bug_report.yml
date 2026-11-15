@@ -67,8 +67,8 @@ body:
     id: system-version
     attributes:
       label: D&D 5e system version
-      description: Shown in Game Settings → Support & Issues, e.g. 6.0.5.
-      placeholder: "6.0.5"
+      description: Shown in Game Settings → Support & Issues, e.g. 6.1.0.
+      placeholder: "6.1.0"
     validations:
       required: true
 

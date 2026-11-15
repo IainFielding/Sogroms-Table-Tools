@@ -58,6 +58,12 @@ export const WHATS_NEW = [
       "STT.Welcome.New.Flanking",
       "STT.Welcome.New.SpellComponents"
     ]
+  },
+  {
+    version: "1.2.0",
+    lines: [
+      "STT.Welcome.New.HeroicInspiration"
+    ]
   }
 ];
 

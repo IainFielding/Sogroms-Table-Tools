@@ -62,7 +62,7 @@ export const WORLD = COMPAT ? {
 };
 
 export const SYSTEM = "dnd5e";
-export const SYSTEM_VERSION = "6.0.5";
+export const SYSTEM_VERSION = "6.1.0";
 export const CORE_VERSION = "14.369";
 
 /** Foundry creates this passwordless GM in a world that has none. */

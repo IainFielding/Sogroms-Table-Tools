@@ -2,6 +2,28 @@
 
 All notable changes to Sogrom's Table Tools.
 
+## 1.2.0
+
+### New
+
+- **Heroic Inspiration plays like a Hero Card.** A character with Heroic Inspiration ticked on their sheet can spend
+  it from the Hero Card button on an attack, check, save or initiative roll, where it's offered as a card of its own
+  with new art, whether or not they hold Hero Cards. Under the 2024 rules it rerolls the d20 and the new roll stands;
+  it can reroll a natural 1 when **Natural 1s and 20s Lock Hero Cards** is off, but isn't offered on a natural 20.
+  Under the 2014 rules it gives advantage. The box is cleared as it's spent, and ticked again if the roll can't be
+  changed. **Heroic Inspiration as a Hero Card**, under Hero Cards, turns it off.
+
+### Changed
+
+- **Needs D&D 5e 6.1.** The module now requires the D&D 5e system 6.1.0 or later, and is tested on 6.1.0.
+- **The settings menus scroll.** A long menu, such as Dice Rolling, scrolls its settings instead of growing past the
+  bottom of the screen, so **Save** stays in view.
+
+### Removed
+
+- **Chat Button Labels.** D&D 5e 6.1 writes the labels beside the buttons on compact chat cards itself, so the setting
+  is gone from Gameplay Enhancements.
+
 ## 1.1.0
 
 ### New

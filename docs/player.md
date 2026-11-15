@@ -15,6 +15,7 @@ This guide is written for players. If you're the GM, check out the **[GM Guide](
   - [Playing a card from your character sheet](#playing-a-card-from-your-character-sheet)
   - [Using a Card on a Roll You've Already Made](#using-a-card-on-a-roll-youve-already-made)
   - [Hero Card Reference](#hero-card-reference)
+  - [Heroic Inspiration](#heroic-inspiration)
   - [Natural 1s and 20s](#natural-1s-and-20s)
 - [Adding another feature's die to a roll](#adding-another-features-die-to-a-roll)
 - [Fighter's Indomitable](#fighters-indomitable)
@@ -85,6 +86,21 @@ A few things to keep in mind:
 | **Mind's Eye** | Reveal some of your character's backstory. |
 | **Divine Intervention** | Your GM will ask you to name a range of consecutive numbers. See [Divine Intervention](#divine-intervention). |
 
+### Heroic Inspiration
+
+When your character has Heroic Inspiration (the Inspiration box on your character sheet is ticked), it's offered as a
+card of its own when you click the Hero Card button on an attack, check, save or initiative roll. You don't need the
+Hero Cards feature to use it.
+
+<img src="../assets/images/heroicinspiration.webp" alt="The Heroic Inspiration card: dice thrown up from an open hand" width="180">
+
+- **2024 rules:** reroll the d20 and use the new result. Unlike Lucky, it can reroll a natural 1, if your GM has
+  turned off **Natural 1s and 20s Lock Hero Cards**. It isn't offered on a natural 20.
+- **2014 rules:** the roll gains advantage, as the Advantage card gives.
+
+Spending it clears the box on your sheet. It isn't a Hero Card, so it doesn't come back on a long rest: your GM
+awards it, or a feature such as the 2024 Human's Resourceful gives it.
+
 The best time to use a Hero Card is when the outcome really matters. Whether you're turning failure into success, pushing for a critical moment, or making a last stand, they're meant to help create memorable stories at the table.
 
 ### Natural 1s and 20s
@@ -95,7 +111,7 @@ Natural 20s and Natural 1s are highlighted in chat so they're easy for everyone 
 
 By default:
 
-- A natural 1 is final and can't be rerolled.
+- A natural 1 is final and can't be rerolled. Heroic Inspiration is the exception, if your GM turns the lock off.
 - Hero Cards can't normally be used on natural 1s or natural 20s.
 - Damage rolls aren't affected by these restrictions.
 - On a saving throw against a spell's or feature's damage, a natural 20 takes no damage and a natural 1 takes the

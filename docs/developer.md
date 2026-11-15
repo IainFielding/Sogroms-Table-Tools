@@ -28,7 +28,7 @@ contribute (sign-off, commit messages, pull requests) is in [CONTRIBUTING.md](..
 | | |
 |---|---|
 | Module ID | `sogrom-table-tools` |
-| Requires | Foundry VTT v14, D&D 5e 6.x (verified on 6.0.6) |
+| Requires | Foundry VTT v14, D&D 5e 6.1 or later (verified on 6.1.0) |
 | API | `game.modules.get("sogrom-table-tools").api`, set during `init` |
 | Flag scope | `sogrom-table-tools` |
 | Socket | `module.sogrom-table-tools` |
@@ -385,6 +385,7 @@ in `settings-menus.mjs`. A setting is added to a menu through its class's `SETTI
 | Key | Type | Default | Purpose |
 |---|---|---|---|
 | `lockNaturals` | Boolean | `true` | No card can be played on a natural 1 or 20. |
+| `heroicInspiration` | Boolean | `true` | Offer a character's Heroic Inspiration as a card on their d20 rolls: a reroll under the 2024 rules, advantage under the 2014 rules. |
 | `markNaturals` | Boolean | `true` | Ring natural 1s and 20s in chat and on request cards. |
 | `naturalChecks` | Boolean | `true` | A natural 20 on a check made against a DC always succeeds, and a natural 1 always fails. Changing it redraws the chat log. |
 | `naturalSaveOutcomes` | Boolean | `true` | A natural 20 on a saving throw made against a DC always succeeds, and a natural 1 always fails. Death saves are left to dnd5e. Changing it redraws the chat log. |
@@ -405,7 +406,6 @@ in `settings-menus.mjs`. A setting is added to a menu through its class's `SETTI
 | `oneTabActivities` | Boolean | `false` | Lay an activity sheet's tabs side by side, through the `stt-one-tab-activities` body class. |
 | `welcomeCards` | Boolean | `true` | Whisper the GMs the welcome card on a world's first run, and a what's new card after a feature release. |
 | `welcomeVersion` | String | `""` | Not in any menu: the last release a welcome or what's new card announced. A card is due when `WHATS_NEW` in `welcome.mjs` has a later entry. Add an entry there for each feature release; a patch adds none. |
-| `chatButtonLabels` | Boolean | `false` | Show icon buttons' labels on compact chat cards, through the `stt-chat-button-labels` body class. |
 
 ## Socket messages
 
@@ -452,7 +452,7 @@ Sogrom's Table Tools fires no hooks of its own. It listens to these:
 |---|---|---|
 | `init` | Every script with a setting, and `settings-menus.mjs` | Register settings and their menus, and set the API. `natural-initiative.mjs` also wraps `Combat#_sortCombatants` and `Combatant#getInitiativeRoll` here, as Foundry sorts each combat's turns before `setup`. `welcome.mjs` adds one click listener to the document for the welcome card's buttons, since the chat log draws earlier sessions' cards before `ready`. |
 | `setup` | `hero-cards.mjs`, `natural-saves.mjs`, `natural-outcomes.mjs` | Wrap `Item#use`, the damage tray's target options (see below), and `D20Roll#isSuccess` and `D20Roll#isFailure`, so dnd5e judges a roll that carries its DC by its natural 1 or 20 where a setting says so. |
-| `ready` | `bonus-rolls.mjs`, `roll-request-popup.mjs`, `natural-saves.mjs`, `welcome.mjs`, `chat-button-labels.mjs`, `one-tab-activities.mjs` | Start listening on the socket, open pop-ups for recent requests, watch RSReforged's Apply buttons, post a welcome or what's new card that is due, and apply the two layout settings. |
+| `ready` | `bonus-rolls.mjs`, `roll-request-popup.mjs`, `natural-saves.mjs`, `welcome.mjs`, `one-tab-activities.mjs` | Start listening on the socket, open pop-ups for recent requests, watch RSReforged's Apply buttons, post a welcome or what's new card that is due, and apply the One-Tab Activities layout. |
 | `dnd5e.renderChatMessage` | `hero-cards.mjs`, `roll-requests.mjs`, `bonus-rolls.mjs`, `class-features.mjs` | Add card buttons, natural 1/20 rings, notes, request cards, and the Indomitable button. |
 | `createChatMessage`, `updateChatMessage`, `deleteChatMessage` | `hero-cards.mjs`, `roll-requests.mjs`, `roll-request-popup.mjs` | Show played cards, redraw request cards, and open or close pop-ups. |
 | `diceSoNiceRollComplete` | `roll-requests.mjs`, `roll-request-popup.mjs` | Redraw a request card and its pop-up once a roll's 3D dice have landed. |
@@ -498,8 +498,7 @@ too, and uses `revert-layer` to hand the request card, the played card and the c
 rules. A new themed element inside `.stt-request` or a `.stt-card-dialog` window is covered without a change there; a
 new themed element anywhere else needs adding to it. `placeSummaryButton()` in `hero-cards.mjs` puts a roll's card
 button in the rows that Carolingian UI's compact cards draw, found through `globalThis.dnd5eCompactCards`, the registry
-those cards share with Flash Token Bar 5e. `labelsSuperseded()` in `chat-button-labels.mjs` keeps **Chat Button
-Labels** off while Carolingian UI is active. The `revert-layer` rules also override a user's own custom CSS on those
+those cards share with Flash Token Bar 5e. The `revert-layer` rules also override a user's own custom CSS on those
 elements, apart from the theme's `--cc-*` variables, which `all` doesn't cover: the GM guide's **Other modules**
 section says how to restyle them.
 
@@ -522,7 +521,6 @@ scripts/
   bloodied-tint.mjs         Gameplay Enhancements: the red tint on D&D 5e's Bloodied effect.
   fade-unprepared.mjs       Gameplay Enhancements: fading unprepared spells on actor sheets.
   rarity-colours.mjs        Gameplay Enhancements: tinting item rows on actor sheets by rarity.
-  chat-button-labels.mjs    Gameplay Enhancements: labels on compact chat cards' icon buttons.
   one-tab-activities.mjs    Gameplay Enhancements: an activity sheet's tabs side by side.
   settings-menus.mjs        The settings menus (ApplicationV2).
   welcome.mjs               The welcome and what's new cards whispered to the GMs.

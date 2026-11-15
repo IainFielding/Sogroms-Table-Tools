@@ -1,6 +1,6 @@
 /*
- * Gameplay Enhancements: the looks the Fade Unprepared Spells, Item Rarity Colours, Chat Button Labels and One-Tab
- * Activities scripts add. Each script only adds its class while its setting is on.
+ * Gameplay Enhancements: the looks the Fade Unprepared Spells, Item Rarity Colours and One-Tab Activities scripts
+ * add. Each script only adds its class while its setting is on.
  */
 
 /* One-Tab Activities */
@@ -49,17 +49,6 @@
     nav.tabs {
       display: none !important;
     }
-  }
-}
-
-/* Chat Button Labels */
-.stt-chat-button-labels .chat-message.compact .icon-row li > button.icon {
-  padding: 0.5rem;
-  font-family: var(--dnd5e-font-roboto-condensed);
-  text-transform: none;
-  width: auto;
-  &::before {
-    content: attr(aria-label);
   }
 }
 

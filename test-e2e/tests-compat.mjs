@@ -589,27 +589,3 @@ test("compat: a card played after Carolingian UI changed a roll's advantage work
   const shown = await shownTotals(player, id);
   assert(shown.some(t => t.includes(String(roll.total))), `The new total ${roll.total} isn't shown. Shown: ${shown.join(" | ")}`);
 });
-
-test("compat: Chat Button Labels stay off while Carolingian UI is enabled, and keep what was saved", async ({ gm }) => {
-  if ( !(await gm.eval(() => !!game.modules.get("crlngn-ui")?.active)) ) return;
-  await gm.eval(moduleId => game.settings.set(moduleId, "chatButtonLabels", true), MODULE_ID);
-  try {
-    assert(!(await gm.eval(() => document.body.classList.contains("stt-chat-button-labels"))),
-      "The labels are on, beside the labels Carolingian UI writes.");
-    await gm.eval(moduleId => new (game.settings.menus.get(`${moduleId}.worldScripts`).type)().render({ force: true }),
-      MODULE_ID);
-    const menu = gm.page.locator("#stt-settings-world-scripts");
-    const box = menu.locator('input[name="chatButtonLabels"]');
-    await box.waitFor({ timeout: 10_000 });
-    assert(await box.isDisabled(), "The setting can be changed.");
-    assert(!(await box.isChecked()), "The setting is shown switched on.");
-    const hint = await menu.locator('.form-group:has(input[name="chatButtonLabels"]) .hint').textContent();
-    assert(hint.includes("Carolingian UI"), `The setting's hint doesn't say why: ${hint}`);
-    await menu.locator('button[type="submit"]').click();
-    await menu.waitFor({ state: "detached", timeout: 5000 });
-    assertEqual(await gm.eval(moduleId => game.settings.get(moduleId, "chatButtonLabels"), MODULE_ID), true,
-      "the saved setting, after saving the menu");
-  } finally {
-    await gm.eval(moduleId => game.settings.set(moduleId, "chatButtonLabels", false), MODULE_ID);
-  }
-});

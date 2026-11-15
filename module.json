@@ -20,8 +20,8 @@
         "id": "dnd5e",
         "type": "system",
         "compatibility": {
-          "minimum": "6.0.0",
-          "verified": "6.0.6"
+          "minimum": "6.1.0",
+          "verified": "6.1.0"
         }
       }
     ]
@@ -50,7 +50,6 @@
     "scripts/bloodied-tint.mjs",
     "scripts/fade-unprepared.mjs",
     "scripts/rarity-colours.mjs",
-    "scripts/chat-button-labels.mjs",
     "scripts/one-tab-activities.mjs",
     "scripts/settings-menus.mjs",
     "scripts/welcome.mjs"

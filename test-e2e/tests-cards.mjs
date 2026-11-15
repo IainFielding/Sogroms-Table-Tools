@@ -474,6 +474,143 @@ test("relentless: not offered after the first round", async ({ gm, player }) => 
 });
 
 /* -------------------------------------------- */
+/*  Heroic Inspiration                          */
+/* -------------------------------------------- */
+
+const HEROIC = "Heroic Inspiration";
+
+/**
+ * Give a character Heroic Inspiration, or take it away, as the GM, and wait for the player to see it.
+ * @param {import("./lib/session.mjs").Session} gm
+ * @param {import("./lib/session.mjs").Session} player
+ * @param {string} name
+ * @param {boolean} value
+ */
+async function setInspiration(gm, player, name, value) {
+  await gm.eval(({ name, value }) => game.actors.getName(name).update({ "system.attributes.inspiration": value }),
+    { name, value });
+  await waitFor(player, ({ name, value }) => game.actors.getName(name).system.attributes.inspiration === value,
+    { name, value }, `${name}'s Heroic Inspiration to reach the player`);
+}
+
+/**
+ * @param {import("./lib/session.mjs").Session} session
+ * @param {string} name
+ * @returns {Promise<boolean>}  Whether the character has Heroic Inspiration.
+ */
+function inspired(session, name) {
+  return session.eval(name => game.actors.getName(name).system.attributes.inspiration, name);
+}
+
+test("heroic inspiration: offered as a card to a character who has it, cards or none", async ({ gm, player }) => {
+  await forceDice(player, [d20(5)]);
+  const id = await roll(player, "Borin", "skill");
+  assertEqual(await cardButton(player, id).count(), 0, "card buttons on Borin's check, with no cards or inspiration");
+
+  // Gaining it shows the button on a roll already in chat.
+  await setInspiration(gm, player, "Borin", true);
+  await waitFor(player, id => !!document.querySelector(`#chat .chat-log [data-message-id="${id}"] .stt-card-button`),
+    id, "the card button to appear on Borin's check");
+  assertEqual(await cardsOffered(player, id), [HEROIC], "cards offered to Borin");
+
+  await setInspiration(gm, player, "Aria", true);
+  await forceDice(player, [d20(5)]);
+  const aria = await roll(player, "Aria", "skill");
+  const offered = await cardsOffered(player, aria);
+  assert(offered.includes(HEROIC) && offered.includes("Lucky"), `Aria's cards and Heroic Inspiration: ${offered.join(", ")}`);
+});
+
+test("heroic inspiration: rerolls the d20 under the 2024 rules, and is spent", async ({ gm, player }) => {
+  await setInspiration(gm, player, "Aria", true);
+  await forceDice(player, [d20(5)]);
+  const id = await roll(player, "Aria", "skill");
+  const lucky = await usesLeft(player, "Lucky");
+  await forceDice(player, [d20(3)]);
+  await cardsOffered(player, id, HEROIC);
+  const result = await afterCard(player, id);
+  assertEqual(result.total, 3, "total after Heroic Inspiration, even though it is lower");
+  assertEqual(result.log, ["Heroic Inspiration: rerolled the d20 (5 → 3): 5 → 3"], "the note");
+  await waitFor(player, () => !game.actors.getName("Aria").system.attributes.inspiration, null, "the box to clear");
+  assertEqual(await usesLeft(player, "Lucky"), lucky, "Lucky uses left, which Heroic Inspiration doesn't touch");
+  const img = await player.eval(({ id, moduleId }) => game.messages.get(id).getFlag(moduleId, "log")[0].img,
+    { id, moduleId: MODULE_ID });
+  assert(img.endsWith("/heroicinspiration.webp"), `the note's art: ${img}`);
+});
+
+test("heroic inspiration: gives advantage under the 2014 rules", async ({ gm, player }) => {
+  await setInspiration(gm, player, "Aria", true);
+  // The rules are swapped on the player's client alone, as D&D 5e reloads to change them.
+  const rules = await player.eval(() => {
+    const was = dnd5e.settings.rulesVersion;
+    dnd5e.settings.rulesVersion = "legacy";
+    return was;
+  });
+  try {
+    await forceDice(player, [d20(5)]);
+    const id = await roll(player, "Aria", "skill");
+    await forceDice(player, [d20(14)]);
+    await cardsOffered(player, id, HEROIC);
+    const result = await afterCard(player, id);
+    assertEqual([result.total, result.advantage], [14, true], "total and mode after Heroic Inspiration");
+    assertEqual(result.log, ["Heroic Inspiration: rolled with advantage (5 and 14): 5 → 14"], "the note");
+    assertEqual(await inspired(player, "Aria"), false, "Aria's Heroic Inspiration, once spent");
+  } finally {
+    await player.eval(rules => dnd5e.settings.rulesVersion = rules, rules);
+  }
+});
+
+test("heroic inspiration: rerolls a natural 1 with the lock off, though Lucky can't", async ({ gm, player }) => {
+  await setInspiration(gm, player, "Aria", true);
+  await forceDice(player, [d20(1)]);
+  const locked = await roll(player, "Aria", "save");
+  assertEqual(await cardButton(player, locked).count(), 0, "card buttons on a natural 1 with the lock on");
+
+  await setLockNaturals(gm, player, false);
+  await forceDice(player, [d20(1)]);
+  const id = await roll(player, "Aria", "save");
+  await forceDice(player, [d20(12)]);
+  const offered = await cardsOffered(player, id, HEROIC);
+  assert(!offered.includes("Lucky"), "Lucky was offered on a natural 1.");
+  const { log } = await afterCard(player, id);
+  assert(log[0].startsWith("Heroic Inspiration: rerolled the d20 (1 → 12)"), `the note: ${log[0]}`);
+});
+
+test("heroic inspiration: not offered on damage, on a natural 20, or with the setting off", async ({ gm, player }) => {
+  await setInspiration(gm, player, "Aria", true);
+  await forceDice(player, [[1, 4]]);
+  const damage = await roll(player, "Aria", "damage");
+  assert(!(await cardsOffered(player, damage)).includes(HEROIC), "Heroic Inspiration was offered on damage.");
+
+  await setLockNaturals(gm, player, false);
+  await forceDice(player, [d20(20)]);
+  const twenty = await roll(player, "Aria", "skill");
+  assert(!(await cardsOffered(player, twenty)).includes(HEROIC), "Heroic Inspiration was offered on a natural 20.");
+
+  await setSetting(gm, player, "heroicInspiration", false);
+  await forceDice(player, [d20(5)]);
+  const off = await roll(player, "Aria", "skill");
+  assert(!(await cardsOffered(player, off)).includes(HEROIC), "Heroic Inspiration was offered with the setting off.");
+});
+
+test("heroic inspiration: given back if its roll can't be changed", async ({ gm, player }) => {
+  await setInspiration(gm, player, "Aria", true);
+  await forceDice(player, [d20(5)]);
+  const id = await roll(player, "Aria", "skill");
+  await player.eval(id => {
+    const message = game.messages.get(id);
+    message.update = async () => {
+      delete message.update;
+      throw new Error("The roll could not be saved.");
+    };
+  }, id);
+  await forceDice(player, [d20(14)]);
+  await cardsOffered(player, id, HEROIC);
+  await waitFor(player, () => [...document.querySelectorAll("#notifications .notification.error")]
+    .some(n => n.textContent.includes("The roll could not be saved.")), undefined, "the error to be shown");
+  await waitFor(player, () => game.actors.getName("Aria").system.attributes.inspiration, null, "it to be given back");
+});
+
+/* -------------------------------------------- */
 /*  The Card Window on the Sheet                */
 /* -------------------------------------------- */
 

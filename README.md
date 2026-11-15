@@ -1,7 +1,7 @@
 # Sogrom's Table Tools
 
 ![Foundry VTT v14](https://img.shields.io/badge/Foundry_VTT-v14-red)
-![D&D 5e 6.x](https://img.shields.io/badge/D%26D_5e-6.x-red)
+![D&D 5e 6.1+](https://img.shields.io/badge/D%26D_5e-6.1%2B-red)
 [![Latest release](https://img.shields.io/github/v/release/IainFielding/Sogroms-Table-Tools)](https://github.com/IainFielding/Sogroms-Table-Tools/releases/latest)
 
 **Hero Cards, cinematic rolls, and less work behind the screen for D&D 5e on Foundry VTT.**
@@ -97,7 +97,7 @@ https://github.com/IainFielding/Sogroms-Table-Tools/releases/latest/download/mod
 Then enable it in your world's **Manage Modules**, and drag the **Hero Cards** feature from the
 **Items (Sogrom's Table Tools)** compendium onto each character who should have them.
 
-**Requires** Foundry VTT v14 and the D&D 5e system 6.x (tested on 6.0.6).
+**Requires** Foundry VTT v14 and the D&D 5e system 6.1 or later (tested on 6.1.0).
 
 ## Support
 
