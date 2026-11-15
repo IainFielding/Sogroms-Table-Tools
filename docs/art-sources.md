@@ -28,4 +28,5 @@ Indomitable) at [contentcredentials.org/verify](https://contentcredentials.org/v
 | Advantage | `advantage.webp` | Double rainbows | chetanvlad | 2279334 | [pexels.com/photo/2279334](https://www.pexels.com/photo/2279334/) | pexels-chetanvlad-2279334 |
 | Inspiration (1d6, 1d8, 1d10) | `inspiration1d6.webp`, `inspiration1d8.webp`, `inspiration1d10.webp` | Inspiration dice | armandoare1 | 3649115 | [pexels.com/photo/3649115](https://www.pexels.com/photo/3649115/) | pexels-armandoare1-3649115 |
 | Mind's Eye | `mindseye.webp` | Mind's eye | jimmy-art | 28304670 | [pexels.com/photo/28304670](https://www.pexels.com/photo/28304670/) | pexels-jimmy-art-470453875-28304670 |
+| Heroic Inspiration (2024 and 2014) | `heroicinspiration.webp`, `heroicinspiration-2014.webp` | Close up shot of a human hand | michele-raffoni | 9065481 | [pexels.com/photo/9065481](https://www.pexels.com/photo/9065481/) | pexels-michele-raffoni-88958531-9065481 |
 | Charger | `charger.webp` | Horse charging | lorenzo-pacifico | 629139 | [pexels.com/photo/629139](https://www.pexels.com/photo/629139/) | pexels-lorenzo-pacifico-203320-629139 |

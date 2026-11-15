@@ -7,7 +7,7 @@ import { MODULE_ID } from "./config.mjs";
 import { assert, assertEqual, test, waitFor } from "./lib/harness.mjs";
 
 const MENUS = {
-  heroCards: { id: "stt-settings-hero-cards", settings: ["lockNaturals", "showPlayedCards"] },
+  heroCards: { id: "stt-settings-hero-cards", settings: ["lockNaturals", "heroicInspiration", "showPlayedCards"] },
   diceRolling: {
     id: "stt-settings-dice-rolling",
     settings: [

@@ -385,6 +385,7 @@ in `settings-menus.mjs`. A setting is added to a menu through its class's `SETTI
 | Key | Type | Default | Purpose |
 |---|---|---|---|
 | `lockNaturals` | Boolean | `true` | No card can be played on a natural 1 or 20. |
+| `heroicInspiration` | Boolean | `true` | Offer a character's Heroic Inspiration as a card on their d20 rolls: a reroll under the 2024 rules, advantage under the 2014 rules. |
 | `markNaturals` | Boolean | `true` | Ring natural 1s and 20s in chat and on request cards. |
 | `naturalChecks` | Boolean | `true` | A natural 20 on a check made against a DC always succeeds, and a natural 1 always fails. Changing it redraws the chat log. |
 | `naturalSaveOutcomes` | Boolean | `true` | A natural 20 on a saving throw made against a DC always succeeds, and a natural 1 always fails. Death saves are left to dnd5e. Changing it redraws the chat log. |

@@ -67,6 +67,16 @@ const CARD_ART = {
 };
 
 /**
+ * Heroic Inspiration's card art: the 2024 rules' reroll, and the 2014 rules' advantage.
+ */
+const HEROIC_ART = { modern: "heroicinspiration.webp", legacy: "heroicinspiration-2014.webp" };
+
+/**
+ * The roll kinds Heroic Inspiration can be spent on: the d20 tests, initiative being a Dexterity check.
+ */
+const HEROIC_KINDS = ["attack", "check", "save", "initiative"];
+
+/**
  * Activity UUIDs currently being spent from a chat card, so the "Advantage on next roll" handler can ignore them.
  * @type {Set<string>}
  */
@@ -127,6 +137,7 @@ Hooks.once("setup", wrapItemUse);
 Hooks.on("dnd5e.renderChatMessage", onRenderChatMessage);
 Hooks.on("createChatMessage", onCreateChatMessage);
 Hooks.on("updateChatMessage", onUpdateChatMessage);
+Hooks.on("updateActor", onUpdateActor);
 Hooks.on("dnd5e.postUseActivity", onPostUseActivity);
 Hooks.on("dnd5e.preRollD20TestV2", onPreRollD20Test);
 Hooks.on("dnd5e.postD20TestRollConfiguration", onPostD20TestRollConfiguration);
@@ -173,6 +184,15 @@ function registerSettings() {
   game.settings.register(MODULE_ID, "naturalSaveOutcomes", {
     name: "STT.Settings.NaturalSaveOutcomes.Name",
     hint: "STT.Settings.NaturalSaveOutcomes.Hint",
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: true,
+    onChange: () => game.messages.forEach(m => ui.chat.updateMessage(m))
+  });
+  game.settings.register(MODULE_ID, "heroicInspiration", {
+    name: "STT.Settings.HeroicInspiration.Name",
+    hint: "STT.Settings.HeroicInspiration.Hint",
     scope: "world",
     config: false,
     type: Boolean,
@@ -471,6 +491,26 @@ async function onUpdateChatMessage(message, changes) {
 /* -------------------------------------------- */
 
 /**
+ * The most recent chat messages redrawn when a character gains or spends Heroic Inspiration.
+ */
+const HEROIC_REDRAW_LIMIT = 50;
+
+/**
+ * A character gained or spent Heroic Inspiration: redraw recent messages, so the card button shows or goes to match.
+ * Every one is redrawn, not only the character's own: their rolls also show in activity cards and in the GM's roll
+ * request cards.
+ * @param {Actor5e} actor
+ * @param {object} changes
+ */
+function onUpdateActor(actor, changes) {
+  if ( !foundry.utils.hasProperty(changes, "system.attributes.inspiration") ) return;
+  if ( !actor.isOwner || !game.settings.get(MODULE_ID, "heroicInspiration") ) return;
+  for ( const message of game.messages.contents.slice(-HEROIC_REDRAW_LIMIT) ) ui.chat?.updateMessage(message);
+}
+
+/* -------------------------------------------- */
+
+/**
  * Using the Advantage card from the sheet grants advantage on the next d20 test. Playing Divine Intervention asks the
  * GM to set up its roll.
  * @param {Activity} activity
@@ -647,9 +687,19 @@ function getCardArt(activity) {
 /* -------------------------------------------- */
 
 /**
+ * A card the current user may spend on a roll: one of the actor's Hero Cards, or the character's Heroic Inspiration.
+ * @typedef {object} CardOption
+ * @property {string} key             The card's kind: a key of CARDS, or "heroic" for Heroic Inspiration.
+ * @property {Activity} [activity]    The Hero Card's activity, whose use is spent. Heroic Inspiration has none.
+ * @property {Actor5e} [actor]        The character whose Heroic Inspiration is spent.
+ * @property {string} label           The card's name.
+ * @property {string} img             The card's art.
+ */
+
+/**
  * Determine which cards the current user may spend on this message right now.
  * @param {ChatMessage5e} message
- * @returns {{ key: string, activity: Activity, label: string, img: string }[]}
+ * @returns {CardOption[]}
  */
 export function getCardOptions(message) {
   const kind = getRollKind(message);
@@ -697,7 +747,41 @@ export function getCardOptions(message) {
       options.push({ key, activity, label: getCardLabel(activity), img: getCardArt(activity) });
     }
   }
+
+  const legacy = dnd5e.settings.rulesVersion === "legacy";
+  const heroic = game.settings.get(MODULE_ID, "heroicInspiration") && getHeroicEffect({
+    inspired: (actor.type === "character") && !!actor.system.attributes?.inspiration,
+    kind, d20: !!d20, natural, hasAdvantage: !!roll?.hasAdvantage, legacy
+  });
+  if ( heroic ) options.push({
+    key: "heroic", actor, label: localize("STT.Cards.Heroic.Label"),
+    img: `${IMAGE_PATH}/${HEROIC_ART[legacy ? "legacy" : "modern"]}`
+  });
   return options;
+}
+
+/* -------------------------------------------- */
+
+/**
+ * What spending Heroic Inspiration would do to a roll, if it can be spent on it at all.
+ *
+ * Under the 2024 rules it rerolls the d20, and the new roll must be used. Unlike Lucky and Indomitable, it can reroll a
+ * natural 1, as the rules allow; "Natural 1s and 20s Lock Hero Cards" still keeps it off one while that's on. A natural
+ * 20 isn't offered, as no reroll could better it. Under the 2014 rules it gives advantage, as the Advantage card does,
+ * so it isn't offered on a roll that already has advantage.
+ * @param {object} roll
+ * @param {boolean} roll.inspired      Whether the roll's actor is a character with Heroic Inspiration.
+ * @param {string} roll.kind           The roll's kind (see getRollKind).
+ * @param {boolean} roll.d20           Whether it is a d20 roll.
+ * @param {number} [roll.natural]      The d20 it keeps.
+ * @param {boolean} roll.hasAdvantage  Whether it was rolled with advantage.
+ * @param {boolean} roll.legacy        Whether dnd5e is set to the 2014 rules.
+ * @returns {"reroll"|"advantage"|null}
+ */
+export function getHeroicEffect({ inspired, kind, d20, natural, hasAdvantage, legacy }) {
+  if ( !inspired || !d20 || !HEROIC_KINDS.includes(kind) ) return null;
+  if ( legacy ) return hasAdvantage ? null : "advantage";
+  return natural === 20 ? null : "reroll";
 }
 
 /* -------------------------------------------- */
@@ -1009,10 +1093,10 @@ async function chooseCard(options, hint) {
   // The tooltip shows the card art at full size so its rules text is readable.
   const { escapeHTML } = foundry.utils;
   const cards = options.map((o, i) => `
-    <button type="button" class="stt-card-choice" data-index="${i}" data-card="${escapeHTML(o.activity.name)}"
+    <button type="button" class="stt-card-choice" data-index="${i}" data-card="${escapeHTML(o.activity?.name ?? o.label)}"
             data-tooltip-html="${escapeHTML(cardArtHTML(o.img, o.label))}"
             data-tooltip-class="stt-card-tooltip" data-tooltip-direction="UP">
-      <img src="${escapeHTML(o.img)}" alt="${escapeHTML(o.activity.name)}">
+      <img src="${escapeHTML(o.img)}" alt="${escapeHTML(o.activity?.name ?? o.label)}">
       <span>${escapeHTML(o.label)}</span>
     </button>
   `).join("");
@@ -1048,9 +1132,11 @@ async function chooseCard(options, hint) {
 /**
  * Spend the card's use, then rewrite the message's rolls.
  * @param {ChatMessage5e} message
- * @param {{ key: string, activity: Activity, label: string }} option
+ * @param {CardOption} option
  */
-async function applyCard(message, { key, activity, label }) {
+async function applyCard(message, option) {
+  if ( option.key === "heroic" ) return applyHeroicInspiration(message, option);
+  const { key, activity, label } = option;
   const spent = activity.uses?.spent ?? 0;
   let used;
   // Midi-QOL runs a whole workflow for every activity used, which would roll the card's own die on a card of its own,
@@ -1085,11 +1171,39 @@ async function applyCard(message, { key, activity, label }) {
 /* -------------------------------------------- */
 
 /**
+ * Spend a character's Heroic Inspiration on a roll: a reroll under the 2024 rules, advantage under the 2014 rules.
+ * @param {ChatMessage5e} message
+ * @param {CardOption} option
+ */
+async function applyHeroicInspiration(message, { actor, label, img }) {
+  // Read again: the box may have been cleared since the chooser opened, by another player or the sheet.
+  if ( !actor.system.attributes?.inspiration ) return;
+  await actor.update({ "system.attributes.inspiration": false });
+  const key = dnd5e.settings.rulesVersion === "legacy" ? "advantage" : "indomitable";
+  // As with a Hero Card, it's given back if the roll can't be changed, so it's never lost without its effect.
+  try {
+    await playOnRoll(message, { key, label, img, by: actor.name });
+  } catch(err) {
+    await actor.update({ "system.attributes.inspiration": true });
+    throw err;
+  }
+  if ( getRollKind(message) === "initiative" ) await updateInitiative(message);
+}
+
+/* -------------------------------------------- */
+
+/**
  * Rewrite a message's rolls with a card's effect, and note the card on it.
  * @param {ChatMessage5e} message
- * @param {{ key: string, activity: Activity, label: string }} option
+ * @param {object} option
+ * @param {string} option.key            How the roll is changed: a key of CARDS. Heroic Inspiration plays as
+ *                                       "indomitable", a plain reroll, or "advantage".
+ * @param {Activity} [option.activity]   The Hero Card played.
+ * @param {string} option.label          The card's name, for the note.
+ * @param {string} [option.img]          The card's art, if not the activity's.
+ * @param {string} [option.by]           Who played it, if not the activity's actor.
  */
-async function playOnRoll(message, { key, activity, label }) {
+async function playOnRoll(message, { key, activity, label, img, by }) {
   const rolls = message.rolls.map(r => Roll.fromData(r.toJSON()));
   const before = rolls[0].total;
   let detail;
@@ -1154,7 +1268,7 @@ async function playOnRoll(message, { key, activity, label }) {
   }
 
   const text = localize("STT.Cards.Log.Entry", { card: label, detail });
-  const entry = { text, card: label, img: getCardArt(activity), by: activity.actor?.name ?? "" };
+  const entry = { text, card: label, img: img ?? getCardArt(activity), by: by ?? activity?.actor?.name ?? "" };
   const log = [...(message.getFlag(MODULE_ID, "log") ?? []), entry];
   await message.update({ rolls: rolls.map(r => r.toJSON()), [`flags.${MODULE_ID}.log`]: log });
 }

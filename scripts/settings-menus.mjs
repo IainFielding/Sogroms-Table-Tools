@@ -108,7 +108,7 @@ class HeroCardsSettings extends SettingsMenu {
   };
 
   /** @override */
-  static SETTINGS = ["lockNaturals", "showPlayedCards"];
+  static SETTINGS = ["lockNaturals", "heroicInspiration", "showPlayedCards"];
 }
 
 class DiceRollingSettings extends SettingsMenu {

@@ -109,6 +109,7 @@ export async function resetWorld(gm, player) {
     if ( !game.settings.get(moduleId, "markNaturals") ) await game.settings.set(moduleId, "markNaturals", true);
     if ( !game.settings.get(moduleId, "attachRolls") ) await game.settings.set(moduleId, "attachRolls", true);
     if ( !game.settings.get(moduleId, "showPlayedCards") ) await game.settings.set(moduleId, "showPlayedCards", true);
+    if ( !game.settings.get(moduleId, "heroicInspiration") ) await game.settings.set(moduleId, "heroicInspiration", true);
     for ( const key of ["popupPlayers", "popupGM", "deathSavePrompt", "bloodiedTint", "fadeUnprepared", "rarityColours",
       "oneTabActivities", "spellComponentWarnings", "flanking"] ) {
       if ( game.settings.get(moduleId, key) ) await game.settings.set(moduleId, key, false);
@@ -124,6 +125,7 @@ export async function resetWorld(gm, player) {
       if ( hp ) changes["system.attributes.hp"] = hp;
       const death = actor.system.attributes?.death;
       if ( death?.success || death?.failure ) changes["system.attributes.death"] = { success: 0, failure: 0 };
+      if ( actor.system.attributes?.inspiration ) changes["system.attributes.inspiration"] = false;
       if ( actor.system.traits?.important && (actor.type === "npc") ) changes["system.traits.important"] = false;
       if ( Object.keys(changes).length ) await actor.update(changes);
       if ( actor.getFlag(moduleId, "stable") !== undefined ) await actor.unsetFlag(moduleId, "stable");

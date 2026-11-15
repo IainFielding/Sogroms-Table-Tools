@@ -56,11 +56,12 @@ can open them, and each setting applies to the whole world.
 
 ### Hero Cards
 
-<img src="images/gm-settings-hero-cards.webp" alt="The Hero Card Settings window, with its two settings" width="420">
+<img src="images/gm-settings-hero-cards.webp" alt="The Hero Card Settings window, with its three settings" width="420">
 
 | Setting | Default | What it does |
 |---|---|---|
-| **Natural 1s and 20s Lock Hero Cards** | On | No card can be played on a roll whose d20 shows a natural 1 or 20. Turn it off to allow Advantage and Inspiration on them. Either way, Lucky can't be played on a natural 20, and nothing rerolls a natural 1. |
+| **Natural 1s and 20s Lock Hero Cards** | On | No card can be played on a roll whose d20 shows a natural 1 or 20. Turn it off to allow Advantage, Inspiration and Heroic Inspiration on them. Either way, Lucky can't be played on a natural 20, and Lucky, Indomitable and Relentless never reroll a natural 1. |
+| **Heroic Inspiration as a Hero Card** | On | A character whose Inspiration box is ticked on their sheet can spend it from the Hero Card button on their roll, where it's offered as a card of its own, whether or not they hold Hero Cards. Under the 2024 rules it rerolls the d20 of an attack, check, save or initiative roll, and the new roll stands; it can reroll a natural 1, but isn't offered on a natural 20. Under the 2014 rules it gives the roll advantage instead. The box is cleared as it's spent, and ticked again if the roll can't be changed. It isn't offered on damage. |
 | **Show Played Cards on Screen** | On | A played card's art appears in the middle of the screen for everyone who can see the roll. Chat keeps a record either way. |
 
 ### Dice Rolling
